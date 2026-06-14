@@ -16,7 +16,7 @@ Page({
       { id: 'custom',  name: '定制',   emoji: '✨', color: '#f0e6ff' }
     ],
     notice: '新人首单立减 10 元, 满 99 包邮!',
-    seckill: [],
+    seckillList: [],
     recommend: [],
     page: 1,
     loading: false,
@@ -26,6 +26,7 @@ Page({
   onLoad() {
     login().catch(() => {});
     this.loadRecommend();
+    this.loadSeckill();
   },
 
   onPullDownRefresh() {
@@ -50,11 +51,17 @@ Page({
       this.setData({
         recommend: [...this.data.recommend, ...list],
         page: this.data.page + 1,
-        finished: list.length < 10,
-        seckill: this.data.page === 1 ? list.filter(g => g.originPrice) : this.data.seckill
+        finished: list.length < 10
       });
     } catch (e) {}
     this.setData({ loading: false });
+  },
+
+  async loadSeckill() {
+    try {
+      const list = await request('getSeckillList', {});
+      this.setData({ seckillList: list.filter(s => s.state === 'ongoing').slice(0, 6) });
+    } catch (e) {}
   },
 
   goDetail(e) {
@@ -76,5 +83,11 @@ Page({
     if (item.url) {
       wx.navigateTo({ url: `/pages/webview/webview?url=${encodeURIComponent(item.url)}&title=活动详情` });
     }
-  }
+  },
+
+  goSeckill() { wx.navigateTo({ url: '/pages/seckill/seckill' }); },
+  goGroup() { wx.navigateTo({ url: '/pages/group/list/list' }); },
+  goCoupon() { wx.navigateTo({ url: '/pages/coupon/center/center' }); },
+  goMember() { wx.navigateTo({ url: '/pages/member/member' }); },
+  goStore() { wx.navigateTo({ url: '/pages/store/list/list' }); }
 });

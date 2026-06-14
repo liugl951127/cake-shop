@@ -1,0 +1,59 @@
+<view class="page">
+  <view class="tabs">
+    <view class="tab {{tab === 'center' ? 'active' : ''}}" bindtap="switchTab" data-t="center">领券中心</view>
+    <view class="tab {{tab === 'mine' ? 'active' : ''}}" bindtap="switchTab" data-t="mine">我的优惠券</view>
+  </view>
+
+  <!-- 领券中心 -->
+  <view wx:if="{{tab === 'center'}}" class="coupon-list">
+    <view class="coupon" wx:for="{{centerList}}" wx:key="_id">
+      <view class="left">
+        <view class="amount" wx:if="{{item.type === 1 || item.type === 3 || item.type === 4}}">
+          <text class="yen">¥</text>{{item.amount}}
+        </view>
+        <view class="amount" wx:elif="{{item.type === 2}}">{{item.discount}}折</view>
+        <view class="amount" wx:else>¥{{item.amount}}</view>
+        <view class="condition" wx:if="{{item.minAmount > 0}}">满{{item.minAmount}}元可用</view>
+        <view class="condition" wx:else>无门槛</view>
+      </view>
+      <view class="right">
+        <view class="name">{{item.name}}</view>
+        <view class="expire">有效期 {{item.validDays}} 天</view>
+        <view class="claimed">已领取 {{item.claimed || 0}}{{item.total === -1 ? '' : '/' + item.total}}</view>
+        <view class="receive-btn {{item.soldOut || item.received ? 'disabled' : ''}}"
+              bindtap="onReceive" data-id="{{item._id}}">
+          {{item.soldOut ? '已抢光' : (item.received ? '已领取' : '立即领取')}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的优惠券 -->
+  <view wx:else>
+    <view class="filters">
+      <text class="f {{filter === 0 ? 'on' : ''}}" bindtap="setFilter" data-f="0">未使用</text>
+      <text class="f {{filter === 1 ? 'on' : ''}}" bindtap="setFilter" data-f="1">已使用</text>
+      <text class="f {{filter === 3 ? 'on' : ''}}" bindtap="setFilter" data-f="3">已过期</text>
+    </view>
+    <view class="coupon-list">
+      <view class="coupon {{myList.length > 0 && item.status !== 0 ? 'gray' : ''}}"
+            wx:for="{{myList}}" wx:key="_id">
+        <view class="left">
+          <view class="amount">
+            <text class="yen">¥</text>{{item.amount || 0}}
+          </view>
+          <view class="condition" wx:if="{{item.minAmount > 0}}">满{{item.minAmount}}元可用</view>
+          <view class="condition" wx:else>无门槛</view>
+        </view>
+        <view class="right">
+          <view class="name">{{item.name || item.typeName}}</view>
+          <view class="expire">至 {{item.expireTimeText}}</view>
+          <view class="tag" wx:if="{{item.status === 0}}">未使用</view>
+          <view class="tag used" wx:elif="{{item.status === 1}}">已使用</view>
+          <view class="tag expired" wx:elif="{{item.status === 3}}">已过期</view>
+        </view>
+      </view>
+      <view class="empty" wx:if="{{myList.length === 0}}">暂无优惠券</view>
+    </view>
+  </view>
+</view>

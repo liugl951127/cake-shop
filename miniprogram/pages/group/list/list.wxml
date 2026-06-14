@@ -1,0 +1,17 @@
+<view class="page">
+  <view class="banner">👥 邀好友,享团购价</view>
+  <view class="g-list">
+    <view class="g-card" wx:for="{{list}}" wx:key="goodsId" bindtap="goDetail" data-id="{{item.goodsId}}" data-act="{{item}}">
+      <image src="{{item.goodsImage}}" mode="aspectFill" class="g-img"></image>
+      <view class="g-info">
+        <view class="g-name">{{item.goodsName}}</view>
+        <view class="g-price-row">
+          <text class="g-price">¥{{item.groupPrice}}</text>
+          <text class="g-old">¥{{item.price}}</text>
+        </view>
+        <view class="g-btn">{{item.groupSize}} 人成团</view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无拼团活动</view>
+  </view>
+</view>

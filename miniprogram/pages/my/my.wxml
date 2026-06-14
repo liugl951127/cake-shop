@@ -5,10 +5,30 @@
     </view>
     <view class="user">
       <view class="u-name">{{userInfo.nickName || '点击登录'}}</view>
-      <view class="u-level" wx:if="{{userInfo.isAdmin}}">👑 管理员</view>
-      <view class="u-level" wx:else>普通会员</view>
+      <view class="u-level" wx:if="{{memberInfo.level}}">
+        {{memberInfo.level.icon}} {{memberInfo.level.name}} · {{memberInfo.exp || 0}} 成长值
+      </view>
     </view>
-    <view class="u-code" wx:if="{{userInfo.openid}}">ID: {{userInfo.openid}}</view>
+    <view class="member-btn" bindtap="goMember" wx:if="{{userInfo.openid}}">会员中心 ›</view>
+  </view>
+
+  <view class="quick-row">
+    <view class="q-item" bindtap="goMember">
+      <text class="q-num">{{memberInfo.points || 0}}</text>
+      <text class="q-text">积分</text>
+    </view>
+    <view class="q-item" bindtap="goCoupon">
+      <text class="q-num">{{couponCount}}</text>
+      <text class="q-text">优惠券</text>
+    </view>
+    <view class="q-item" bindtap="goFavor">
+      <text class="q-num">{{favorCount || 0}}</text>
+      <text class="q-text">收藏</text>
+    </view>
+    <view class="q-item" bindtap="goStore">
+      <text class="q-num">📍</text>
+      <text class="q-text">门店</text>
+    </view>
   </view>
 
   <view class="order-entry">
@@ -18,56 +38,62 @@
     </view>
     <view class="oe-grid">
       <view class="oe-item" bindtap="goOrderList" data-v="0">
-        <text>💰</text>
-        <text>待付款</text>
+        <text>💰</text><text>待付款</text>
       </view>
       <view class="oe-item" bindtap="goOrderList" data-v="2">
-        <text>🎂</text>
-        <text>制作中</text>
+        <text>🎂</text><text>制作中</text>
       </view>
       <view class="oe-item" bindtap="goOrderList" data-v="3">
-        <text>🚚</text>
-        <text>配送中</text>
+        <text>🚚</text><text>配送中</text>
       </view>
       <view class="oe-item" bindtap="goOrderList" data-v="4">
-        <text>✓</text>
-        <text>已完成</text>
+        <text>✓</text><text>已完成</text>
       </view>
     </view>
   </view>
 
+  <view class="feature-grid">
+    <view class="f-item" bindtap="goSeckill">
+      <view class="f-icon" style="background:#fff5f0">⚡</view>
+      <text>限时秒杀</text>
+    </view>
+    <view class="f-item" bindtap="goGroup">
+      <view class="f-icon" style="background:#fff0f3">👥</view>
+      <text>拼团</text>
+    </view>
+    <view class="f-item" bindtap="goCoupon">
+      <view class="f-icon" style="background:#fff4d6">🎟️</view>
+      <text>领券中心</text>
+    </view>
+    <view class="f-item" bindtap="goStore">
+      <view class="f-icon" style="background:#e0f4ff">📍</view>
+      <text>附近门店</text>
+    </view>
+    <view class="f-item" bindtap="goMember">
+      <view class="f-icon" style="background:#f0e6ff">👑</view>
+      <text>会员中心</text>
+    </view>
+    <view class="f-item" bindtap="goFavor">
+      <view class="f-icon" style="background:#e6f7e6">♥</view>
+      <text>我的收藏</text>
+    </view>
+  </view>
+
   <view class="menu card">
-    <view class="menu-item" bindtap="goFavor">
-      <text>♥ 我的收藏</text>
-      <text class="arrow">›</text>
-    </view>
     <view class="menu-item" bindtap="goAddress">
-      <text>📍 收货地址</text>
-      <text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goOrderList">
-      <text>📦 全部订单</text>
-      <text class="arrow">›</text>
-    </view>
-    <view class="menu-item" wx:if="{{userInfo.isAdmin}}" bindtap="goAdmin">
-      <text>🛠 商家管理后台</text>
-      <text class="arrow">›</text>
+      <text>📍 收货地址</text><text class="arrow">›</text>
     </view>
     <view class="menu-item" wx:if="{{userInfo.isAdmin}}" bindtap="goAdminGoods">
-      <text>🛠 商品管理</text>
-      <text class="arrow">›</text>
+      <text>🛠 商品管理</text><text class="arrow">›</text>
     </view>
     <view class="menu-item" wx:if="{{userInfo.isAdmin}}" bindtap="goAdminOrders">
-      <text>📋 订单管理</text>
-      <text class="arrow">›</text>
+      <text>📋 订单管理</text><text class="arrow">›</text>
     </view>
     <view class="menu-item" bindtap="contact">
-      <text>💬 联系客服</text>
-      <text class="arrow">›</text>
+      <text>💬 联系客服</text><text class="arrow">›</text>
     </view>
     <view class="menu-item" bindtap="about">
-      <text>ℹ 关于</text>
-      <text class="arrow">›</text>
+      <text>ℹ 关于</text><text class="arrow">›</text>
     </view>
   </view>
 </view>

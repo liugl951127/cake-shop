@@ -12,7 +12,15 @@
     "pages/my/my",
     "pages/favor/favor",
     "pages/login/login",
-    "pages/webview/webview"
+    "pages/webview/webview",
+    "pages/member/member",
+    "pages/coupon/coupon",
+    "pages/coupon/center/center",
+    "pages/seckill/seckill",
+    "pages/group/list/list",
+    "pages/group/detail/detail",
+    "pages/store/list/list",
+    "pages/logistics/logistics"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -39,8 +47,6 @@
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents",
   "permission": {
-    "scope.userLocation": {
-      "desc": "用于显示附近的门店和配送范围"
-    }
+    "scope.userLocation": { "desc": "用于显示附近的门店和配送范围" }
   }
 }

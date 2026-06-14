@@ -1,0 +1,46 @@
+.page { padding-bottom: 40rpx; }
+.tabs { display: flex; background: #fff; position: sticky; top: 0; z-index: 10; }
+.tab { flex: 1; text-align: center; padding: 24rpx 0; font-size: 28rpx; color: #666; position: relative; }
+.tab.active { color: var(--primary); font-weight: bold; }
+.tab.active::after {
+  content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: 40rpx; height: 4rpx; background: var(--primary); border-radius: 4rpx;
+}
+.filters { display: flex; padding: 20rpx; background: #fff; }
+.f { flex: 1; text-align: center; padding: 16rpx 0; font-size: 26rpx; color: #666; }
+.f.on { color: var(--primary); font-weight: bold; border-bottom: 2rpx solid var(--primary); }
+
+.coupon-list { padding: 20rpx; }
+.coupon {
+  display: flex; background: #fff; border-radius: 16rpx;
+  margin-bottom: 20rpx; overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+}
+.coupon.gray { opacity: 0.5; }
+.left {
+  width: 220rpx; background: linear-gradient(135deg, #ff7b9c, #e85a82);
+  color: #fff; padding: 30rpx 20rpx; text-align: center;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.left .amount { font-size: 56rpx; font-weight: bold; }
+.left .amount .yen { font-size: 28rpx; }
+.left .condition { font-size: 22rpx; margin-top: 10rpx; opacity: 0.9; }
+
+.right { flex: 1; padding: 24rpx; display: flex; flex-direction: column; }
+.name { font-size: 28rpx; font-weight: 600; }
+.expire { font-size: 22rpx; color: #999; margin-top: 6rpx; }
+.claimed { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+.receive-btn {
+  margin-top: auto; background: var(--primary); color: #fff;
+  text-align: center; padding: 14rpx 0; border-radius: 999rpx;
+  font-size: 26rpx;
+}
+.receive-btn.disabled { background: #ccc; color: #fff; }
+.tag {
+  margin-top: auto; align-self: flex-start;
+  font-size: 22rpx; padding: 4rpx 16rpx; border-radius: 6rpx;
+  background: var(--primary-light); color: var(--primary);
+}
+.tag.used { background: #eee; color: #999; }
+.tag.expired { background: #f5f5f5; color: #999; }
+.empty { text-align: center; color: #999; padding: 100rpx 0; }

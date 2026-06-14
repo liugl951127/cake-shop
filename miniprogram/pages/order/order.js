@@ -1,5 +1,5 @@
 const { request } = require('../../utils/request.js');
-const { requireLogin } = require('../../utils/auth.js');
+const { requireLogin, getUser } = require('../../utils/auth.js');
 const cartUtil = require('../../utils/cart.js');
 const { formatPrice } = require('../../utils/util.js');
 
@@ -8,34 +8,46 @@ Page({
     from: 'cart',
     items: [],
     address: null,
+    store: null,
+    isSelfPickup: false,
     remark: '',
-    goodsPrice: '0.00',
-    freight: '0.00',
-    discount: 0,
-    totalPrice: '0.00',
     timeRanges: [],
     timeIndex: [0, 0],
     timeText: '尽快送达',
     payLoading: false,
     orderId: '',
     expireTime: 0,
-    countdownText: ''
+    countdownText: '',
+
+    // 会员 / 优惠券 / 积分
+    userInfo: {},
+    memberDiscount: 0,
+    availableCoupons: [],
+    couponId: '',
+    couponDiscount: 0,
+    usePoints: 0,
+    pointsDiscount: 0,
+
+    goodsPrice: '0.00',
+    freight: '0.00',
+    totalPrice: '0.00'
   },
 
   onLoad(options) {
     this.setData({ from: options.from || 'cart' });
     this.buildTimeOptions();
+    this.loadUserInfo();
     this.loadItems();
   },
 
   onShow() {
     const addr = wx.getStorageSync('selectAddress');
     if (addr) this.setAddress(addr);
+    const store = wx.getStorageSync('selectStore');
+    if (store) this.setStore(store);
   },
 
-  onUnload() {
-    if (this._timer) clearInterval(this._timer);
-  },
+  onUnload() { if (this._timer) clearInterval(this._timer); },
 
   buildTimeOptions() {
     const dates = [];
@@ -46,10 +58,13 @@ Page({
       const label = i === 0 ? '今天' : i === 1 ? '明天' : '后天';
       dates.push(`${label} (${d.getMonth() + 1}/${d.getDate()})`);
     }
-    for (let h = 9; h < 22; h++) {
-      times.push(`${h}:00 - ${h + 1}:00`);
-    }
+    for (let h = 9; h < 22; h++) times.push(`${h}:00 - ${h + 1}:00`);
     this.setData({ timeRanges: [dates, times] });
+  },
+
+  loadUserInfo() {
+    const u = getUser();
+    this.setData({ userInfo: u });
   },
 
   loadItems() {
@@ -67,16 +82,38 @@ Page({
     this.setData({ items });
     this.compute();
     this.loadDefaultAddress();
+    this.loadCoupons();
   },
 
   compute() {
+    const u = this.data.userInfo;
     const goodsPrice = this.data.items.reduce((s, i) => s + i.price * i.count, 0);
-    const freight = goodsPrice >= 99 ? 0 : 8;
-    const totalPrice = goodsPrice + freight - this.data.discount;
+
+    // 会员折扣
+    const lv = u.level || 0;
+    const discountMap = { 0: 1, 1: 0.98, 2: 0.95, 3: 0.9 };
+    const memberRate = discountMap[lv] || 1;
+    const memberDiscount = Number((goodsPrice * (1 - memberRate)).toFixed(2));
+
+    // 优惠券
+    const couponDiscount = this.data.couponDiscount;
+
+    // 积分抵扣
+    const pointsDiscount = this.data.usePoints > 0 ? Number((this.data.usePoints / 100).toFixed(2)) : 0;
+
+    // 运费
+    const freight = this.data.isSelfPickup ? 0 : (goodsPrice >= 99 ? 0 : 8);
+
+    // 应付
+    const total = Math.max(0, goodsPrice - memberDiscount - couponDiscount - pointsDiscount + freight);
+
     this.setData({
       goodsPrice: formatPrice(goodsPrice),
+      memberDiscount: formatPrice(memberDiscount),
+      couponDiscount: formatPrice(couponDiscount),
+      pointsDiscount: formatPrice(pointsDiscount),
       freight: formatPrice(freight),
-      totalPrice: formatPrice(totalPrice)
+      totalPrice: formatPrice(total)
     });
   },
 
@@ -88,24 +125,67 @@ Page({
     } catch (e) {}
   },
 
+  async loadCoupons() {
+    const goodsPrice = this.data.items.reduce((s, i) => s + i.price * i.count, 0);
+    try {
+      const list = await request('getCoupons', { available: true, amount: goodsPrice });
+      this.setData({ availableCoupons: list });
+    } catch (e) {}
+  },
+
   setAddress(addr) { this.setData({ address: addr }); },
+  setStore(store) { this.setData({ store }); },
 
   selectAddress() { wx.navigateTo({ url: '/pages/address/list/list?select=1' }); },
+  selectStore() { wx.navigateTo({ url: '/pages/store/list/list' }); },
+
+  setPickup(e) {
+    const v = e.currentTarget.dataset.v === 'true';
+    this.setData({ isSelfPickup: v });
+    this.compute();
+  },
 
   onRemarkInput(e) { this.setData({ remark: e.detail.value }); },
-
   onTimeChange(e) { this.setData({ timeIndex: e.detail.value }); },
 
+  // 选优惠券
+  showCouponPicker() {
+    const items = ['不使用', ...this.data.availableCoupons.map(c => `${c.name} (-¥${c.discount})`)];
+    wx.showActionSheet({
+      itemList: items,
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          this.setData({ couponId: '', couponDiscount: 0 });
+        } else {
+          const c = this.data.availableCoupons[res.tapIndex - 1];
+          this.setData({ couponId: c._id, couponDiscount: c.discount });
+        }
+        this.compute();
+      }
+    });
+  },
+
+  togglePoints(e) {
+    const use = e.detail.value ? Math.min(100, this.data.userInfo.points || 0) : 0;
+    this.setData({ usePoints: use });
+    this.compute();
+  },
+
   async submitOrder() {
-    if (!this.data.address) return wx.showToast({ title: '请选择地址', icon: 'none' });
+    if (!this.data.isSelfPickup && !this.data.address) {
+      return wx.showToast({ title: '请选择地址', icon: 'none' });
+    }
+    if (this.data.isSelfPickup && !this.data.store) {
+      return wx.showToast({ title: '请选择自提门店', icon: 'none' });
+    }
     if (!requireLogin()) return;
 
     const items = this.data.items.map(i => ({
       _id: i._id, name: i.name, image: i.image,
       price: i.price, count: i.count, spec: i.spec
     }));
-    const timeText = this.data.timeRanges[0][this.data.timeIndex[0]] + ' ' +
-                     this.data.timeRanges[1][this.data.timeIndex[1]];
+    const timeText = this.data.isSelfPickup ? '门店自提' :
+      (this.data.timeRanges[0][this.data.timeIndex[0]] + ' ' + this.data.timeRanges[1][this.data.timeIndex[1]]);
 
     this.setData({ payLoading: true });
     wx.showLoading({ title: '正在下单', mask: true });
@@ -118,12 +198,16 @@ Page({
         timeText,
         goodsPrice: this.data.goodsPrice,
         freight: this.data.freight,
-        totalPrice: this.data.totalPrice
+        totalPrice: this.data.totalPrice,
+        couponId: this.data.couponId,
+        couponDiscount: this.data.couponDiscount,
+        usePoints: this.data.usePoints,
+        isSelfPickup: this.data.isSelfPickup,
+        storeId: this.data.store ? this.data.store._id : ''
       }, { loading: false });
 
       this.setData({ orderId: result._id, expireTime: result.expireTime });
 
-      // 清理临时数据
       if (this.data.from === 'cart') {
         const remain = cartUtil.get().filter(i => !items.find(it => it._id === i._id));
         cartUtil.save(remain);
@@ -132,7 +216,6 @@ Page({
       }
 
       wx.hideLoading();
-      // 调起微信支付
       this.invokePay(result.payment, result._id);
     } catch (e) {
       wx.hideLoading();
@@ -140,59 +223,34 @@ Page({
     }
   },
 
-  // 调起微信支付
   invokePay(payment, orderId) {
-    if (!payment) {
-      // 演示模式:payment 可能是 null,直接跳转订单页
-      return this.skipPay(orderId);
-    }
-
+    if (!payment) return this.skipPay(orderId);
     wx.requestPayment({
       ...payment,
       success: () => {
         wx.showToast({ title: '支付成功' });
-        setTimeout(() => {
-          wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
-        }, 1000);
+        setTimeout(() => wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` }), 1000);
       },
       fail: (err) => {
         if (err.errMsg && err.errMsg.includes('cancel')) {
           wx.showModal({
             title: '支付已取消',
-            content: '订单将在 30 分钟后自动关闭,可在订单列表继续支付',
+            content: '订单将在 30 分钟后自动关闭',
             confirmText: '去支付',
             cancelText: '查看订单',
             success: (r) => {
-              if (r.confirm) {
-                this.retryPay(orderId);
-              } else {
-                wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
-              }
+              if (r.confirm) wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
+              else wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
             }
           });
-        } else {
-          wx.showToast({ title: '支付失败', icon: 'none' });
         }
       },
       complete: () => this.setData({ payLoading: false })
     });
   },
 
-  // 演示模式:直接跳详情
   skipPay(orderId) {
     wx.showToast({ title: '下单成功' });
-    setTimeout(() => {
-      wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
-    }, 1000);
-  },
-
-  // 继续支付
-  async retryPay(orderId) {
-    try {
-      const result = await request('getOrderDetail', { id: orderId });
-      // 真实支付模式:再走统一下单
-      // 此处简化,直接到详情页让用户从订单列表支付
-      wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
-    } catch (e) {}
+    setTimeout(() => wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` }), 1000);
   }
 });

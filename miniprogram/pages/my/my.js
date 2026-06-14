@@ -2,18 +2,31 @@ const { request } = require('../../utils/request.js');
 const { login } = require('../../utils/auth.js');
 
 Page({
-  data: { userInfo: {} },
+  data: {
+    userInfo: {},
+    memberInfo: {},
+    couponCount: 0,
+    favorCount: 0
+  },
 
   onShow() {
     const userInfo = wx.getStorageSync('userInfo') || {};
     this.setData({ userInfo });
-    if (userInfo.openid) this.refreshUser();
+    if (userInfo.openid) this.refreshAll();
   },
 
-  async refreshUser() {
+  async refreshAll() {
     try {
-      const info = await login(true);
-      this.setData({ userInfo: info });
+      const [member, coupons, favs] = await Promise.all([
+        request('getMemberInfo', {}, { loading: false, silent: true }),
+        request('getCoupons', { status: 0 }, { loading: false, silent: true }),
+        request('getFavorites', {}, { loading: false, silent: true })
+      ]);
+      this.setData({
+        memberInfo: member,
+        couponCount: coupons.length,
+        favorCount: favs.length
+      });
     } catch (e) {}
   },
 
@@ -22,29 +35,23 @@ Page({
     wx.navigateTo({ url: '/pages/login/login' });
   },
 
-  goOrderList(e) {
-    const status = e && e.currentTarget.dataset.v;
-    wx.switchTab({ url: '/pages/order/list/list' });
-  },
+  goMember() { wx.navigateTo({ url: '/pages/member/member' }); },
+  goCoupon() { wx.navigateTo({ url: '/pages/coupon/center/center' }); },
+  goSeckill() { wx.navigateTo({ url: '/pages/seckill/seckill' }); },
+  goGroup() { wx.navigateTo({ url: '/pages/group/list/list' }); },
+  goStore() { wx.navigateTo({ url: '/pages/store/list/list' }); },
 
+  goOrderList() { wx.switchTab({ url: '/pages/order/list/list' }); },
   goAddress() { wx.navigateTo({ url: '/pages/address/list/list' }); },
   goFavor() { wx.navigateTo({ url: '/pages/favor/favor' }); },
   goAdminGoods() { wx.navigateTo({ url: '/pages/admin/goods/goods' }); },
   goAdminOrders() { wx.navigateTo({ url: '/pages/admin/order/order' }); },
-  goAdmin() {
-    const url = encodeURIComponent('https://你的管理后台域名/admin');
-    wx.navigateTo({ url: `/pages/webview/webview?url=${url}&title=管理后台` });
-  },
 
   contact() {
-    wx.showModal({ title: '客服', content: '工作时间 9:00-21:00\n电话: 400-888-8888', showCancel: false });
+    wx.showModal({ title: '客服', content: '工作时间 9:00-21:00\n电话: 400-888-8888\n微信: cake_service', showCancel: false });
   },
 
   about() {
-    wx.showModal({
-      title: '关于',
-      content: '甜心蛋糕 v1.0.0\n用心做好每一块蛋糕',
-      showCancel: false
-    });
+    wx.showModal({ title: '甜心蛋糕 v2.0', content: '用心做好每一块蛋糕 🍰', showCancel: false });
   }
 });

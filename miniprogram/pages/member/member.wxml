@@ -1,0 +1,68 @@
+<view class="page" wx:if="{{info}}">
+  <view class="header" style="background: linear-gradient(135deg, #ff7b9c, #e85a82);">
+    <view class="level-card">
+      <view class="level-icon">{{info.level.icon}}</view>
+      <view class="level-info">
+        <view class="level-name">{{info.level.name}}</view>
+        <view class="level-desc">{{info.level.desc}}</view>
+      </view>
+      <view class="level-num">LV{{info.level.level}}</view>
+    </view>
+    <view class="progress-row">
+      <view class="progress-bar">
+        <view class="progress-fill" style="width:{{info.growthPercent}}%"></view>
+      </view>
+      <text class="progress-text">{{info.exp}} 成长值</text>
+    </view>
+    <view class="next-text" wx:if="{{info.next}}">
+      还差 {{info.next.min - info.exp}} 成长值升级为 {{info.next.name}}
+    </view>
+    <view class="next-text" wx:else>已是最高等级,享受专属服务</view>
+  </view>
+
+  <view class="stats">
+    <view class="stat-item">
+      <view class="stat-num">{{info.points}}</view>
+      <view class="stat-text">积分</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-num">{{info.signinStreak}}</view>
+      <view class="stat-text">连续签到</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-num">{{info.exp}}</view>
+      <view class="stat-text">成长值</view>
+    </view>
+  </view>
+
+  <view class="signin-card" bindtap="onSignIn">
+    <text wx:if="{{info.signedInToday}}" class="signed">✓ 今日已签到 +{{info.signinPoints}} 积分</text>
+    <text wx:else>📅 点击签到 +{{info.signinPoints}} 积分</text>
+  </view>
+
+  <view class="card">
+    <view class="card-title">等级权益</view>
+    <view class="level-list">
+      <view class="lv {{item.level === info.level.level ? 'active' : ''}}"
+            wx:for="{{info.levelList}}" wx:key="level">
+        <view class="lv-icon">{{item.icon}}</view>
+        <view class="lv-name">{{item.name}}</view>
+        <view class="lv-range">{{item.min}}+ 成长值</view>
+        <view class="lv-discount">{{item.discount < 1 ? ((1 - item.discount) * 10).toFixed(0) + ' 折优惠' : '基础权益'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{info.pointLogs.length}}">
+    <view class="card-title">积分流水</view>
+    <view class="log-item" wx:for="{{info.pointLogs}}" wx:key="createTime">
+      <view>
+        <view class="log-text">{{item.remark}}</view>
+        <view class="text-sub">{{item.createTime}}</view>
+      </view>
+      <view class="log-delta {{item.delta > 0 ? 'plus' : 'minus'}}">
+        {{item.delta > 0 ? '+' : ''}}{{item.delta}}
+      </view>
+    </view>
+  </view>
+</view>

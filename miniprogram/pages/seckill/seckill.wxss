@@ -1,0 +1,35 @@
+.page { padding-bottom: 40rpx; background: linear-gradient(180deg, #fff5f8 0%, #f7f7f7 30%); min-height: 100vh; }
+.header {
+  background: linear-gradient(135deg, #ff5722, #ff9800);
+  color: #fff; padding: 30rpx;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.title { font-size: 40rpx; font-weight: bold; }
+.now-time { font-size: 24rpx; opacity: 0.9; }
+
+.s-list { padding: 20rpx; }
+.s-item {
+  background: #fff; border-radius: 16rpx; padding: 20rpx;
+  margin-bottom: 20rpx; display: flex; align-items: center;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+}
+.s-img { width: 180rpx; height: 180rpx; border-radius: 12rpx; background: #f0f0f0; }
+.s-info { flex: 1; margin: 0 20rpx; min-width: 0; }
+.s-name { font-size: 28rpx; font-weight: 600; }
+.s-row { display: flex; align-items: baseline; margin-top: 8rpx; }
+.s-price { color: #ff5722; font-size: 36rpx; font-weight: bold; }
+.s-old { color: #999; font-size: 24rpx; text-decoration: line-through; margin-left: 12rpx; }
+.progress-bar {
+  height: 16rpx; background: #f5f5f5; border-radius: 999rpx; overflow: hidden;
+  margin-top: 12rpx;
+}
+.progress-fill { height: 100%; background: linear-gradient(90deg, #ff5722, #ff9800); border-radius: 999rpx; }
+.s-stock { font-size: 22rpx; color: #999; margin-top: 6rpx; }
+.s-btn {
+  background: linear-gradient(135deg, #ff5722, #ff9800);
+  color: #fff; padding: 16rpx 30rpx; border-radius: 999rpx;
+  font-size: 26rpx; font-weight: bold;
+}
+.s-btn.gray { background: #ccc; }
+.countdown { font-size: 24rpx; }
+.empty { text-align: center; color: #999; padding: 200rpx 0; }

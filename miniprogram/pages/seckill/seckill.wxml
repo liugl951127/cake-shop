@@ -1,0 +1,33 @@
+<view class="page">
+  <view class="header">
+    <text class="title">⚡ 限时秒杀</text>
+    <view class="now-time">{{nowText}}</view>
+  </view>
+
+  <view class="s-list">
+    <view class="s-item" wx:for="{{list}}" wx:key="_id">
+      <image src="{{item.image}}" class="s-img" mode="aspectFill"></image>
+      <view class="s-info">
+        <view class="s-name">{{item.name}}</view>
+        <view class="s-row">
+          <text class="s-price">¥{{item.price}}</text>
+          <text class="s-old">¥{{item.originPrice}}</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width:{{item.sold / item.total * 100}}%"></view>
+        </view>
+        <view class="s-stock">已抢 {{item.sold}}/{{item.total}}</view>
+      </view>
+      <view class="s-btn" wx:if="{{item.state === 'ongoing'}}"
+            bindtap="goSeckill" data-id="{{item._id}}">立即抢</view>
+      <view class="s-btn gray" wx:elif="{{item.state === 'pending'}}">
+        <view class="countdown" wx:if="{{item.startTime > now}}">
+          {{formatTime(item.startTime - now)}} 后开抢
+        </view>
+        <view wx:else>即将开始</view>
+      </view>
+      <view class="s-btn gray" wx:else>已结束</view>
+    </view>
+    <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无秒杀活动</view>
+  </view>
+</view>

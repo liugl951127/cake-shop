@@ -1,0 +1,19 @@
+<view class="page">
+  <view class="location-bar" bindtap="onLocate">
+    <text class="loc-icon">📍</text>
+    <text class="loc-text">{{location || '点击获取当前位置'}}</text>
+  </view>
+
+  <view class="s-list">
+    <view class="s-item" wx:for="{{list}}" wx:key="_id" bindtap="onSelect" data-id="{{item._id}}" data-item="{{item}}">
+      <view class="s-name">{{item.name}}</view>
+      <view class="s-address">{{item.region}} {{item.address}}</view>
+      <view class="s-meta">
+        <text wx:if="{{item.distance}}">📏 {{item.distance}} km</text>
+        <text>🕒 {{item.hours}}</text>
+        <text bindtap="callPhone" data-phone="{{item.phone}}">📞 {{item.phone}}</text>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无门店</view>
+  </view>
+</view>

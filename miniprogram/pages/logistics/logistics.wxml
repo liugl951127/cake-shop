@@ -1,0 +1,29 @@
+<view class="page">
+  <view class="header" wx:if="{{info.company || info.number}}">
+    <view class="info-row">
+      <text class="label">物流公司</text>
+      <text class="val">{{info.company || '-'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">运单号</text>
+      <text class="val copy" bindtap="copyNo">{{info.number || '-'}}</text>
+    </view>
+  </view>
+
+  <view class="status-card">
+    <view class="status-text" wx:if="{{trace && trace.state === '3'}}">已签收 ✓</view>
+    <view class="status-text" wx:elif="{{trace && trace.state === '2'}}">运输中</view>
+    <view class="status-text" wx:else>查询中...</view>
+  </view>
+
+  <view class="traces">
+    <view class="trace-item" wx:for="{{traceList}}" wx:key="time" wx:for-item="t">
+      <view class="t-dot {{index === 0 ? 'active' : ''}}"></view>
+      <view class="t-content">
+        <view class="t-text">{{t.context}}</view>
+        <view class="t-time">{{t.timeText}}</view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!loading && traceList.length === 0}}">暂无轨迹</view>
+  </view>
+</view>

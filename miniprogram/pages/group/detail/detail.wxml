@@ -1,0 +1,35 @@
+<view class="page" wx:if="{{info}}">
+  <image src="{{info.goodsImage}}" mode="aspectFill" class="g-img"></image>
+  <view class="info">
+    <view class="g-name">{{info.goodsName}}</view>
+    <view class="g-price-row">
+      <text class="g-price">¥{{info.groupPrice}}</text>
+      <text class="g-old">¥{{info.price}}</text>
+    </view>
+    <view class="g-tag">{{info.groupSize}} 人成团 · 还差 {{info.groupSize - info.currentSize}} 人</view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">团内成员 ({{info.currentSize}}/{{info.groupSize}})</view>
+    <view class="members">
+      <view class="member" wx:for="{{info.members}}" wx:key="openid">
+        <image src="{{item.avatarUrl || '/images/default-avatar.png'}}" class="m-avatar"></image>
+        <text class="m-name ellipsis">{{item.nickName || (item.isLeader ? '团长' : '参团者')}}</text>
+        <text class="m-tag" wx:if="{{item.isLeader}}">团长</text>
+      </view>
+      <view class="member empty-m" wx:for="{{emptySlots}}" wx:key="*this">
+        <view class="m-avatar empty">?</view>
+        <text class="m-name">虚位以待</text>
+      </view>
+    </view>
+    <view class="countdown" wx:if="{{info.status === 1}}">
+      <text>距结束 </text>
+      <text class="ct">{{countdown}}</text>
+    </view>
+  </view>
+
+  <view class="footer">
+    <view class="footer-side" bindtap="goDetail">商品详情</view>
+    <view class="footer-btn" bindtap="onJoinGroup">¥{{info.groupPrice}} 参与拼团</view>
+  </view>
+</view>

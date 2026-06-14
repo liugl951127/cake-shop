@@ -30,19 +30,43 @@
     <text class="ellipsis">{{notice}}</text>
   </view>
 
+  <!-- 功能宫格 -->
+  <view class="feature-bar">
+    <view class="f-item" bindtap="goSeckill">
+      <view class="f-icon" style="background:#fff5f0">⚡</view>
+      <text>限时秒杀</text>
+    </view>
+    <view class="f-item" bindtap="goGroup">
+      <view class="f-icon" style="background:#fff0f3">👥</view>
+      <text>拼团</text>
+    </view>
+    <view class="f-item" bindtap="goCoupon">
+      <view class="f-icon" style="background:#fff4d6">🎟️</view>
+      <text>领券</text>
+    </view>
+    <view class="f-item" bindtap="goMember">
+      <view class="f-icon" style="background:#f0e6ff">👑</view>
+      <text>会员</text>
+    </view>
+    <view class="f-item" bindtap="goStore">
+      <view class="f-icon" style="background:#e0f4ff">📍</view>
+      <text>门店</text>
+    </view>
+  </view>
+
   <!-- 限时活动 -->
-  <view class="seckill" wx:if="{{seckill.length}}">
+  <view class="seckill" wx:if="{{seckillList.length}}">
     <view class="seckill-title flex-between">
       <text>⚡ 限时秒杀</text>
-      <text class="text-sub">每天 10:00 开抢</text>
+      <text class="text-sub" bindtap="goSeckill">查看全部 ›</text>
     </view>
     <scroll-view scroll-x class="seckill-list">
-      <view class="seckill-item" wx:for="{{seckill}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+      <view class="seckill-item" wx:for="{{seckillList}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
         <image src="{{item.image}}" mode="aspectFill"></image>
         <view class="seckill-name ellipsis">{{item.name}}</view>
         <view class="flex">
-          <text class="price seckill-price">{{item.price}}</text>
-          <text class="price-old seckill-old">{{item.originPrice}}</text>
+          <text class="seckill-price">¥{{item.price}}</text>
+          <text class="seckill-old">¥{{item.originPrice}}</text>
         </view>
       </view>
     </scroll-view>

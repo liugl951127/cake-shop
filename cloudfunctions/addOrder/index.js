@@ -1,69 +1,98 @@
-// addOrder - 下单 + 微信支付统一下单
+// addOrder - 下单 + 微信支付统一下单(完整版:支持优惠券/积分/会员折扣/秒杀/自提)
 const { cloud, ok, BizError, auth } = require('../common/index.js');
 const { genOutTradeNo, unifiedOrder } = require('../common/pay.js');
 const { writeLog } = require('../common/orderLog.js');
+const { calcDiscount } = require('../common/member.js');
+const { lockCoupon, markCouponUsed, refundCoupon } = require('../common/coupon.js');
 
 exports.main = auth(async (event) => {
-  const { items, address, remark, timeText, goodsPrice, freight, totalPrice } = event;
+  const {
+    items, address, remark, timeText,
+    goodsPrice, freight, totalPrice,
+    couponId = '', couponDiscount = 0,
+    usePoints = 0,
+    isSelfPickup = false, storeId = ''
+  } = event;
   if (!items || items.length === 0) throw new BizError('订单无商品');
-  if (!address) throw new BizError('请选择地址');
-  if (!address.name || !address.phone || !address.region) throw new BizError('收货信息不完整');
-  if (!/^1\d{10}$/.test(address.phone)) throw new BizError('手机号格式错误');
+  if (!address && !isSelfPickup) throw new BizError('请选择地址');
+  if (isSelfPickup && !storeId) throw new BizError('请选择自提门店');
 
   const db = cloud.database();
   const _ = db.command;
   const now = Date.now();
   const orderNo = genOutTradeNo('CAKE');
-  const outTradeNo = orderNo; // 同一单号复用
+  const outTradeNo = orderNo;
 
-  // 幂等锁:同一 openid 5 秒内同金额同商品只允许一个待付款订单
+  // 幂等锁
   const recent = await db.collection('orders').where({
     _openid: event._openid,
     status: 0,
     createTime: _.gt(now - 5000)
   }).limit(1).get();
-  if (recent.data.length > 0) {
-    throw new BizError('操作太频繁,请稍后再试');
-  }
+  if (recent.data.length > 0) throw new BizError('操作太频繁,请稍后再试');
 
-  // 校验库存
+  // 校验商品 + 库存(支持秒杀/拼团)
   for (const it of items) {
-    const g = await db.collection('goods').doc(it._id).get();
-    if (!g.data) throw new BizError(`商品已下架: ${it.name}`);
-    if (g.data.status !== 1) throw new BizError(`${it.name} 已下架`);
-    if ((g.data.stock || 0) < it.count) throw new BizError(`${it.name} 库存不足`);
+    if (it.activityType === 'seckill') {
+      const sk = await db.collection('seckill').doc(it.activityId || it._id).get().catch(() => null);
+      if (!sk || !sk.data) throw new BizError(`秒杀活动已结束: ${it.name}`);
+      if (sk.data.stock < it.count) throw new BizError(`秒杀库存不足: ${it.name}`);
+    } else if (it.activityType === 'group') {
+      throw new BizError('拼团商品请走拼团下单');
+    } else {
+      const g = await db.collection('goods').doc(it._id).get();
+      if (!g.data) throw new BizError(`商品已下架: ${it.name}`);
+      if (g.data.status !== 1) throw new BizError(`${it.name} 已下架`);
+      if ((g.data.stock || 0) < it.count) throw new BizError(`${it.name} 库存不足`);
+    }
   }
 
-  // 计算金额(后端复算,防篡改)
+  // 金额复算
   let calcGoods = 0;
-  for (const it of items) {
-    calcGoods += Number(it.price) * it.count;
+  for (const it of items) calcGoods += Number(it.price) * it.count;
+
+  // 会员折扣
+  const user = await db.collection('users').doc(event._userId).get();
+  const userLevel = user.data.level || 0;
+  const discountAmount = Number((calcGoods - calcDiscount(userLevel, calcGoods)).toFixed(2));
+
+  // 优惠券
+  let actualCouponDiscount = 0;
+  let lockedCoupon = null;
+  if (couponId) {
+    lockedCoupon = await lockCoupon(db, couponId, event._openid, event._userId, calcGoods);
+    actualCouponDiscount = lockedCoupon.discount;
   }
-  const calcFreight = calcGoods >= 99 ? 0 : 8;
-  const calcTotal = calcGoods + calcFreight;
+
+  // 积分抵扣
+  const pointsDiscount = Math.min(usePoints, user.data.points || 0) / 100;
+
+  // 运费
+  const calcFreight = isSelfPickup ? 0 : (calcGoods >= 99 ? 0 : 8);
+
+  // 应付
+  const calcTotal = Math.max(0, calcGoods - discountAmount - actualCouponDiscount - pointsDiscount + calcFreight);
   const clientTotal = Number(totalPrice) || 0;
   if (Math.abs(calcTotal - clientTotal) > 0.01) {
+    if (lockedCoupon) await refundCoupon(db, couponId, event._userId);
     throw new BizError('订单金额异常,请刷新后重试');
   }
 
-  // 扣减库存(乐观更新,失败回滚)
+  // 扣库存
   for (const it of items) {
-    const upd = await db.collection('goods').doc(it._id).update({
-      data: { stock: _.inc(-it.count), sales: _.inc(it.count) }
-    });
-    if (upd.stats.updated !== 1) {
-      // 失败,回滚
-      for (const r of items) {
-        await db.collection('goods').doc(r._id).update({
-          data: { stock: _.inc(r.count), sales: _.inc(-r.count) }
-        }).catch(() => {});
-      }
-      throw new BizError('库存更新失败');
+    if (it.activityType === 'seckill') {
+      await db.collection('seckill').doc(it.activityId || it._id).update({
+        data: { stock: _.inc(-it.count), sold: _.inc(it.count) }
+      });
+    } else {
+      await db.collection('goods').doc(it._id).update({
+        data: { stock: _.inc(-it.count), sales: _.inc(it.count) }
+      });
     }
   }
 
   // 创建订单
-  const expireTime = now + 30 * 60 * 1000; // 30 分钟过期
+  const expireTime = now + 30 * 60 * 1000;
   const orderRes = await db.collection('orders').add({
     data: {
       _openid: event._openid,
@@ -71,39 +100,62 @@ exports.main = auth(async (event) => {
       orderNo,
       outTradeNo,
       items,
-      address,
+      address: address || null,
       remark: remark || '',
       timeText: timeText || '尽快送达',
+      isSelfPickup: !!isSelfPickup,
+      storeId: storeId || '',
       goodsPrice: calcGoods,
+      memberDiscount: discountAmount,
+      couponId: couponId || '',
+      couponDiscount: actualCouponDiscount,
+      usePoints: usePoints || 0,
+      pointsDiscount: pointsDiscount,
       freight: calcFreight,
       totalPrice: calcTotal,
-      totalFee: Math.round(calcTotal * 100), // 支付金额(分)
+      totalFee: Math.round(calcTotal * 100),
       status: 0,
       createTime: now,
       updateTime: now,
       expireTime,
       payTime: 0,
-      refundStatus: 0,  // 0-无 1-退款中 2-已退款
+      refundStatus: 0,
       refundReason: '',
-      deliveryInfo: null  // 配送信息(后续管理员填)
+      deliveryInfo: null
     }
   });
 
   const orderId = orderRes._id;
 
-  // 写订单日志
+  // 标记优惠券已用
+  if (couponId && lockedCoupon) {
+    await markCouponUsed(db, couponId, event._userId, orderId);
+  }
+
+  // 扣积分
+  if (usePoints > 0) {
+    const newPoints = (user.data.points || 0) - usePoints;
+    await db.collection('users').doc(event._userId).update({
+      data: { points: newPoints }
+    });
+    await db.collection('pointLogs').add({
+      data: {
+        _openid: event._openid,
+        type: 'use', delta: -usePoints, balance: newPoints,
+        remark: `订单 ${orderNo} 抵扣`, orderId,
+        createTime: Date.now()
+      }
+    });
+  }
+
   await writeLog(db, {
-    orderId, orderNo,
-    _openid: event._openid,
-    action: 'create',
-    fromStatus: null,
-    toStatus: 0,
-    operator: event._openid,
-    operatorType: 'user',
-    remark: `创建订单,共 ${items.length} 件商品`
+    orderId, orderNo, _openid: event._openid,
+    action: 'create', fromStatus: null, toStatus: 0,
+    operator: event._openid, operatorType: 'user',
+    remark: `创建订单,共 ${items.length} 件,实付 ¥${calcTotal}`
   });
 
-  // 调起微信支付 - 统一下单
+  // 调起支付
   const wxContext = cloud.getWXContext();
   const payResult = await unifiedOrder({
     outTradeNo,
@@ -114,10 +166,22 @@ exports.main = auth(async (event) => {
   });
 
   if (!payResult.success) {
-    // 统一下单失败,回滚库存
+    // 回滚
     for (const it of items) {
-      await db.collection('goods').doc(it._id).update({
-        data: { stock: _.inc(it.count), sales: _.inc(-it.count) }
+      if (it.activityType === 'seckill') {
+        await db.collection('seckill').doc(it.activityId || it._id).update({
+          data: { stock: _.inc(it.count), sold: _.inc(-it.count) }
+        }).catch(() => {});
+      } else {
+        await db.collection('goods').doc(it._id).update({
+          data: { stock: _.inc(it.count), sales: _.inc(-it.count) }
+        }).catch(() => {});
+      }
+    }
+    if (couponId) await refundCoupon(db, couponId, event._userId);
+    if (usePoints > 0) {
+      await db.collection('users').doc(event._userId).update({
+        data: { points: _.inc(usePoints) }
       }).catch(() => {});
     }
     await db.collection('orders').doc(orderId).update({
@@ -126,10 +190,5 @@ exports.main = auth(async (event) => {
     throw new BizError('支付下单失败: ' + payResult.error);
   }
 
-  return ok({
-    _id: orderId,
-    orderNo,
-    payment: payResult.payment,
-    expireTime
-  });
+  return ok({ _id: orderId, orderNo, payment: payResult.payment, expireTime });
 });

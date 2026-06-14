@@ -1,0 +1,32 @@
+.page { padding-bottom: 40rpx; }
+.header {
+  background: #fff; padding: 24rpx 30rpx; margin-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.info-row { display: flex; padding: 8rpx 0; font-size: 26rpx; }
+.label { width: 160rpx; color: #666; }
+.val { flex: 1; }
+.copy { color: var(--primary); }
+
+.status-card {
+  background: linear-gradient(135deg, var(--primary), #e85a82);
+  color: #fff; padding: 30rpx; text-align: center;
+}
+.status-text { font-size: 36rpx; font-weight: bold; }
+
+.traces { padding: 30rpx 20rpx; background: #fff; }
+.trace-item { display: flex; padding: 20rpx 0; }
+.t-dot {
+  width: 20rpx; height: 20rpx; border-radius: 50%; background: #ccc;
+  margin: 8rpx 24rpx 0 0; flex-shrink: 0; position: relative;
+}
+.t-dot.active { background: var(--primary); }
+.t-dot::after {
+  content: ''; position: absolute; left: 50%; top: 24rpx; transform: translateX(-50%);
+  width: 2rpx; height: 60rpx; background: #eee;
+}
+.trace-item:last-child .t-dot::after { display: none; }
+.t-content { flex: 1; }
+.t-text { font-size: 28rpx; line-height: 1.5; }
+.t-time { font-size: 22rpx; color: #999; margin-top: 6rpx; }
+.empty { text-align: center; color: #999; padding: 60rpx 0; }

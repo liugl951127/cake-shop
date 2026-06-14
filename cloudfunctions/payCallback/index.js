@@ -1,6 +1,8 @@
 // payCallback - 微信支付回调(云开发模式)
 const { cloud, ok } = require('../common/index.js');
 const { writeLog } = require('../common/orderLog.js');
+const member = require('../common/member.js');
+const { send: sendSubMsg } = require('../common/subscribeMessage.js');
 
 /**
  * 微信支付回调入口
@@ -80,6 +82,35 @@ async function handlePaySuccess(event, db, _) {
     operator: openid,
     operatorType: 'user',
     remark: `支付成功,微信流水号: ${transaction_id || '-'}`
+  });
+
+  // 会员成长值 + 积分
+  if (o._userId) {
+    const user = await db.collection('users').doc(o._userId).get().catch(() => null);
+    if (user && user.data) {
+      const newExp = (user.data.exp || 0) + Math.floor(o.totalPrice);
+      const newPoints = (user.data.points || 0) + Math.floor(o.totalPrice);
+      const newLevel = member.getLevel(newExp).level;
+      const orderCount = (user.data.orderCount || 0) + 1;
+      await db.collection('users').doc(o._userId).update({
+        data: { exp: newExp, points: newPoints, level: newLevel, orderCount, updateTime: Date.now() }
+      });
+      await db.collection('pointLogs').add({
+        data: {
+          _openid: o._openid, type: 'order', delta: Math.floor(o.totalPrice),
+          balance: newPoints, remark: `订单 ${o.orderNo} 消费积分`, orderId: o._id,
+          createTime: Date.now()
+        }
+      });
+    }
+  }
+
+  // 发送订阅消息
+  await sendSubMsg(openid, 'orderPay', {
+    character_string1: { value: o.orderNo },
+    amount2: { value: o.totalPrice + ' 元' },
+    phrase3: { value: '支付成功' },
+    date4: { value: new Date().toLocaleString('zh-CN') }
   });
 
   return { errcode: 0, errmsg: 'OK' };

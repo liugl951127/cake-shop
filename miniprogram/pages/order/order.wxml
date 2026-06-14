@@ -1,6 +1,17 @@
 <view class="page">
-  <!-- 地址 -->
-  <view class="addr" bindtap="selectAddress">
+  <!-- 配送方式 -->
+  <view class="delivery">
+    <view class="d-item {{isSelfPickup ? '' : 'active'}}" bindtap="setPickup" data-v="false">
+      <text class="d-icon">🚚</text>
+      <text>商家配送</text>
+    </view>
+    <view class="d-item {{isSelfPickup ? 'active' : ''}}" bindtap="setPickup" data-v="true">
+      <text class="d-icon">🏪</text>
+      <text>到门店提</text>
+    </view>
+  </view>
+
+  <view wx:if="{{!isSelfPickup}}" class="addr" bindtap="selectAddress">
     <view wx:if="{{address}}" class="addr-info">
       <view class="flex">
         <text class="a-name">{{address.name}}</text>
@@ -10,6 +21,18 @@
       <view class="a-region">{{address.region}} {{address.detail}}</view>
     </view>
     <view wx:else class="addr-empty">请选择收货地址</view>
+    <text class="arrow">›</text>
+  </view>
+
+  <view wx:else class="addr" bindtap="selectStore">
+    <view wx:if="{{store}}" class="addr-info">
+      <view class="flex">
+        <text class="a-name">{{store.name}}</text>
+        <text wx:if="{{store.distance}}" class="a-tag">{{store.distance}}km</text>
+      </view>
+      <view class="a-region">{{store.region}} {{store.address}}</view>
+    </view>
+    <view wx:else class="addr-empty">请选择自提门店</view>
     <text class="arrow">›</text>
   </view>
 
@@ -28,14 +51,24 @@
     </view>
   </view>
 
-  <!-- 配送 -->
+  <!-- 优惠券/积分 -->
   <view class="card">
-    <view class="row">
-      <text class="label">配送方式</text>
-      <text>商家配送</text>
+    <view class="row" bindtap="showCouponPicker">
+      <text class="label">优惠券</text>
+      <text wx:if="{{couponId}}">-¥{{couponDiscount}}</text>
+      <text wx:elif="{{availableCoupons.length > 0}}">{{availableCoupons.length}}张可用 ›</text>
+      <text wx:else class="text-sub">暂无可用 ›</text>
     </view>
-    <view class="row">
-      <text class="label">送达时间</text>
+    <view class="row" wx:if="{{userInfo.points > 0}}">
+      <text class="label">积分抵扣 {{userInfo.points}}可用</text>
+      <switch checked="{{usePoints > 0}}" bindchange="togglePoints" color="#ff7b9c"/>
+    </view>
+  </view>
+
+  <!-- 备注/时间 -->
+  <view class="card">
+    <view class="row" wx:if="{{!isSelfPickup}}">
+      <text class="label">配送时间</text>
       <picker mode="multiSelector" range="{{timeRanges}}" value="{{timeIndex}}" bindchange="onTimeChange">
         <view class="picker-val">{{timeText}} ›</view>
       </picker>
@@ -46,19 +79,24 @@
     </view>
   </view>
 
-  <!-- 费用 -->
+  <!-- 费用明细 -->
   <view class="card">
-    <view class="row">
-      <text class="label">商品金额</text>
-      <text>¥{{goodsPrice}}</text>
+    <view class="row"><text class="label">商品金额</text><text>¥{{goodsPrice}}</text></view>
+    <view class="row" wx:if="{{memberDiscount > 0}}">
+      <text class="label">{{userInfo.levelName || '会员'}}折扣</text>
+      <text style="color:var(--price)">-¥{{memberDiscount}}</text>
     </view>
-    <view class="row">
+    <view class="row" wx:if="{{couponDiscount > 0}}">
+      <text class="label">优惠券</text>
+      <text style="color:var(--price)">-¥{{couponDiscount}}</text>
+    </view>
+    <view class="row" wx:if="{{pointsDiscount > 0}}">
+      <text class="label">积分抵扣</text>
+      <text style="color:var(--price)">-¥{{pointsDiscount}}</text>
+    </view>
+    <view class="row" wx:if="{{!isSelfPickup}}">
       <text class="label">配送费</text>
       <text>¥{{freight}}</text>
-    </view>
-    <view class="row" wx:if="{{discount > 0}}">
-      <text class="label">优惠</text>
-      <text style="color:var(--price)">-¥{{discount}}</text>
     </view>
   </view>
 
