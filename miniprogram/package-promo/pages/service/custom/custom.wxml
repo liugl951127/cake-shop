@@ -1,0 +1,88 @@
+<view class="page">
+  <view class="head">用一段话描述您想要的蛋糕,商家 1 小时内报价</view>
+
+  <view class="block">
+    <view class="label">类型 <text class="req">*</text></view>
+    <view class="radios">
+      <text class="r {{type === 'birthday' ? 'on' : ''}}" bindtap="onType" data-k="birthday">🎂 生日</text>
+      <text class="r {{type === 'wedding' ? 'on' : ''}}" bindtap="onType" data-k="wedding">💒 婚礼</text>
+      <text class="r {{type === 'corporate' ? 'on' : ''}}" bindtap="onType" data-k="corporate">🏢 企业</text>
+      <text class="r {{type === 'party' ? 'on' : ''}}" bindtap="onType" data-k="party">🥳 聚会</text>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="label">尺寸</view>
+    <view class="radios">
+      <text class="r {{size === '6寸' ? 'on' : ''}}" bindtap="onSize" data-k="6寸">6 寸 (2-3 人)</text>
+      <text class="r {{size === '8寸' ? 'on' : ''}}" bindtap="onSize" data-k="8寸">8 寸 (4-6 人)</text>
+      <text class="r {{size === '10寸' ? 'on' : ''}}" bindtap="onSize" data-k="10寸">10 寸 (8-10 人)</text>
+      <text class="r {{size === '12寸' ? 'on' : ''}}" bindtap="onSize" data-k="12寸">12 寸 (12+ 人)</text>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="label">口味</view>
+    <view class="radios">
+      <text class="r {{flavor === '奶油' ? 'on' : ''}}" bindtap="onFlavor" data-k="奶油">奶油</text>
+      <text class="r {{flavor === '巧克力' ? 'on' : ''}}" bindtap="onFlavor" data-k="巧克力">巧克力</text>
+      <text class="r {{flavor === '水果' ? 'on' : ''}}" bindtap="onFlavor" data-k="水果">水果</text>
+      <text class="r {{flavor === '抹茶' ? 'on' : ''}}" bindtap="onFlavor" data-k="抹茶">抹茶</text>
+      <text class="r {{flavor === '榴莲' ? 'on' : ''}}" bindtap="onFlavor" data-k="榴莲">榴莲</text>
+      <text class="r {{flavor === '芝士' ? 'on' : ''}}" bindtap="onFlavor" data-k="芝士">芝士</text>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="label">数量</view>
+    <view class="counter">
+      <text class="b" bindtap="onCount" data-k="-1">-</text>
+      <text class="v">{{quantity}}</text>
+      <text class="b" bindtap="onCount" data-k="1">+</text>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="label">参考图(最多 9 张)</view>
+    <view class="images">
+      <view class="img-item" wx:for="{{images}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" bindtap="onPreview" data-i="{{index}}"></image>
+        <view class="del" catchtap="onDel" data-i="{{index}}">×</view>
+      </view>
+      <view class="img-add" wx:if="{{images.length < 9}}" bindtap="onChoose">+</view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="label">需求描述 <text class="req">*</text></view>
+    <textarea class="ta" placeholder="说说你想要的款式、颜色、造型、字样等(1000字内)"
+              maxlength="1000" value="{{description}}" bindinput="onDesc"></textarea>
+    <view class="counter-t">{{description.length}}/1000</view>
+  </view>
+
+  <view class="block">
+    <view class="label">预算(元)</view>
+    <input class="in" type="digit" placeholder="0 表示由商家报价" value="{{budget}}" bindinput="onBudget"/>
+  </view>
+
+  <view class="block">
+    <view class="label">联系人 <text class="req">*</text></view>
+    <input class="in" placeholder="您的称呼" value="{{contactName}}" bindinput="onName"/>
+  </view>
+  <view class="block">
+    <view class="label">联系电话 <text class="req">*</text></view>
+    <input class="in" type="number" maxlength="11" placeholder="11 位手机号" value="{{contactPhone}}" bindinput="onPhone"/>
+  </view>
+  <view class="block">
+    <view class="label">期望送达时间</view>
+    <picker mode="datetime" value="{{needDate}}" start="{{now}}" bindchange="onDate">
+      <view class="picker">{{needDate || '请选择'}}</view>
+    </picker>
+  </view>
+  <view class="block">
+    <view class="label">收货地址</view>
+    <textarea class="ta short" placeholder="详细地址" value="{{address}}" bindinput="onAddr"></textarea>
+  </view>
+
+  <view class="submit" bindtap="onSubmit">提交需求</view>
+</view>

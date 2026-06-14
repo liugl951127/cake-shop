@@ -23,10 +23,27 @@ Page({
     finished: false
   },
 
-  onLoad() {
-    login().then(u => this.setData({ userOpenid: u.openid })).catch(() => {});
+  onLoad(q) {
+    this._inviterCode = (q && q.inviter) || '';
+    login({ inviterCode: this._inviterCode })
+      .then(u => {
+        this.setData({ userOpenid: u.openid });
+        // 如果携带着邀请码,尝试绑定
+        if (this._inviterCode) this.bindInviter(this._inviterCode);
+      })
+      .catch(() => {});
     this.loadRecommend();
     this.loadSeckill();
+  },
+
+  bindInviter(code) {
+    request('bindInviter', { inviterCode: code }, { loading: false, silent: true })
+      .then((r) => {
+        if (r && r.bound) {
+          wx.showToast({ title: `绑定邀请人:${r.inviterName || '成功'}`, icon: 'success' });
+        }
+      })
+      .catch(() => {});
   },
 
   onShow() {

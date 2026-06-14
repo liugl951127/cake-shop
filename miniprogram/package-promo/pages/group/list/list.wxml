@@ -1,17 +1,40 @@
 <view class="page">
-  <view class="banner">👥 邀好友,享团购价</view>
-  <view class="g-list">
-    <view class="g-card" wx:for="{{list}}" wx:key="goodsId" bindtap="goDetail" data-id="{{item.goodsId}}" data-act="{{item}}">
-      <image src="{{item.goodsImage}}" mode="aspectFill" class="g-img"></image>
-      <view class="g-info">
-        <view class="g-name">{{item.goodsName}}</view>
-        <view class="g-price-row">
-          <text class="g-price">¥{{item.groupPrice}}</text>
-          <text class="g-old">¥{{item.price}}</text>
+  <view class="head">
+    <view class="loc" bindtap="onTapLocation">
+      <text class="icon">📍</text>
+      <text class="text">{{location || locationTips}}</text>
+    </view>
+    <view class="radii">
+      <text class="r {{radius === 3 ? 'on' : ''}}" bindtap="setRadius" data-r="3">3km</text>
+      <text class="r {{radius === 5 ? 'on' : ''}}" bindtap="setRadius" data-r="5">5km</text>
+      <text class="r {{radius === 10 ? 'on' : ''}}" bindtap="setRadius" data-r="10">10km</text>
+      <text class="r {{radius === 50 ? 'on' : ''}}" bindtap="setRadius" data-r="50">50km</text>
+    </view>
+  </view>
+
+  <view class="list" wx:if="{{list.length}}">
+    <view class="g" wx:for="{{list}}" wx:key="_id" bindtap="goDetail" data-id="{{item.goodsId || item._id}}" data-g="{{item}}">
+      <image class="img" src="{{item.goods && item.goods.image || item.image}}" mode="aspectFill"></image>
+      <view class="info">
+        <view class="name">{{item.goods && item.goods.name || item.name}}</view>
+        <view class="row">
+          <text class="gp">¥{{item.goods && item.goods.price || item.groupPrice}}</text>
+          <text class="or">原价 ¥{{item.goods && item.goods.price * 1.2 || ''}}</text>
         </view>
-        <view class="g-btn">{{item.groupSize}} 人成团</view>
+        <view class="row">
+          <text class="gt">已 {{item.currentCount || 0}}/{{item.groupSize || 3}} 人成团</text>
+          <text class="dst" wx:if="{{item.distance !== undefined && item.distance !== null}}">{{item.distance}} km</text>
+        </view>
+        <view class="row">
+          <text class="et">剩余 {{item.expireText || '2小时'}}</text>
+          <text class="btn">去拼</text>
+        </view>
       </view>
     </view>
-    <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无拼团活动</view>
+  </view>
+
+  <view class="empty" wx:else>
+    <text>暂无附近拼团活动</text>
+    <text class="sub">{{locationTips === '已定位' ? '换个距离试试' : '点击上方开启定位'}}</text>
   </view>
 </view>

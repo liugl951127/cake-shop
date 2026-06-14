@@ -41,6 +41,8 @@ Page({
   goGroup() { wx.navigateTo({ url: '/package-promo/pages/group/list/list' }); },
   goStore() { wx.navigateTo({ url: '/package-user/pages/store/list/list' }); },
   goLuckyBag() { wx.navigateTo({ url: '/package-user/pages/luckybag/luckybag' }); },
+  goInvite() { wx.navigateTo({ url: '/package-user/pages/invite/invite' }); },
+  goService() { wx.navigateTo({ url: '/package-promo/pages/service/market/market' }); },
 
   goOrderList() { wx.switchTab({ url: '/pages/order/list/list' }); },
   goAddress() { wx.navigateTo({ url: '/package-address/pages/address/list/list' }); },

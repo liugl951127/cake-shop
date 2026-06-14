@@ -1,0 +1,63 @@
+.page { padding-bottom: 60rpx; }
+.head {
+  background: linear-gradient(135deg, #ff5722, #ff9800);
+  color: #fff; padding: 60rpx 30rpx 40rpx; text-align: center;
+}
+.big { font-size: 44rpx; font-weight: bold; }
+.sub { font-size: 24rpx; margin-top: 16rpx; opacity: 0.95; }
+.b { font-weight: bold; font-size: 30rpx; }
+
+.card { background: #fff; margin: 20rpx; border-radius: 16rpx; padding: 24rpx; }
+.c-title { font-size: 28rpx; font-weight: 600; margin-bottom: 20rpx; }
+.code-row { display: flex; align-items: center; }
+.code {
+  flex: 1; background: #fafafa; padding: 24rpx;
+  font-size: 40rpx; font-weight: bold; letter-spacing: 8rpx; text-align: center;
+  border-radius: 12rpx; border: 2rpx dashed #ff9800;
+  color: #ff5722;
+}
+.copy {
+  background: #ff5722; color: #fff; padding: 24rpx 32rpx;
+  border-radius: 12rpx; font-size: 28rpx; margin-left: 20rpx;
+}
+.tip { color: #999; font-size: 24rpx; margin-top: 16rpx; }
+
+.row-item {
+  display: flex; justify-content: space-between;
+  padding: 16rpx 0; border-bottom: 1rpx solid #f5f5f5;
+}
+.row-item:last-child { border-bottom: none; }
+.num { font-weight: 600; color: #ff5722; }
+
+.share-area { padding: 0 30rpx; margin-top: 20rpx; }
+.share-btn, .poster-btn {
+  background: #07c160; color: #fff;
+  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
+  font-size: 30rpx; margin-bottom: 20rpx;
+}
+.poster-btn { background: #fff; color: #ff5722; border: 1rpx solid #ff5722; }
+
+.poster-mask {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+.poster {
+  background: #fff; border-radius: 16rpx; padding: 30rpx;
+  width: 80%; position: relative; text-align: center;
+}
+.p-tip { font-size: 28rpx; font-weight: 600; margin-bottom: 20rpx; }
+.p-img { width: 100%; height: 600rpx; background: #fafafa; }
+.p-text { color: #999; font-size: 24rpx; margin-top: 16rpx; }
+.p-close {
+  position: absolute; right: -10rpx; top: -10rpx;
+  width: 60rpx; height: 60rpx; background: #fff; border-radius: 50%;
+  text-align: center; line-height: 56rpx; font-size: 40rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
+}
+
+.rules {
+  margin: 30rpx; padding: 20rpx; background: #fff5e0; border-radius: 12rpx;
+  font-size: 24rpx; color: #666;
+}
+.r-title { font-weight: 600; margin-bottom: 10rpx; color: #333; }
+.rules view { line-height: 1.6; }

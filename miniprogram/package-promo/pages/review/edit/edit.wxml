@@ -1,0 +1,38 @@
+<view class="page">
+  <view class="block">
+    <view class="label">评分</view>
+    <view class="stars">
+      <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" class="star {{item <= score ? 'on' : ''}}"
+            bindtap="onStar" data-i="{{item}}">★</text>
+    </view>
+  </view>
+
+  <view class="block">
+    <textarea class="content" placeholder="说点使用体验吧,最多 500 字"
+              maxlength="500" value="{{content}}" bindinput="onInput"
+              show-confirm-bar="{{false}}"></textarea>
+    <view class="counter">{{content.length}}/500</view>
+  </view>
+
+  <view class="block">
+    <view class="label">上传图片 <text class="text-sub">最多 9 张</text></view>
+    <view class="images">
+      <view class="img-item" wx:for="{{images}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" bindtap="onPreview" data-i="{{index}}"></image>
+        <view class="del" catchtap="onDel" data-i="{{index}}">×</view>
+      </view>
+      <view class="img-add" wx:if="{{images.length < 9}}" bindtap="onChoose">
+        <text>+</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="anon" bindtap="onAnon">
+      <text class="checkbox {{anonymous ? 'on' : ''}}">✓</text>
+      <text>匿名评价</text>
+    </view>
+  </view>
+
+  <view class="submit" bindtap="onSubmit">提交</view>
+</view>

@@ -1,0 +1,29 @@
+.page { padding: 20rpx; }
+.block { background: #fff; border-radius: 12rpx; padding: 24rpx; margin-bottom: 20rpx; }
+.label { font-size: 28rpx; color: #333; margin-bottom: 16rpx; }
+.text-sub { color: #999; font-size: 24rpx; margin-left: 8rpx; }
+.stars { color: #ddd; font-size: 50rpx; }
+.stars .star { padding: 8rpx; }
+.stars .star.on { color: #ff9800; }
+
+.content { width: 100%; height: 200rpx; font-size: 28rpx; }
+.counter { text-align: right; color: #999; font-size: 22rpx; }
+
+.images { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16rpx; }
+.img-item { position: relative; aspect-ratio: 1; }
+.img-item image { width: 100%; height: 100%; border-radius: 8rpx; }
+.del { position: absolute; right: -10rpx; top: -10rpx; width: 36rpx; height: 36rpx; background: #333; color: #fff; border-radius: 50%; text-align: center; line-height: 32rpx; font-size: 28rpx; }
+.img-add { aspect-ratio: 1; border: 2rpx dashed #ddd; border-radius: 8rpx; text-align: center; line-height: 1; font-size: 60rpx; color: #ddd; display: flex; align-items: center; justify-content: center; }
+
+.anon { display: flex; align-items: center; font-size: 28rpx; color: #666; }
+.checkbox {
+  width: 32rpx; height: 32rpx; border: 1rpx solid #ddd; border-radius: 50%;
+  margin-right: 12rpx; text-align: center; line-height: 30rpx; color: transparent; font-size: 22rpx;
+}
+.checkbox.on { background: #ff5722; color: #fff; border-color: #ff5722; }
+
+.submit {
+  background: linear-gradient(135deg, #ff5722, #ff9800); color: #fff;
+  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
+  font-size: 30rpx; margin: 40rpx 0;
+}

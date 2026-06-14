@@ -1,0 +1,72 @@
+<view class="page">
+  <!-- 评分概览 -->
+  <view class="summary">
+    <view class="s-score">
+      <text class="big">{{summary.avgScore || '5.0'}}</text>
+      <text class="unit">分</text>
+    </view>
+    <view class="s-info">
+      <view class="s-stars">
+        <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" class="star {{item <= (summary.avgScore || 5) ? 'on' : ''}}">★</text>
+      </view>
+      <view class="s-count">共 {{summary.total || 0}} 条评价</view>
+    </view>
+    <view class="s-rate">{{summary.goodRate || 100}}% 好评</view>
+  </view>
+
+  <!-- 筛选 Tab -->
+  <view class="tabs">
+    <view class="t {{filter === 'all' ? 'on' : ''}}" bindtap="setFilter" data-k="all">全部</view>
+    <view class="t {{filter === 'good' ? 'on' : ''}}" bindtap="setFilter" data-k="good">好评</view>
+    <view class="t {{filter === 'mid' ? 'on' : ''}}" bindtap="setFilter" data-k="mid">中评</view>
+    <view class="t {{filter === 'bad' ? 'on' : ''}}" bindtap="setFilter" data-k="bad">差评</view>
+    <view class="t {{filter === 'image' ? 'on' : ''}}" bindtap="setFilter" data-k="image">有图</view>
+  </view>
+
+  <!-- 评价列表 -->
+  <view class="list">
+    <view class="item" wx:for="{{list}}" wx:key="_id">
+      <view class="i-head">
+        <image class="avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="meta">
+          <view class="name">{{item.nickName}}</view>
+          <view class="stars">
+            <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" class="star {{item <= item.score ? 'on' : ''}}">★</text>
+          </view>
+        </view>
+        <view class="time">{{item.createTimeText}}</view>
+      </view>
+
+      <view class="i-content" wx:if="{{item.content}}">{{item.content}}</view>
+
+      <!-- 图片 -->
+      <view class="i-images" wx:if="{{item.images.length}}">
+        <image wx:for="{{item.images}}" wx:for-item="img" wx:key="*this" class="img"
+               src="{{img}}" mode="aspectFill" bindtap="onPreview" data-i="{{index}}" data-list="{{item.images}}"></image>
+      </view>
+
+      <!-- 商品信息 -->
+      <view class="i-goods" wx:if="{{item.goods}}">
+        <image class="g-img" src="{{item.goods.image}}" mode="aspectFill"></image>
+        <text class="g-name">{{item.goods.name}}</text>
+      </view>
+
+      <!-- 商家回复 -->
+      <view class="i-reply" wx:if="{{item.replies && item.replies.length}}">
+        <view class="r-title">💼 商家回复</view>
+        <view class="r-content">{{item.replies[0].content}}</view>
+      </view>
+
+      <!-- 点赞 -->
+      <view class="i-foot">
+        <view class="like" bindtap="onLike" data-id="{{item._id}}" data-index="{{index}}">
+          <text class="icon">{{item.liked ? '❤️' : '🤍'}}</text>
+          <text class="cnt">{{item.likeCount || 0}}</text>
+        </view>
+        <view class="append" wx:if="{{canAppend && !item.isAppend && item._openid === myOpenid}}" bindtap="onAppend" data-id="{{item._id}}">追评</view>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{!list.length}}">暂无评价</view>
+  </view>
+</view>

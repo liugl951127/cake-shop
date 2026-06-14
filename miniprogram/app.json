@@ -38,7 +38,8 @@
         "pages/logistics/logistics",
         "pages/webview/webview",
         "pages/settings/lang/lang",
-        "pages/luckybag/luckybag"
+        "pages/luckybag/luckybag",
+        "pages/invite/invite"
       ]
     },
     {
@@ -46,7 +47,13 @@
       "root": "package-promo",
       "pages": [
         "pages/group/list/list",
-        "pages/group/detail/detail"
+        "pages/group/detail/detail",
+        "pages/review/list/list",
+        "pages/review/edit/edit",
+        "pages/service/market/market",
+        "pages/service/custom/custom",
+        "pages/service/bulk/bulk",
+        "pages/service/birthday/birthday"
       ]
     },
     {

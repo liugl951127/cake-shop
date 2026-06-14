@@ -119,5 +119,25 @@ Page({
       await request('cancelOrder', { id: this.data.id, remove: true });
       wx.navigateBack();
     } catch (e) {}
+  },
+
+  // 评价
+  onReview() {
+    const o = this.data.order;
+    if (!o) return;
+    // 跳转评价编辑页(用首个商品为例)
+    const g = (o.goods || [])[0];
+    if (!g) return wx.showToast({ title: '没有可评价的商品', icon: 'none' });
+    wx.navigateTo({
+      url: `/package-promo/pages/review/edit/edit?orderId=${o._id}&goodsId=${g.goodsId}`
+    });
+  },
+
+  // 查看全部评价
+  onViewReviews() {
+    const o = this.data.order;
+    const g = (o.goods || [])[0];
+    if (!g) return;
+    wx.navigateTo({ url: `/package-promo/pages/review/list/list?goodsId=${g.goodsId}` });
   }
 });

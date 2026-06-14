@@ -84,7 +84,7 @@ async function handlePaySuccess(event, db, _) {
     remark: `支付成功,微信流水号: ${transaction_id || '-'}`
   });
 
-  // 会员成长值 + 积分
+  // 会员成长值 + 积分 + 首单邀请裂变奖励
   if (o._userId) {
     const user = await db.collection('users').doc(o._userId).get().catch(() => null);
     if (user && user.data) {
@@ -92,9 +92,70 @@ async function handlePaySuccess(event, db, _) {
       const newPoints = (user.data.points || 0) + Math.floor(o.totalPrice);
       const newLevel = member.getLevel(newExp).level;
       const orderCount = (user.data.orderCount || 0) + 1;
-      await db.collection('users').doc(o._userId).update({
-        data: { exp: newExp, points: newPoints, level: newLevel, orderCount, updateTime: Date.now() }
-      });
+      const isFirstOrder = orderCount === 1;
+      const updateData = { exp: newExp, points: newPoints, level: newLevel, orderCount, updateTime: Date.now() };
+
+      // 首单奖励 + 邀请人奖励
+      if (isFirstOrder && !user.data.firstOrderRewarded) {
+        updateData.points = newPoints + 50;  // 自己 +50
+        updateData.firstOrderRewarded = true;
+
+        // 写自己的积分流水
+        await db.collection('pointLogs').add({
+          data: {
+            _openid: o._openid, type: 'first_order', delta: 50,
+            balance: newPoints + 50,
+            remark: '首单奖励 50 积分', orderId: o._id, createTime: now
+          }
+        });
+
+        // 发首单优惠券
+        const couponTpl = await db.collection('coupons').where({ type: 3, status: 1 }).limit(1).get();
+        if (couponTpl.data[0]) {
+          await db.collection('couponUsers').add({
+            data: {
+              _openid: o._openid, _userId: o._userId,
+              couponId: couponTpl.data[0]._id, status: 0,
+              receiveTime: now, expireTime: now + 30 * 86400000,
+              fromFirstOrder: true
+            }
+          }).catch(() => {});
+        }
+
+        // 邀请人奖励
+        if (user.data.inviterOpenid) {
+          const inviter = await db.collection('users').where({ openid: user.data.inviterOpenid }).limit(1).get();
+          if (inviter.data[0]) {
+            const inv = inviter.data[0];
+            const invNewPoints = (inv.points || 0) + 100;
+            await db.collection('users').doc(inv._id).update({
+              data: { points: invNewPoints, inviteCount: (inv.inviteCount || 0) + 1, updateTime: now }
+            });
+            await db.collection('pointLogs').add({
+              data: {
+                _openid: inv.openid, _userId: inv._id,
+                type: 'invite', delta: 100, balance: invNewPoints,
+                remark: `邀请好友首单奖励,好友: ${user.data.nickName || '匿名'}`,
+                orderId: o._id, createTime: now
+              }
+            });
+            // 给邀请人也发张券
+            const invCoupon = await db.collection('coupons').where({ type: 1, minAmount: 0, status: 1 }).limit(1).get();
+            if (invCoupon.data[0]) {
+              await db.collection('couponUsers').add({
+                data: {
+                  _openid: inv.openid, _userId: inv._id,
+                  couponId: invCoupon.data[0]._id, status: 0,
+                  receiveTime: now, expireTime: now + 30 * 86400000,
+                  fromInvite: true
+                }
+              }).catch(() => {});
+            }
+          }
+        }
+      }
+
+      await db.collection('users').doc(o._userId).update({ data: updateData });
       await db.collection('pointLogs').add({
         data: {
           _openid: o._openid, type: 'order', delta: Math.floor(o.totalPrice),

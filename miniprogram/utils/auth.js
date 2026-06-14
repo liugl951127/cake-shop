@@ -37,12 +37,18 @@ function clearAuth() {
 /**
  * 一键登录:wx.login 拿 code → 调云函数换 token + 用户信息
  */
-function login(force = false) {
+function login(force = false, inviterCode = '') {
   return new Promise((resolve, reject) => {
     // 已有 token 且不强制刷新,直接返回
     if (!force && getToken()) {
       const u = getUser();
-      if (u && u.openid) return resolve(u);
+      if (u && u.openid) {
+        // 如果有邀请码、且未绑定,尝试绑
+        if (inviterCode && !u.inviterOpenid) {
+          bindInviterRemote(inviterCode).catch(() => {});
+        }
+        return resolve(u);
+      }
     }
 
     wx.login({
@@ -51,7 +57,7 @@ function login(force = false) {
         try {
           const res = await wx.cloud.callFunction({
             name: 'login',
-            data: { code: loginRes.code }
+            data: { code: loginRes.code, inviterCode: inviterCode || '' }
           });
           if (res.result && res.result.code === 0) {
             const { token, ...user } = res.result.data;
@@ -67,6 +73,12 @@ function login(force = false) {
       fail: reject
     });
   });
+}
+
+function bindInviterRemote(code) {
+  return wx.cloud.callFunction({
+    name: 'bindInviter', data: { inviterCode: code }
+  }).then((res) => res.result && res.result.data);
 }
 
 /**

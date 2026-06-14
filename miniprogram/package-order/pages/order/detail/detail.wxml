@@ -113,6 +113,8 @@
     <view class="o-btn" wx:if="{{order.status === 0}}" bindtap="onCancel">取消订单</view>
     <view class="o-btn primary" wx:if="{{order.status === 3}}" bindtap="onConfirm">确认收货</view>
     <view class="o-btn primary" wx:if="{{order.status === 1 || order.status === 2 || order.status === 3}}" bindtap="onRefund">申请退款</view>
+    <view class="o-btn primary" wx:if="{{order.status === 3}}" bindtap="onReview">评价晒单</view>
+    <view class="o-btn" wx:if="{{order.status === 3}}" bindtap="onViewReviews">查看评价</view>
     <view class="o-btn" wx:if="{{order.status === 4 || order.status === -1 || order.status === -2}}" bindtap="onDelete">删除订单</view>
   </view>
 </view>

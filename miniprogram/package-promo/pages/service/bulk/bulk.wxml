@@ -1,0 +1,70 @@
+<view class="page">
+  <view class="head">🏢 企业 / 活动团采,10 件起订,享团购折扣 + 开专票</view>
+
+  <view class="block">
+    <view class="label">公司名称</view>
+    <input class="in" value="{{form.companyName}}" bindinput="onK" data-k="companyName" placeholder="选填,用于开票"/>
+  </view>
+
+  <view class="block">
+    <view class="label">联系人 / 电话 <text class="req">*</text></view>
+    <view class="row2">
+      <input class="in" value="{{form.contactName}}" bindinput="onK" data-k="contactName" placeholder="称呼"/>
+      <input class="in" type="number" maxlength="11" value="{{form.contactPhone}}" bindinput="onK" data-k="contactPhone" placeholder="手机号"/>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="label">商品清单 <text class="req">*</text></view>
+    <view class="items">
+      <view class="it" wx:for="{{form.itemList}}" wx:key="idx">
+        <input class="in narrow" value="{{item.goodsName}}" bindinput="onItem" data-idx="{{index}}" data-k="goodsName" placeholder="商品名"/>
+        <input class="in narrow" type="number" value="{{item.count}}" bindinput="onItem" data-idx="{{index}}" data-k="count" placeholder="数量"/>
+        <view class="x" catchtap="onItemDel" data-idx="{{index}}">×</view>
+      </view>
+    </view>
+    <view class="add-item" bindtap="onItemAdd">+ 添加商品</view>
+  </view>
+
+  <view class="block">
+    <view class="label">总数量 <text class="req">*</text> (10 件起)</view>
+    <view class="counter">
+      <text class="b" bindtap="onCount" data-k="-10">-10</text>
+      <text class="b" bindtap="onCount" data-k="-1">-</text>
+      <text class="v">{{form.totalCount}}</text>
+      <text class="b" bindtap="onCount" data-k="1">+</text>
+      <text class="b" bindtap="onCount" data-k="10">+10</text>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="label">预算(元)</view>
+    <input class="in" type="digit" value="{{form.budget}}" bindinput="onK" data-k="budget" placeholder="0 表示商家报价"/>
+  </view>
+
+  <view class="block">
+    <view class="label">收货地址</view>
+    <textarea class="ta" value="{{form.address}}" bindinput="onK" data-k="address" placeholder="详细地址"></textarea>
+  </view>
+
+  <view class="block">
+    <view class="label">期望送达时间</view>
+    <picker mode="datetime" value="{{form.needDate}}" start="{{now}}" bindchange="onDate">
+      <view class="picker">{{form.needDate || '请选择'}}</view>
+    </picker>
+  </view>
+
+  <view class="block">
+    <view class="label">备注</view>
+    <textarea class="ta" value="{{form.remark}}" bindinput="onK" data-k="remark" placeholder="其他要求"></textarea>
+  </view>
+
+  <view class="block">
+    <view class="check" bindtap="onInvoice">
+      <text class="cb {{form.needInvoice ? 'on' : ''}}">✓</text>
+      <text>需要开具增值税专用发票</text>
+    </view>
+  </view>
+
+  <view class="submit" bindtap="onSubmit">提交团采需求</view>
+</view>

@@ -102,8 +102,12 @@ Page({
     // 积分抵扣
     const pointsDiscount = this.data.usePoints > 0 ? Number((this.data.usePoints / 100).toFixed(2)) : 0;
 
-    // 运费
-    const freight = this.data.isSelfPickup ? 0 : (goodsPrice >= 99 ? 0 : 8);
+    // 运费(由 calcDelivery 计算,无坐标时 fallback)
+    let freight = this.data.freight;
+    if (this.data.isSelfPickup) freight = 0;
+    if (freight === undefined || freight === null) {
+      freight = goodsPrice >= 99 ? 0 : 8;
+    }
 
     // 应付
     const promoDiscount = Number(this.data.promoDiscount || 0);
@@ -149,7 +153,29 @@ Page({
     } catch (e) {}
   },
 
-  setAddress(addr) { this.setData({ address: addr }); },
+  setAddress(addr) {
+    this.setData({ address: addr });
+    this.calcDelivery(addr);
+  },
+
+  async calcDelivery(addr) {
+    // 有地址 lat/lng 则动态算
+    if (!addr || addr.lat === undefined) return;
+    try {
+      const goodsPrice = this.data.items.reduce((s, i) => s + i.price * i.count, 0);
+      const r = await request('calcDelivery', {
+        fromLng: 116.404, fromLat: 39.915,  // 店坐标(演示)
+        toLng: addr.lng, toLat: addr.lat,
+        orderAmount: goodsPrice, type: 'auto'
+      }, { loading: false, silent: true });
+      this.setData({
+        freight: r.fee,
+        deliveryEta: r.eta,
+        deliveryDistance: r.distance
+      });
+      this.calcTotal();
+    } catch (e) {}
+  },
   setStore(store) { this.setData({ store }); },
 
   selectAddress() { wx.navigateTo({ url: '/pages/address/list/list?select=1' }); },

@@ -1,0 +1,53 @@
+<view class="page">
+  <view class="head">
+    <view class="big">🎁 邀请有礼</view>
+    <view class="sub">每邀请 1 位好友首单,你得 <text class="b">100 积分</text> + <text class="b">一张优惠券</text></view>
+  </view>
+
+  <!-- 我的邀请码 -->
+  <view class="card">
+    <view class="c-title">我的邀请码</view>
+    <view class="code-row">
+      <view class="code">{{inviteCode || '加载中...'}}</view>
+      <view class="copy" bindtap="onCopy">复制</view>
+    </view>
+    <view class="tip">分享给好友,让他们在微信扫码时一并传入这个码</view>
+  </view>
+
+  <!-- 邀请战绩 -->
+  <view class="card">
+    <view class="row-item"><text>累计邀请</text><text class="num">{{stats.inviteCount || 0}} 人</text></view>
+    <view class="row-item"><text>好友首单完成</text><text class="num">{{stats.firstOrderCount || 0}} 人</text></view>
+    <view class="row-item"><text>邀请获得积分</text><text class="num">{{stats.invitePoints || 0}}</text></view>
+  </view>
+
+  <!-- 分享按钮 -->
+  <view class="share-area">
+    <button class="share-btn" open-type="share">
+      <text>💚 分享给好友</text>
+    </button>
+    <view class="poster-btn" bindtap="onShowPoster">
+      <text>🖼️ 生成分享海报</text>
+    </view>
+  </view>
+
+  <!-- 海报弹层 -->
+  <view class="poster-mask" wx:if="{{showPoster}}" bindtap="onClosePoster">
+    <view class="poster" catchtap="">
+      <view class="p-tip">长按识别二维码</view>
+      <image class="p-img" src="{{posterUrl}}" mode="aspectFit" show-menu-by-longpress="true"></image>
+      <view class="p-text">扫码进入,自动绑定邀请关系</view>
+      <view class="p-close" bindtap="onClosePoster">×</view>
+    </view>
+  </view>
+
+  <!-- 规则 -->
+  <view class="rules">
+    <view class="r-title">活动规则</view>
+    <view>1. 分享海报 / 链接给好友</view>
+    <view>2. 好友首次进入,自动绑定您为邀请人</view>
+    <view>3. 好友完成首单,您得 100 积分 + 优惠券</view>
+    <view>4. 好友自己也得 50 积分 + 优惠券</view>
+    <view>5. 同设备/IP 多次邀请不计数</view>
+  </view>
+</view>

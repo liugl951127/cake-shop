@@ -1,0 +1,59 @@
+<view class="page">
+  <view class="head">📅 设置亲友生日,我们会提前提醒您</view>
+
+  <view class="add" bindtap="onAdd">+ 添加生日</view>
+
+  <view class="list">
+    <view class="item" wx:for="{{list}}" wx:key="_id">
+      <view class="avatar">{{item.name[0]}}</view>
+      <view class="info">
+        <view class="name">
+          <text>{{item.name}}</text>
+          <text class="tag" wx:if="{{item.type === 'self'}}">我</text>
+        </view>
+        <view class="bd">{{item.birthday}} · 提前{{item.remindDays || 7}}天提醒</view>
+      </view>
+      <view class="days">
+        <text class="big">{{item.daysToBirthday}}</text>
+        <text class="unit">天后</text>
+      </view>
+      <view class="del" catchtap="onDel" data-id="{{item._id}}">×</view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!list.length}}">
+    <text>还没添加生日</text>
+    <text class="sub">添加后,生日临近会自动推送提醒</text>
+  </view>
+
+  <!-- 添加弹层 -->
+  <view class="mask" wx:if="{{showAdd}}" bindtap="closeAdd"></view>
+  <view class="add-panel {{showAdd ? 'show' : ''}}">
+    <view class="p-title">添加生日</view>
+    <view class="p-row">
+      <text class="lab">姓名</text>
+      <input class="ipt" value="{{form.name}}" bindinput="onFormName" placeholder="如:小美"/>
+    </view>
+    <view class="p-row">
+      <text class="lab">关系</text>
+      <view class="radios">
+        <text class="r {{form.type === 'self' ? 'on' : ''}}" bindtap="onFormType" data-k="self">自己</text>
+        <text class="r {{form.type === 'loved' ? 'on' : ''}}" bindtap="onFormType" data-k="loved">爱人</text>
+        <text class="r {{form.type === 'friend' ? 'on' : ''}}" bindtap="onFormType" data-k="friend">朋友</text>
+        <text class="r {{form.type === 'colleague' ? 'on' : ''}}" bindtap="onFormType" data-k="colleague">同事</text>
+      </view>
+    </view>
+    <view class="p-row">
+      <text class="lab">生日</text>
+      <picker mode="date" value="{{form.birthday}}" bindchange="onFormDate">
+        <view class="ipt">{{form.birthday || '请选择'}}</view>
+      </picker>
+    </view>
+    <view class="p-row">
+      <text class="lab">偏好</text>
+      <input class="ipt" value="{{form.giftPref}}" bindinput="onFormGift" placeholder="如:巧克力、抹茶"/>
+    </view>
+    <view class="p-btn" bindtap="onSave">保存</view>
+    <view class="p-close" bindtap="closeAdd">×</view>
+  </view>
+</view>
