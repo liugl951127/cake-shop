@@ -3,22 +3,55 @@
   <view class="brand">甜心蛋糕</view>
   <view class="slogan">用心做好每一块蛋糕</view>
 
-  <!-- 已登录态:展示信息 -->
+  <!-- 已登录 -->
   <view wx:if="{{userInfo.openid}}" class="logged">
     <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
     <view class="l-name">{{userInfo.nickName}}</view>
     <view class="l-phone" wx:if="{{userInfo.phone}}">📱 {{userInfo.phone}}</view>
+    <view class="l-tip" wx:if="{{userInfo.loginType}}">登录方式:{{loginTypeText}}</view>
     <view class="wechat-login" bindtap="onBack">进入小程序</view>
     <view class="logout" bindtap="onLogout">退出登录</view>
   </view>
 
-  <!-- 未登录:微信一键登录 -->
+  <!-- 未登录:多种登录方式 -->
   <view wx:else>
+    <!-- 微信登录 -->
     <view class="wechat-login" bindtap="onWxLogin">
-      <text>微信一键登录</text>
+      <text>💚 微信一键登录</text>
     </view>
+
+    <!-- 手机号 + 验证码 -->
+    <view class="phone-login" bindtap="togglePhone">
+      <text>📱 手机号登录</text>
+    </view>
+
+    <!-- Apple 登录(iOS 设备才显示) -->
+    <view class="apple-login" bindtap="onAppleLogin" wx:if="{{showApple}}">
+      <text>  Sign in with Apple</text>
+    </view>
+
     <view class="agreement">
       登录即表示同意 <text class="text-primary" bindtap="goAgreement">《用户协议》</text> 和 <text class="text-primary" bindtap="goAgreement">《隐私政策》</text>
     </view>
+  </view>
+
+  <!-- 手机号登录弹层 -->
+  <view class="mask" wx:if="{{phonePanel}}" bindtap="togglePhone"></view>
+  <view class="phone-panel {{phonePanel ? 'show' : ''}}">
+    <view class="p-title">手机号登录</view>
+    <view class="p-row">
+      <text class="p-label">+86</text>
+      <input class="p-input" type="number" maxlength="11" placeholder="请输入手机号"
+             value="{{phone}}" bindinput="onPhoneInput"/>
+    </view>
+    <view class="p-row">
+      <input class="p-input code" type="number" maxlength="6" placeholder="6 位验证码"
+             value="{{code}}" bindinput="onCodeInput"/>
+      <view class="p-send {{countdown > 0 ? 'disabled' : ''}}" bindtap="onSendCode">
+        {{countdown > 0 ? countdown + 's' : '获取验证码'}}
+      </view>
+    </view>
+    <view class="p-btn" bindtap="onPhoneLogin">登录</view>
+    <view class="p-close" bindtap="togglePhone">×</view>
   </view>
 </view>

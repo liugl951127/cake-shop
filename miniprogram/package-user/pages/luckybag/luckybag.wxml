@@ -1,0 +1,63 @@
+<view class="page">
+  <view class="banner">
+    <view class="b-title">🎁 每日福袋</view>
+    <view class="b-desc">1 元抽大奖 · 100% 中奖</view>
+    <view class="b-stats">库存 {{stock}} 个</view>
+  </view>
+
+  <!-- 抽奖按钮 -->
+  <view class="draw-area" wx:if="{{!drawing}}">
+    <view class="bag {{result ? 'shake' : ''}}" bindtap="onDraw">
+      <text class="bag-emoji">🎁</text>
+      <text class="bag-text">点我抽</text>
+    </view>
+    <view class="draw-tip">点击福袋抽取</view>
+  </view>
+
+  <!-- 抽奖中 -->
+  <view class="drawing" wx:if="{{drawing}}">
+    <view class="spinner">🎰</view>
+    <view>正在抽取...</view>
+  </view>
+
+  <!-- 结果展示 -->
+  <view class="result" wx:if="{{result}}">
+    <view class="result-card {{result.isWin ? 'win' : 'lose'}}">
+      <view class="r-emoji">{{result.prize.image || (result.isWin ? '🎉' : '😢')}}</view>
+      <view class="r-name">{{result.prize.name}}</view>
+      <view class="r-desc">{{result.isWin ? '恭喜中奖!' : '再接再厉~'}}</view>
+      <view class="r-actions">
+        <view class="r-btn" bindtap="reset">再抽一次</view>
+        <view class="r-btn primary" wx:if="{{result.isWin}}" bindtap="goUse">立即使用</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 奖品池 -->
+  <view class="card">
+    <view class="card-title">📋 奖品池</view>
+    <view class="prize-grid">
+      <view class="prize-item" wx:for="{{prizes}}" wx:key="name">
+        <text class="p-emoji">{{item.image}}</text>
+        <text class="p-name">{{item.name}}</text>
+        <text class="p-weight">权重 {{item.weight}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的中奖记录 -->
+  <view class="card">
+    <view class="card-title">🏆 我的记录</view>
+    <view class="my-record" wx:if="{{myRecords.length}}">
+      <view class="r-item" wx:for="{{myRecords}}" wx:key="_id">
+        <text class="r-emoji">{{item.prizeName.includes('券') ? '🎟️' : '💎'}}</text>
+        <view class="r-info">
+          <view class="r-name">{{item.prizeName}}</view>
+          <view class="text-sub">{{item.createTimeText}}</view>
+        </view>
+        <text class="r-status {{item.isWin ? 'win' : ''}}">{{item.isWin ? '中奖' : '未中'}}</text>
+      </view>
+    </view>
+    <view class="empty" wx:else>暂无记录</view>
+  </view>
+</view>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= _seo.title %></title>
+  <meta name="description" content="<%= _seo.description %>">
+  <meta name="keywords" content="<%= _seo.keywords %>">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="<%= _seo.type || 'website' %>">
+  <meta property="og:title" content="<%= _seo.title %>">
+  <meta property="og:description" content="<%= _seo.description %>">
+  <meta property="og:image" content="<%= _seo.image %>">
+  <meta property="og:url" content="<%= _seo.url %>">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= _seo.title %>">
+  <meta name="twitter:description" content="<%= _seo.description %>">
+  <meta name="twitter:image" content="<%= _seo.image %>">
+
+  <!-- JSON-LD 结构化数据 -->
+  <% if (_seo.jsonLd) { %>
+  <script type="application/ld+json">
+  <%- JSON.stringify(_seo.jsonLd) %>
+  </script>
+  <% } %>
+
+  <link rel="canonical" href="<%= _seo.url %>">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="main">
+    <%- body %>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <!-- 跳转小程序按钮 -->
+  <div class="to-mp">
+    <a href="<%= SITE_URL %>/#/pages/index/index" class="mp-btn">
+      🎂 打开小程序下单
+    </a>
+  </div>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

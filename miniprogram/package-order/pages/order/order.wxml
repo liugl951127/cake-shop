@@ -81,6 +81,10 @@
 
   <!-- 费用明细 -->
   <view class="card">
+    <view class="row" wx:if="{{promoDiscount > 0}}">
+      <text class="label">满减优惠</text>
+      <text style="color:var(--price)">-¥{{promoDiscount}}</text>
+    </view>
     <view class="row"><text class="label">商品金额</text><text>¥{{goodsPrice}}</text></view>
     <view class="row" wx:if="{{memberDiscount > 0}}">
       <text class="label">{{userInfo.levelName || '会员'}}折扣</text>

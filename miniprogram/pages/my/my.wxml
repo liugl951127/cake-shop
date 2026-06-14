@@ -61,6 +61,10 @@
       <view class="f-icon" style="background:#fff0f3">👥</view>
       <text>拼团</text>
     </view>
+    <view class="f-item" bindtap="goLuckyBag">
+      <view class="f-icon" style="background:#fff5e0">🎁</view>
+      <text>拼手气</text>
+    </view>
     <view class="f-item" bindtap="goCoupon">
       <view class="f-icon" style="background:#fff4d6">🎟️</view>
       <text>领券中心</text>

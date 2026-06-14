@@ -1,0 +1,23 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<div class="container">
+  <h1 class="page-title"><%= category.name %></h1>
+  <div class="goods-grid">
+    <% (list || []).forEach(function(g) { %>
+      <a href="/goods/<%= g._id %>" class="goods-card">
+        <img src="<%= g.image %>" alt="<%= g.name %>" loading="lazy">
+        <div class="g-info">
+          <h3 class="g-name"><%= g.name %></h3>
+          <p class="g-desc"><%= g.desc || '' %></p>
+          <div class="g-price">¥<%= g.price %></div>
+        </div>
+      </a>
+    <% }); %>
+  </div>
+  <% if (!list || list.length === 0) { %>
+    <p class="empty">该分类下暂无商品</p>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

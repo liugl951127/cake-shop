@@ -4,6 +4,7 @@ const { genOutTradeNo, unifiedOrder } = require('../common/pay.js');
 const { writeLog } = require('../common/orderLog.js');
 const { calcDiscount } = require('../common/member.js');
 const { lockCoupon, markCouponUsed, refundCoupon } = require('../common/coupon.js');
+const { calcBestDiscount } = require('../common/promo.js');
 
 exports.main = auth(async (event) => {
   const {
@@ -51,6 +52,15 @@ exports.main = auth(async (event) => {
   let calcGoods = 0;
   for (const it of items) calcGoods += Number(it.price) * it.count;
 
+  // 满减/折扣活动
+  const promos = await db.collection('promos').where({
+    status: 1, type: _.in(['full_reduce', 'discount']),
+    startTime: _.lte(now), endTime: _.gte(now)
+  }).get();
+  const bestPromo = calcBestDiscount(calcGoods, promos.data);
+  const promoDiscount = bestPromo ? bestPromo.discount : 0;
+  const promoId = bestPromo ? bestPromo.promo._id : '';
+
   // 会员折扣
   const user = await db.collection('users').doc(event._userId).get();
   const userLevel = user.data.level || 0;
@@ -71,7 +81,8 @@ exports.main = auth(async (event) => {
   const calcFreight = isSelfPickup ? 0 : (calcGoods >= 99 ? 0 : 8);
 
   // 应付
-  const calcTotal = Math.max(0, calcGoods - discountAmount - actualCouponDiscount - pointsDiscount + calcFreight);
+  const calcTotal = Math.max(0,
+    calcGoods - discountAmount - actualCouponDiscount - pointsDiscount - promoDiscount + calcFreight);
   const clientTotal = Number(totalPrice) || 0;
   if (Math.abs(calcTotal - clientTotal) > 0.01) {
     if (lockedCoupon) await refundCoupon(db, couponId, event._userId);
@@ -111,6 +122,8 @@ exports.main = auth(async (event) => {
       couponDiscount: actualCouponDiscount,
       usePoints: usePoints || 0,
       pointsDiscount: pointsDiscount,
+      promoId: promoId,
+      promoDiscount: promoDiscount,
       freight: calcFreight,
       totalPrice: calcTotal,
       totalFee: Math.round(calcTotal * 100),

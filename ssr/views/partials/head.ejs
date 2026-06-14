@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= _seo.title %></title>
+  <meta name="description" content="<%= _seo.description %>">
+  <meta name="keywords" content="<%= _seo.keywords %>">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="<%= _seo.type || 'website' %>">
+  <meta property="og:title" content="<%= _seo.title %>">
+  <meta property="og:description" content="<%= _seo.description %>">
+  <meta property="og:image" content="<%= _seo.image %>">
+  <meta property="og:url" content="<%= _seo.url %>">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= _seo.title %>">
+  <meta name="twitter:description" content="<%= _seo.description %>">
+  <meta name="twitter:image" content="<%= _seo.image %>">
+  <% if (_seo.jsonLd) { %>
+  <script type="application/ld+json">
+  <%- JSON.stringify(_seo.jsonLd) %>
+  </script>
+  <% } %>
+  <link rel="canonical" href="<%= _seo.url %>">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>

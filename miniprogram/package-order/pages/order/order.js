@@ -25,6 +25,7 @@ Page({
     availableCoupons: [],
     couponId: '',
     couponDiscount: 0,
+    promoDiscount: 0,
     usePoints: 0,
     pointsDiscount: 0,
 
@@ -105,7 +106,8 @@ Page({
     const freight = this.data.isSelfPickup ? 0 : (goodsPrice >= 99 ? 0 : 8);
 
     // 应付
-    const total = Math.max(0, goodsPrice - memberDiscount - couponDiscount - pointsDiscount + freight);
+    const promoDiscount = Number(this.data.promoDiscount || 0);
+    const total = Math.max(0, goodsPrice - memberDiscount - couponDiscount - pointsDiscount - promoDiscount + freight);
 
     this.setData({
       goodsPrice: formatPrice(goodsPrice),
@@ -128,8 +130,22 @@ Page({
   async loadCoupons() {
     const goodsPrice = this.data.items.reduce((s, i) => s + i.price * i.count, 0);
     try {
-      const list = await request('getCoupons', { available: true, amount: goodsPrice });
-      this.setData({ availableCoupons: list });
+      const [list, promos] = await Promise.all([
+        request('getCoupons', { available: true, amount: goodsPrice }),
+        request('getFullReduce', {}, { loading: false, silent: true })
+      ]);
+      let promoDiscount = 0;
+      if (promos && promos.length) {
+        for (const p of promos) {
+          if (goodsPrice >= p.minAmount) {
+            const d = Math.floor(goodsPrice / p.fullAmount) * p.reduceAmount;
+            if (p.maxDiscount) promoDiscount = Math.max(promoDiscount, Math.min(d, p.maxDiscount));
+            else promoDiscount = Math.max(promoDiscount, d);
+          }
+        }
+      }
+      this.setData({ availableCoupons: list, promoDiscount: promoDiscount.toFixed(2) });
+      this.compute();
     } catch (e) {}
   },
 

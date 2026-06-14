@@ -37,7 +37,8 @@
         "pages/store/list/list",
         "pages/logistics/logistics",
         "pages/webview/webview",
-        "pages/settings/lang/lang"
+        "pages/settings/lang/lang",
+        "pages/luckybag/luckybag"
       ]
     },
     {

@@ -1,0 +1,43 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="/">首页</a>
+    <span>›</span>
+    <a href="/goods">商品</a>
+    <span>›</span>
+    <span><%= goods.name %></span>
+  </nav>
+
+  <div class="detail-main">
+    <div class="detail-img">
+      <img src="<%= goods.image %>" alt="<%= goods.name %>">
+    </div>
+    <div class="detail-info">
+      <h1><%= goods.name %></h1>
+      <p class="detail-desc"><%= goods.desc || '' %></p>
+      <div class="detail-price">
+        <span class="price-num">¥<%= goods.price %></span>
+        <% if (goods.originPrice && goods.originPrice > goods.price) { %>
+          <span class="price-old">¥<%= goods.originPrice %></span>
+        <% } %>
+      </div>
+      <div class="detail-tags">
+        <% (goods.tags || []).forEach(function(t) { %>
+          <span class="tag"><%= t %></span>
+        <% }); %>
+      </div>
+      <a href="javascript:;" class="buy-btn" onclick="openMP()">在小程序中购买</a>
+    </div>
+  </div>
+
+  <% if (goods.detail) { %>
+    <section class="detail-content">
+      <h2>商品详情</h2>
+      <article><%- goods.detail %></article>
+    </section>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

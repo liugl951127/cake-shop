@@ -130,6 +130,58 @@ function logout() {
   clearAuth();
 }
 
+// Apple 登录
+function appleLogin(detail) {
+  // detail 来自 <button open-type="apple" bind:getuserinfo="onApple">
+  return new Promise((resolve, reject) => {
+    if (!detail || !detail.detail) return reject(new Error('Apple 授权失败'));
+    const d = detail.detail;
+    if (!d.identityToken && !d.code) return reject(new Error('未拿到 Apple 凭证'));
+    wx.cloud.callFunction({
+      name: 'appleLogin',
+      data: {
+        identityToken: d.identityToken,
+        code: d.code,
+        userInfo: d.userInfo || {}
+      }
+    }).then(res => {
+      if (res.result && res.result.code === 0) {
+        const { token, ...user } = res.result.data;
+        saveAuth(token, user);
+        resolve(user);
+      } else {
+        reject(res.result);
+      }
+    }).catch(reject);
+  });
+}
+
+// 手机号: 发送验证码
+function phoneSendCode(phone) {
+  return wx.cloud.callFunction({
+    name: 'phoneLogin',
+    data: { action: 'sendCode', phone }
+  }).then(res => {
+    if (res.result && res.result.code === 0) return res.result.data;
+    throw res.result;
+  });
+}
+
+// 手机号: 登录
+function phoneLogin(phone, code) {
+  return wx.cloud.callFunction({
+    name: 'phoneLogin',
+    data: { action: 'login', phone, code }
+  }).then(res => {
+    if (res.result && res.result.code === 0) {
+      const { token, ...user } = res.result.data;
+      saveAuth(token, user);
+      return user;
+    }
+    throw res.result;
+  });
+}
+
 function checkLogin() {
   return !!(getToken() && getUser().openid);
 }
@@ -145,5 +197,6 @@ function requireLogin() {
 module.exports = {
   login, updateProfile, getPhoneNumber, logout,
   checkLogin, requireLogin,
-  getToken, getUser, saveAuth, clearAuth
+  getToken, getUser, saveAuth, clearAuth,
+  appleLogin, phoneSendCode, phoneLogin
 };

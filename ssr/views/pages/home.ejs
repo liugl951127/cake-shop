@@ -1,0 +1,49 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<section class="banner">
+  <% if (banners && banners.length) { %>
+    <div class="banner-slider">
+      <% banners.forEach(function(b, i) { %>
+        <a href="<%= b.url || '#' %>" class="banner-slide <%= i === 0 ? 'active' : '' %>">
+          <img src="<%= b.image %>" alt="<%= b.title || 'banner' %>" loading="<%= i === 0 ? 'eager' : 'lazy' %>">
+          <div class="banner-title"><%= b.title %></div>
+        </a>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<section class="categories">
+  <div class="container">
+    <h2 class="section-title">品类</h2>
+    <div class="cat-grid">
+      <% (categories || []).forEach(function(cat) { %>
+        <a href="/category/<%= cat._id %>" class="cat-card">
+          <div class="cat-icon"><%= cat.icon || '🎂' %></div>
+          <div class="cat-name"><%= cat.name %></div>
+        </a>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<section class="recommend">
+  <div class="container">
+    <h2 class="section-title">为你推荐</h2>
+    <div class="goods-grid">
+      <% (recommend || []).forEach(function(g) { %>
+        <a href="/goods/<%= g._id %>" class="goods-card">
+          <img src="<%= g.image %>" alt="<%= g.name %>" loading="lazy">
+          <div class="g-info">
+            <h3 class="g-name"><%= g.name %></h3>
+            <p class="g-desc"><%= g.desc || '' %></p>
+            <div class="g-price">¥<%= g.price %></div>
+          </div>
+        </a>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

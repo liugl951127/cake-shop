@@ -11,9 +11,20 @@
 .avatar { width: 160rpx; height: 160rpx; border-radius: 50%; background: #f0f0f0; border: 4rpx solid #fff; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1); }
 .l-name { font-size: 36rpx; font-weight: 600; margin-top: 24rpx; }
 .l-phone { font-size: 26rpx; color: #666; margin-top: 8rpx; }
+.l-tip { font-size: 22rpx; color: #999; margin-top: 4rpx; }
 
 .wechat-login {
-  margin: 80rpx 60rpx 0; background: #07c160; color: #fff;
+  margin: 30rpx 60rpx 0; background: #07c160; color: #fff;
+  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
+  font-size: 30rpx; width: calc(100% - 120rpx);
+}
+.phone-login {
+  margin: 20rpx 60rpx 0; background: #fff; color: #333;
+  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
+  font-size: 30rpx; border: 1rpx solid #ddd; width: calc(100% - 120rpx);
+}
+.apple-login {
+  margin: 20rpx 60rpx 0; background: #000; color: #fff;
   text-align: center; padding: 24rpx 0; border-radius: 999rpx;
   font-size: 30rpx; width: calc(100% - 120rpx);
 }
@@ -25,4 +36,38 @@
 .agreement {
   position: fixed; bottom: 60rpx; left: 0; right: 0;
   text-align: center; font-size: 24rpx; color: #999;
+}
+
+/* 手机号登录弹层 */
+.mask { z-index: 1000; }
+.phone-panel {
+  position: fixed; left: 60rpx; right: 60rpx; top: 30%;
+  background: #fff; border-radius: 16rpx; padding: 60rpx 40rpx 40rpx;
+  z-index: 1001;
+  transform: scale(0.9); opacity: 0; transition: all 0.2s;
+}
+.phone-panel.show { transform: scale(1); opacity: 1; }
+.p-title { text-align: center; font-size: 32rpx; font-weight: bold; margin-bottom: 40rpx; }
+.p-row {
+  display: flex; align-items: center;
+  border-bottom: 1rpx solid #f0f0f0; padding: 24rpx 0;
+}
+.p-label { color: #333; font-size: 28rpx; margin-right: 16rpx; }
+.p-input { flex: 1; font-size: 28rpx; }
+.p-input.code { margin-right: 20rpx; }
+.p-send {
+  color: var(--primary); font-size: 26rpx; padding: 8rpx 20rpx;
+  border: 1rpx solid var(--primary); border-radius: 999rpx;
+  white-space: nowrap;
+}
+.p-send.disabled { color: #ccc; border-color: #ccc; }
+.p-btn {
+  background: linear-gradient(135deg, #ff7b9c, #e85a82); color: #fff;
+  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
+  font-size: 30rpx; margin-top: 40rpx;
+}
+.p-close {
+  position: absolute; right: 30rpx; top: 16rpx;
+  width: 60rpx; height: 60rpx; text-align: center; line-height: 60rpx;
+  font-size: 40rpx; color: #999;
 }

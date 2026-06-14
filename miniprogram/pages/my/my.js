@@ -36,16 +36,17 @@ Page({
   },
 
   goMember() { wx.navigateTo({ url: '/pages/member/member' }); },
-  goCoupon() { wx.navigateTo({ url: '/pages/coupon/center/center' }); },
-  goSeckill() { wx.navigateTo({ url: '/pages/seckill/seckill' }); },
-  goGroup() { wx.navigateTo({ url: '/pages/group/list/list' }); },
-  goStore() { wx.navigateTo({ url: '/pages/store/list/list' }); },
+  goCoupon() { wx.navigateTo({ url: '/package-user/pages/coupon/center/center' }); },
+  goSeckill() { wx.navigateTo({ url: '/package-user/pages/seckill/seckill' }); },
+  goGroup() { wx.navigateTo({ url: '/package-promo/pages/group/list/list' }); },
+  goStore() { wx.navigateTo({ url: '/package-user/pages/store/list/list' }); },
+  goLuckyBag() { wx.navigateTo({ url: '/package-user/pages/luckybag/luckybag' }); },
 
   goOrderList() { wx.switchTab({ url: '/pages/order/list/list' }); },
-  goAddress() { wx.navigateTo({ url: '/pages/address/list/list' }); },
+  goAddress() { wx.navigateTo({ url: '/package-address/pages/address/list/list' }); },
   goFavor() { wx.navigateTo({ url: '/pages/favor/favor' }); },
-  goAdminGoods() { wx.navigateTo({ url: '/pages/admin/goods/goods' }); },
-  goAdminOrders() { wx.navigateTo({ url: '/pages/admin/order/order' }); },
+  goAdminGoods() { wx.navigateTo({ url: '/package-admin/pages/admin/goods/goods' }); },
+  goAdminOrders() { wx.navigateTo({ url: '/package-admin/pages/admin/order/order' }); },
   goChat() { wx.navigateTo({ url: '/pages/chat/session/session' }); },
   goChatAdmin() { wx.navigateTo({ url: '/pages/chat/admin/admin' }); },
 
@@ -57,14 +58,14 @@ Page({
     wx.showModal({ title: '甜心蛋糕 v2.0', content: '用心做好每一块蛋糕 🍰', showCancel: false });
   },
 
-  goChat() { wx.navigateTo({ url: '/pages/chat/session/session' }); },
-  goChatAdmin() { wx.navigateTo({ url: '/pages/chat/admin/admin' }); },
-  goNotice() { wx.navigateTo({ url: '/pages/cms/notice/notice' }); },
-  goAgreement() { wx.navigateTo({ url: '/pages/cms/page/page?slug=agreement' }); },
-  goPrivacy() { wx.navigateTo({ url: '/pages/cms/page/page?slug=privacy' }); },
-  goFaq() { wx.navigateTo({ url: '/pages/cms/page/page?slug=faq' }); },
-  goAbout() { wx.navigateTo({ url: '/pages/cms/page/page?slug=about' }); },
-  goAdminDashboard() { wx.navigateTo({ url: '/pages/admin/dashboard/dashboard' }); },
-  goLang() { wx.navigateTo({ url: '/pages/settings/lang/lang' }); },
-  goChatDashboard() { wx.navigateTo({ url: '/pages/chat/dashboard/dashboard' }); }
+  goChat() { wx.navigateTo({ url: '/package-chat/pages/chat/session/session' }); },
+  goChatAdmin() { wx.navigateTo({ url: '/package-chat/pages/chat/admin/admin' }); },
+  goNotice() { wx.navigateTo({ url: '/package-cms/pages/cms/notice/notice' }); },
+  goAgreement() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=agreement' }); },
+  goPrivacy() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=privacy' }); },
+  goFaq() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=faq' }); },
+  goAbout() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=about' }); },
+  goAdminDashboard() { wx.navigateTo({ url: '/package-admin/pages/admin/dashboard/dashboard' }); },
+  goLang() { wx.navigateTo({ url: '/package-user/pages/settings/lang/lang' }); },
+  goChatDashboard() { wx.navigateTo({ url: '/package-chat/pages/chat/dashboard/dashboard' }); }
 });
