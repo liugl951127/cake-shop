@@ -541,3 +541,33 @@ input[type="number"].form-control { width: 100%; }
   .form-row { flex-direction: column; gap: 0; }
   .stat-card .value { font-size: 22px; }
 }
+
+/* ===== 折叠屏 / iPad 大屏: 利用空间 ===== */
+@media (min-width: 1024px) {
+  .sidebar { width: 240px; }
+  .sidebar.collapsed { width: 60px; }
+  .content { padding: 28px; }
+  .card-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
+@media (min-width: 1280px) {
+  .sidebar { width: 260px; }
+  .content { padding: 32px; }
+  .card-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .stat-card .value { font-size: 32px; }
+}
+
+/* ===== 折叠屏展开时(超宽但不高): 横向多列 ===== */
+@media (min-aspect-ratio: 1/1) and (min-width: 600px) and (max-width: 1023px) {
+  .app { flex-direction: row; }
+  .sidebar { position: relative; transform: none; width: 200px; }
+  .content { padding: 16px; }
+}
+
+/* ===== 横屏 iPad(>= 1024 width) ===== */
+@media (min-width: 1024px) and (orientation: landscape) {
+  .menu-group-title { padding: 8px 20px; }
+}
+
+/* ===== 鸿蒙/老内核 webview 适配 ===== */
+.cs-no-backdrop-filter { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.cs-flex-fix { display: -webkit-flex; display: flex; }

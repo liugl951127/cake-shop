@@ -1,6 +1,8 @@
 // app.js
 const tracker = require('./utils/tracker.js');
 const monitor = require('./utils/monitor.js');
+const device = require('./utils/device.js');
+const offlineQueue = require('./utils/offlineQueue.js');
 
 App({
   globalData: {
@@ -27,6 +29,15 @@ App({
     tracker.login('wechat-silent');
     // 初始化性能监控 + 异常上报
     monitor.init({ app: this });
+    // 初始化离线操作队列
+    offlineQueue.init();
+    // 注册设备能力(云端记为设备信息,给兼容表用)
+    const dev = device.getDeviceInfo();
+    wx.cloud.callFunction({
+      name: 'registryDevice',
+      data: { deviceInfo: dev, clientId: wx.getStorageSync('__offline_client_id__') || '' }
+    }).catch(() => {});
+    this.globalData.device = dev;
   },
 
   onShow() {

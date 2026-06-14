@@ -72,6 +72,23 @@ public enum ErrorCode {
     METRIC_AGGREGATE_FAILED(4402, "指标聚合失败"),
     ALREADY_REPORTED(4403, "已上报过同一错误"),
 
+    // 设备/兼容性 45xx
+    DEVICE_INFO_INVALID(4501, "设备信息格式错误"),
+    UNSUPPORTED_PLATFORM(4502, "不支持的平台"),
+    SCREEN_BREAKPOINT_INVALID(4503, "屏幕断点不合法"),
+
+    // 断线/重连 46xx
+    WS_DISCONNECTED(4601, "WS连接已断开"),
+    WS_RECONNECT_FAILED(4602, "WS重连失败"),
+    WS_SESSION_LOST(4603, "WS会话丢失"),
+    WS_HEARTBEAT_TIMEOUT(4604, "WS心跳超时"),
+
+    // 离线操作 47xx
+    OFFLINE_OP_TOO_OLD(4701, "离线操作已过期"),
+    OFFLINE_OP_INVALID(4702, "离线操作格式错误"),
+    OFFLINE_OP_REPLAY_DUPLICATE(4703, "离线操作重复回放"),
+    OFFLINE_OP_PAYLOAD_TOO_LARGE(4704, "离线操作包过大"),
+
     // 系统错误 5xxx
     SYSTEM_ERROR(5000, "系统异常"),
     DB_ERROR(5001, "数据库异常"),

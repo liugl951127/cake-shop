@@ -71,6 +71,23 @@ const ErrorCode = {
   METRIC_AGGREGATE_FAILED: 4402,
   ALREADY_REPORTED: 4403,
 
+  // 设备/兼容性 45xx
+  DEVICE_INFO_INVALID: 4501,
+  UNSUPPORTED_PLATFORM: 4502,
+  SCREEN_BREAKPOINT_INVALID: 4503,
+
+  // 断线/重连 46xx
+  WS_DISCONNECTED: 4601,
+  WS_RECONNECT_FAILED: 4602,
+  WS_SESSION_LOST: 4603,
+  WS_HEARTBEAT_TIMEOUT: 4604,
+
+  // 离线操作 47xx
+  OFFLINE_OP_TOO_OLD: 4701,
+  OFFLINE_OP_INVALID: 4702,
+  OFFLINE_OP_REPLAY_DUPLICATE: 4703,
+  OFFLINE_OP_PAYLOAD_TOO_LARGE: 4704,
+
   // 系统错误 5xxx
   SYSTEM_ERROR: 5000,
   DB_ERROR: 5001,
@@ -135,6 +152,20 @@ const ErrorMessage = {
   [ErrorCode.METRIC_INVALID]: '指标格式错误',
   [ErrorCode.METRIC_AGGREGATE_FAILED]: '指标聚合失败',
   [ErrorCode.ALREADY_REPORTED]: '已上报过同一错误',
+  // 设备
+  [ErrorCode.DEVICE_INFO_INVALID]: '设备信息格式错误',
+  [ErrorCode.UNSUPPORTED_PLATFORM]: '不支持的平台',
+  [ErrorCode.SCREEN_BREAKPOINT_INVALID]: '屏幕断点不合法',
+  // WS
+  [ErrorCode.WS_DISCONNECTED]: 'WS连接已断开',
+  [ErrorCode.WS_RECONNECT_FAILED]: 'WS重连失败',
+  [ErrorCode.WS_SESSION_LOST]: 'WS会话丢失',
+  [ErrorCode.WS_HEARTBEAT_TIMEOUT]: 'WS心跳超时',
+  // 离线
+  [ErrorCode.OFFLINE_OP_TOO_OLD]: '离线操作已过期',
+  [ErrorCode.OFFLINE_OP_INVALID]: '离线操作格式错误',
+  [ErrorCode.OFFLINE_OP_REPLAY_DUPLICATE]: '离线操作重复回放',
+  [ErrorCode.OFFLINE_OP_PAYLOAD_TOO_LARGE]: '离线操作包过大',
   [ErrorCode.SYSTEM_ERROR]: '系统异常',
   [ErrorCode.DB_ERROR]: '数据库异常',
   [ErrorCode.CACHE_ERROR]: '缓存异常',

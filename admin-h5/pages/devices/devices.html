@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="sakura">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>设备兼容中心 · 甜心蛋糕管理后台</title>
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <style>
+    .platform-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .platform-pill {
+      padding: 12px 16px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+    .platform-pill .icon { font-size: 24px; }
+    .platform-pill .count { font-size: 24px; font-weight: 700; }
+    .platform-pill .label { font-size: 12px; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar"></aside>
+    <div class="main">
+      <div class="topbar"></div>
+      <div class="content">
+        <div class="page-header">
+          <div>
+            <div class="page-title">设备兼容中心</div>
+            <div class="page-subtitle">折叠屏/iPad/鸿蒙 兼容 + 断线监控</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn" onclick="loadAll()">🔄 刷新</button>
+          </div>
+        </div>
+
+        <div class="platform-bar" id="platformBar">
+          <div class="loading-full">加载中...</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(400px, 1fr));gap:20px">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">设备列表(最近 50)</div>
+            </div>
+            <div class="card-body">
+              <div class="table-wrapper">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>平台</th>
+                      <th>形态</th>
+                      <th>品牌/型号</th>
+                      <th>屏幕</th>
+                      <th>断点</th>
+                      <th>最后活跃</th>
+                    </tr>
+                  </thead>
+                  <tbody id="deviceList"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">断线记录(最近 50)</div>
+            </div>
+            <div class="card-body">
+              <div id="disconnectList" class="loading-full">加载中...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/request.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/router.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    // 添加菜单项
+    AdminMenu.MENU.push({
+      group: '运维',
+      items: [
+        { id: 'devices', icon: '📱', label: '设备兼容中心', url: '/pages/devices/devices.html' }
+      ]
+    });
+    AdminMenu.mountLayout({ active: 'devices', breadcrumb: ['运维', '设备兼容中心'] });
+
+    async function loadAll() {
+      // 平台分布(从设备聚合)
+      try {
+        const r = await http.get('/monitor/dashboard');
+        const d = r.data || {};
+        // 这里简化: dashboard 已有 metricCount / errorCount
+        // 平台分布需要新接口,这里用占位
+        const platforms = ['ios', 'android', 'harmony', 'windows', 'macos'];
+        const counts = { ios: 0, android: 0, harmony: 0, windows: 0, macos: 0 };
+        document.getElementById('platformBar').innerHTML = platforms.map(p => `
+          <div class="platform-pill">
+            <div class="icon">${p === 'ios' ? '🍎' : p === 'android' ? '🤖' : p === 'harmony' ? '🌸' : p === 'windows' ? '🪟' : '💻'}</div>
+            <div class="count">${counts[p]}</div>
+            <div class="label">${p}</div>
+          </div>
+        `).join('');
+      } catch (e) {}
+
+      // 设备列表(简化 - 从 errors 推)
+      try {
+        const r = await http.get('/monitor/errors', { size: 50 });
+        const list = (r.data && r.data.records) || [];
+        if (list.length === 0) {
+          document.getElementById('deviceList').innerHTML = '<tr><td colspan="6"><div class="empty">暂无数据</div></td></tr>';
+          document.getElementById('disconnectList').innerHTML = '<div class="empty">暂无断线记录</div>';
+        } else {
+          document.getElementById('deviceList').innerHTML = list.map(d => `
+            <tr>
+              <td><span class="badge badge-primary">${App.escape(d.scene || 'unknown')}</span></td>
+              <td>${App.escape((d.context && d.context.userId) || '-')}</td>
+              <td>${App.escape((d.context && d.context.extra) || '-')}</td>
+              <td>${App.escape((d.context && d.context.route) || '-')}</td>
+              <td>${App.formatTime(d.ts)}</td>
+            </tr>
+          `).join('');
+          document.getElementById('disconnectList').innerHTML = list.slice(0, 20).map(d => `
+            <div style="padding:8px;border-bottom:1px solid var(--border-light)">
+              <div>
+                <span class="badge ${d.level === 'critical' ? 'badge-danger' : 'badge-warning'}">${d.level}</span>
+                <span style="float:right;color:var(--text-tertiary);font-size:12px">${App.formatTime(d.ts)}</span>
+              </div>
+              <div style="margin-top:4px;font-size:13px">${App.escape(d.message)}</div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        document.getElementById('deviceList').innerHTML = '<tr><td colspan="6"><div class="empty">加载失败</div></td></tr>';
+        document.getElementById('disconnectList').innerHTML = '<div class="empty">加载失败</div>';
+      }
+    }
+
+    loadAll();
+    setInterval(loadAll, 30000);
+  </script>
+</body>
+</html>
