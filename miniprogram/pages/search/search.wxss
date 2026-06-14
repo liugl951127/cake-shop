@@ -1,0 +1,54 @@
+.page { padding-bottom: 40rpx; }
+.search-bar {
+  display: flex; align-items: center; padding: 20rpx; background: #fff;
+  gap: 16rpx; position: sticky; top: 0; z-index: 10;
+}
+.search-input {
+  flex: 1; background: #f5f5f5; border-radius: 999rpx;
+  padding: 12rpx 24rpx; display: flex; align-items: center;
+}
+.search-input input { flex: 1; margin: 0 12rpx; font-size: 28rpx; }
+.clear {
+  width: 36rpx; height: 36rpx; line-height: 36rpx; text-align: center;
+  background: #ccc; color: #fff; border-radius: 50%;
+}
+.cancel { color: var(--primary); font-size: 28rpx; padding: 0 12rpx; }
+
+.card { background: #fff; margin: 20rpx; border-radius: 16rpx; padding: 24rpx; }
+.card-head { display: flex; justify-content: space-between; align-items: center; font-size: 28rpx; font-weight: 600; margin-bottom: 20rpx; }
+.tag-list { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.tag {
+  background: #f5f5f5; padding: 10rpx 24rpx; border-radius: 999rpx;
+  font-size: 26rpx;
+}
+
+.hot-list { }
+.hot-item {
+  display: flex; align-items: center; padding: 14rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.hot-item:last-child { border-bottom: none; }
+.hot-rank {
+  width: 36rpx; height: 36rpx; border-radius: 50%;
+  background: #eee; color: #999; text-align: center; line-height: 36rpx;
+  font-size: 22rpx; margin-right: 16rpx;
+}
+.hot-rank.top { background: #ff5722; color: #fff; }
+.hot-name { flex: 1; font-size: 28rpx; }
+.hot-count { font-size: 22rpx; }
+
+.g-list, .result-list { padding: 0 20rpx; }
+.g-item {
+  display: flex; padding: 20rpx 0; border-bottom: 1rpx solid #f5f5f5;
+  background: #fff; margin: 0 20rpx 20rpx; border-radius: 16rpx;
+  padding: 20rpx;
+}
+.g-item:last-child { border-bottom: none; }
+.g-img { width: 160rpx; height: 160rpx; border-radius: 12rpx; background: #f0f0f0; }
+.g-info { flex: 1; margin-left: 20rpx; min-width: 0; }
+.g-name { font-size: 28rpx; font-weight: 500; line-height: 1.4; }
+.g-name .hl { color: var(--primary); font-weight: bold; }
+.g-desc { font-size: 22rpx; margin-top: 6rpx; }
+.result-meta { padding: 20rpx; color: #999; font-size: 24rpx; }
+.empty { padding: 200rpx 0; text-align: center; color: #999; }
+.empty view:first-child { font-size: 80rpx; }

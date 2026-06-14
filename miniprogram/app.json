@@ -4,32 +4,89 @@
     "pages/goods/goods",
     "pages/detail/detail",
     "pages/cart/cart",
-    "pages/order/order",
     "pages/order/list/list",
-    "pages/order/detail/detail",
-    "pages/address/list/list",
-    "pages/address/edit/edit",
     "pages/my/my",
     "pages/favor/favor",
     "pages/login/login",
-    "pages/webview/webview",
-    "pages/member/member",
-    "pages/coupon/coupon",
-    "pages/coupon/center/center",
-    "pages/seckill/seckill",
-    "pages/group/list/list",
-    "pages/group/detail/detail",
-    "pages/store/list/list",
-    "pages/logistics/logistics",
-    "pages/chat/session/session",
-    "pages/chat/admin/admin",
-    "pages/chat/adminChat/adminChat",
-    "pages/admin/dashboard/dashboard",
-    "pages/cms/notice/notice",
-    "pages/cms/page/page",
-    "pages/chat/dashboard/dashboard",
-    "pages/settings/lang/lang"
+    "pages/search/search"
   ],
+  "subpackages": [
+    {
+      "name": "order",
+      "root": "package-order",
+      "pages": [
+        "pages/order/order",
+        "pages/order/detail/detail"
+      ]
+    },
+    {
+      "name": "address",
+      "root": "package-address",
+      "pages": [
+        "pages/address/list/list",
+        "pages/address/edit/edit"
+      ]
+    },
+    {
+      "name": "user",
+      "root": "package-user",
+      "pages": [
+        "pages/member/member",
+        "pages/coupon/center/center",
+        "pages/seckill/seckill",
+        "pages/store/list/list",
+        "pages/logistics/logistics",
+        "pages/webview/webview",
+        "pages/settings/lang/lang"
+      ]
+    },
+    {
+      "name": "promo",
+      "root": "package-promo",
+      "pages": [
+        "pages/group/list/list",
+        "pages/group/detail/detail"
+      ]
+    },
+    {
+      "name": "chat",
+      "root": "package-chat",
+      "pages": [
+        "pages/chat/session/session",
+        "pages/chat/admin/admin",
+        "pages/chat/adminChat/adminChat",
+        "pages/chat/dashboard/dashboard"
+      ]
+    },
+    {
+      "name": "admin",
+      "root": "package-admin",
+      "pages": [
+        "pages/admin/goods/goods",
+        "pages/admin/order/order",
+        "pages/admin/edit/edit",
+        "pages/admin/dashboard/dashboard"
+      ]
+    },
+    {
+      "name": "cms",
+      "root": "package-cms",
+      "pages": [
+        "pages/cms/notice/notice",
+        "pages/cms/page/page"
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": ["user", "promo", "chat"]
+    },
+    "pages/my/my": {
+      "network": "all",
+      "packages": ["order", "address", "user", "chat", "admin", "cms"]
+    }
+  },
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#ff7b9c",

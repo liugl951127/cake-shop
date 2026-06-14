@@ -1,0 +1,7 @@
+<view class="toast-list">
+  <view wx:for="{{toasts}}" wx:key="id"
+        class="toast toast-{{item.type}} {{item._visible ? 'show' : 'hide'}}">
+    <view class="toast-icon" wx:if="{{item.icon}}">{{item.icon}}</view>
+    <view class="toast-text">{{item.title}}</view>
+  </view>
+</view>

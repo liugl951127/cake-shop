@@ -1,0 +1,90 @@
+<view class="page">
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <view class="search-input">
+      <text>🔍</text>
+      <input placeholder="搜索蛋糕、面包" value="{{keyword}}" focus="{{autoFocus}}"
+             confirm-type="search" bindinput="onInput" bindconfirm="onSearch"/>
+      <text class="clear" wx:if="{{keyword}}" bindtap="clear">×</text>
+    </view>
+    <view class="cancel" bindtap="goBack">取消</view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view wx:if="{{searched}}">
+    <view wx:if="{{loading}}" class="result-list">
+      <skeleton-card wx:for="{{[1,2,3]}}" wx:key="*this" loading="{{true}}"/>
+    </view>
+    <view wx:else>
+      <view class="result-meta">共 {{goods.length}} 个结果</view>
+      <view class="g-item" wx:for="{{goods}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+        <image src="{{item.image}}" mode="aspectFill" class="g-img"/>
+        <view class="g-info">
+          <view class="g-name ellipsis-2">
+            <text wx:for="{{item._highlightName || []}}" wx:key="*this" wx:for-item="h"
+                  class="{{h.hit ? 'hl' : ''}}">{{h.text}}</text>
+            <text>{{item.name}}</text>
+          </view>
+          <view class="g-desc text-sub ellipsis">{{item.desc || ''}}</view>
+          <view class="flex-between">
+            <text class="price">{{item.price}}</text>
+            <text class="text-sub">已售 {{item.sales || 0}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="empty" wx:if="{{goods.length === 0}}">
+        <view>🔍</view>
+        <view>没有找到 "{{keyword}}" 相关商品</view>
+        <view class="text-sub" style="margin-top:20rpx">试试其他关键词?</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 默认态(没搜) -->
+  <view wx:else>
+    <!-- 历史 -->
+    <view class="card" wx:if="{{history.length}}">
+      <view class="card-head">
+        <text>历史搜索</text>
+        <text class="text-sub" bindtap="clearHistory">🗑 清空</text>
+      </view>
+      <view class="tag-list">
+        <text class="tag" wx:for="{{history}}" wx:key="*this"
+              bindtap="onTagTap" data-k="{{item}}">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- 热词 -->
+    <view class="card" wx:if="{{hot.length}}">
+      <view class="card-head">
+        <text>🔥 热搜榜</text>
+      </view>
+      <view class="hot-list">
+        <view class="hot-item" wx:for="{{hot}}" wx:key="keyword" bindtap="onTagTap" data-k="{{item.keyword}}">
+          <text class="hot-rank {{index < 3 ? 'top' : ''}}">{{index + 1}}</text>
+          <text class="hot-name">{{item.keyword}}</text>
+          <text class="hot-count text-sub">{{item.count}} 搜过</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 推荐 -->
+    <view class="card" wx:if="{{goods.length}}">
+      <view class="card-head">
+        <text>猜你想搜</text>
+      </view>
+      <view class="g-list">
+        <view class="g-item" wx:for="{{goods}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+          <image src="{{item.image}}" mode="aspectFill" class="g-img"/>
+          <view class="g-info">
+            <view class="g-name ellipsis-2">{{item.name}}</view>
+            <view class="flex-between">
+              <text class="price">{{item.price}}</text>
+              <text class="text-sub">已售 {{item.sales || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

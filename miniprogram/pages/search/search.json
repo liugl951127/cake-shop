@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "搜索",
+  "usingComponents": {
+    "skeleton-card": "/components/skeleton-card/skeleton-card"
+  }
+}

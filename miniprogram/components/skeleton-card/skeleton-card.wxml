@@ -1,0 +1,11 @@
+<view class="sk-card" wx:if="{{loading}}">
+  <view class="sk-img"></view>
+  <view class="sk-info">
+    <view class="sk-line" style="width:80%"></view>
+    <view class="sk-line" style="width:60%"></view>
+    <view class="sk-line sk-price" style="width:40%"></view>
+  </view>
+</view>
+<view wx:else>
+  <slot></slot>
+</view>

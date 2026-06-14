@@ -1,0 +1,23 @@
+.sk-card {
+  background: #fff; border-radius: 16rpx; padding: 20rpx; margin-bottom: 20rpx;
+  display: flex; align-items: center;
+}
+.sk-img {
+  width: 180rpx; height: 180rpx; border-radius: 12rpx;
+  background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  flex-shrink: 0;
+}
+.sk-info { flex: 1; margin-left: 20rpx; }
+.sk-line {
+  height: 28rpx; background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6rpx; margin-bottom: 16rpx;
+}
+.sk-line.sk-price { background: linear-gradient(90deg, #ffd6e0 0%, #ffb8c8 50%, #ffd6e0 100%); }
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

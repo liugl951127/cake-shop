@@ -1,0 +1,11 @@
+.skeleton { display: flex; flex-direction: column; gap: 16rpx; padding: 20rpx; }
+.sk-block {
+  height: 32rpx; background: #f0f0f0; border-radius: 8rpx;
+  background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+  background-size: 200% 100%;
+}
+.skeleton.animated .sk-block { animation: shimmer 1.5s infinite; }
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

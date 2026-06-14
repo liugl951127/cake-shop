@@ -87,7 +87,7 @@ Page({
   },
 
   goSearch() {
-    wx.navigateTo({ url: '/pages/goods/goods?keyword=' });
+    wx.navigateTo({ url: '/pages/search/search' });
   },
 
   onIconTap(e) {
