@@ -28,6 +28,10 @@ Page({
 
   goRealtime() { wx.navigateTo({ url: '/package-admin/pages/admin/dashboard2/dashboard2' }); },
 
+  goRealtime() { wx.navigateTo({ url: '/package-admin/pages/admin/dashboard2/dashboard2' }); },
+  goPlugins() { wx.navigateTo({ url: '/package-admin/pages/admin/plugins/plugins' }); },
+  goLowcode() { wx.navigateTo({ url: '/package-admin/pages/admin/lowcode/lowcode' }); },
+
   fWidth(rate) {
     return Math.max(20, Math.min(100, Number(rate) || 0));
   }

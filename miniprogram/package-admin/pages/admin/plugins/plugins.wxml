@@ -1,0 +1,35 @@
+<view class="page">
+  <view class="head">
+    <view class="big">🔌 插件市场</view>
+    <view class="sub">按需启用,开箱即用</view>
+  </view>
+
+  <view class="categories">
+    <text class="c {{cat === '' ? 'on' : ''}}" bindtap="setCat" data-k="">全部</text>
+    <text class="c {{cat === 'order' ? 'on' : ''}}" bindtap="setCat" data-k="order">订单</text>
+    <text class="c {{cat === 'notify' ? 'on' : ''}}" bindtap="setCat" data-k="notify">通知</text>
+    <text class="c {{cat === 'payment' ? 'on' : ''}}" bindtap="setCat" data-k="payment">支付</text>
+    <text class="c {{cat === 'system' ? 'on' : ''}}" bindtap="setCat" data-k="system">系统</text>
+  </view>
+
+  <view class="list">
+    <view class="p" wx:for="{{plugins}}" wx:key="key">
+      <text class="p-emoji">{{item.icon}}</text>
+      <view class="p-info">
+        <view class="p-name">{{item.name}}
+          <text class="p-version">v{{item.version}}</text>
+          <text class="p-installed" wx:if="{{item.installed}}">已安装</text>
+        </view>
+        <view class="p-desc">{{item.description}}</view>
+        <view class="p-meta">
+          <text>📊 {{item.installCount || 0}} 在用</text>
+          <text>·</text>
+          <text>👤 {{item.author}}</text>
+        </view>
+      </view>
+      <view class="p-btn {{item.installed ? 'un' : 'in'}}" bindtap="onToggle" data-p="{{item}}">
+        {{item.installed ? '卸载' : '安装'}}
+      </view>
+    </view>
+  </view>
+</view>

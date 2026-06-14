@@ -65,3 +65,4 @@
   color: #fff; text-align: center; padding: 28rpx 0;
   border-radius: 999rpx; font-size: 30rpx; margin: 40rpx 0;
 }
+.big-screen-btn.secondary { background: linear-gradient(135deg, #ff5722, #ff9800); margin-top: 20rpx; }

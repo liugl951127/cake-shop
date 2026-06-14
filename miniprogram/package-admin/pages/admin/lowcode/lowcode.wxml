@@ -1,0 +1,101 @@
+<view class="page">
+  <view class="head">
+    <view class="big">🧩 低代码设计器</view>
+    <view class="sub">拖拽组件,所见即所得</view>
+  </view>
+
+  <view class="tabs">
+    <text class="t {{tab === 'page' ? 'on' : ''}}" bindtap="setTab" data-k="page">📄 页面</text>
+    <text class="t {{tab === 'report' ? 'on' : ''}}" bindtap="setTab" data-k="report">📊 报表</text>
+    <text class="t {{tab === 'campaign' ? 'on' : ''}}" bindtap="setTab" data-k="campaign">🎯 活动</text>
+  </view>
+
+  <!-- 页面设计 -->
+  <view class="block" wx:if="{{tab === 'page'}}">
+    <view class="block-title">组件库</view>
+    <view class="comps">
+      <view class="comp" wx:for="{{comps}}" wx:key="key" data-k="{{item.key}}" bindtap="onAddComp">
+        <text class="c-icon">{{item.icon}}</text>
+        <text class="c-name">{{item.name}}</text>
+      </view>
+    </view>
+
+    <view class="block-title">已添加 ({{components.length}})</view>
+    <view class="added" wx:if="{{components.length}}">
+      <view class="a" wx:for="{{components}}" wx:key="id" bindtap="onEditComp" data-i="{{index}}">
+        <text class="a-num">{{index + 1}}</text>
+        <text class="a-icon">{{compsMap[item.type].icon}}</text>
+        <text class="a-name">{{compsMap[item.type].name}}</text>
+        <text class="a-x" catchtap="onDelComp" data-i="{{index}}">×</text>
+      </view>
+    </view>
+    <view class="empty" wx:else>点击上方组件添加</view>
+
+    <view class="input-row">
+      <input class="in" placeholder="页面名称" value="{{pageName}}" bindinput="onPageName"/>
+    </view>
+    <view class="input-row">
+      <input class="in" placeholder="slug(URL 路径,如 about)" value="{{pageSlug}}" bindinput="onPageSlug"/>
+    </view>
+    <view class="submit" bindtap="onSavePage">保存草稿</view>
+    <view class="submit outline" bindtap="onPublish">发布</view>
+  </view>
+
+  <!-- 报表 -->
+  <view class="block" wx:if="{{tab === 'report'}}">
+    <view class="block-title">数据源</view>
+    <view class="radios">
+      <text class="r {{report.source === 'orders' ? 'on' : ''}}" bindtap="onSrc" data-k="orders">订单</text>
+      <text class="r {{report.source === 'users' ? 'on' : ''}}" bindtap="onSrc" data-k="users">用户</text>
+      <text class="r {{report.source === 'goods' ? 'on' : ''}}" bindtap="onSrc" data-k="goods">商品</text>
+    </view>
+    <view class="block-title">指标</view>
+    <view class="radios">
+      <text class="r {{report.metric === 'revenue' ? 'on' : ''}}" bindtap="onMetric" data-k="revenue">营业额</text>
+      <text class="r {{report.metric === 'count' ? 'on' : ''}}" bindtap="onMetric" data-k="count">数量</text>
+      <text class="r {{report.metric === 'avgOrder' ? 'on' : ''}}" bindtap="onMetric" data-k="avgOrder">客单价</text>
+    </view>
+    <view class="block-title">维度</view>
+    <view class="radios">
+      <text class="r {{report.dimension === 'date' ? 'on' : ''}}" bindtap="onDim" data-k="date">按日</text>
+      <text class="r {{report.dimension === 'shopId' ? 'on' : ''}}" bindtap="onDim" data-k="shopId">按门店</text>
+      <text class="r {{report.dimension === 'category' ? 'on' : ''}}" bindtap="onDim" data-k="category">按分类</text>
+    </view>
+    <view class="block-title">时间范围</view>
+    <view class="radios">
+      <text class="r {{report.range === 'today' ? 'on' : ''}}" bindtap="onRange" data-k="today">今日</text>
+      <text class="r {{report.range === '7d' ? 'on' : ''}}" bindtap="onRange" data-k="7d">7 日</text>
+      <text class="r {{report.range === '30d' ? 'on' : ''}}" bindtap="onRange" data-k="30d">30 日</text>
+    </view>
+    <view class="submit" bindtap="onRunReport">▶ 试运行</view>
+    <view class="result" wx:if="{{reportResult.length}}">
+      <view class="r-row" wx:for="{{reportResult}}" wx:key="key">
+        <text class="r-k">{{item.key}}</text>
+        <text class="r-v">{{item.value}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 活动模板 -->
+  <view class="block" wx:if="{{tab === 'campaign'}}">
+    <view class="block-title">活动类型</view>
+    <view class="radios">
+      <text class="r {{campaign.type === 'full_reduce' ? 'on' : ''}}" bindtap="onCT" data-k="full_reduce">满减</text>
+      <text class="r {{campaign.type === 'discount' ? 'on' : ''}}" bindtap="onCT" data-k="discount">折扣</text>
+      <text class="r {{campaign.type === 'seckill' ? 'on' : ''}}" bindtap="onCT" data-k="seckill">秒杀</text>
+      <text class="r {{campaign.type === 'group' ? 'on' : ''}}" bindtap="onCT" data-k="group">拼团</text>
+    </view>
+    <view class="input-row">
+      <input class="in" placeholder="活动名称" value="{{campaign.name}}" bindinput="onCN"/>
+    </view>
+    <view class="submit" bindtap="onSaveCampaign">保存活动</view>
+
+    <view class="block-title">已创建</view>
+    <view class="campaigns">
+      <view class="cm" wx:for="{{campaigns}}" wx:key="_id">
+        <text class="cm-name">{{item.name}}</text>
+        <text class="cm-type">{{item.type}}</text>
+      </view>
+    </view>
+  </view>
+</view>
