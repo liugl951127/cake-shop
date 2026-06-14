@@ -1,0 +1,24 @@
+<view class="page">
+  <view wx:if="{{list.length === 0 && !loading}}" class="empty">
+    <view>📍</view>
+    <view>还没有地址,点击下方按钮添加</view>
+  </view>
+
+  <view class="addr-list">
+    <view class="a-item" wx:for="{{list}}" wx:key="_id" bindtap="onTap" data-id="{{item._id}}" data-item="{{item}}">
+      <view class="a-line1">
+        <text class="a-name">{{item.name}}</text>
+        <text class="a-phone">{{item.phone}}</text>
+        <text wx:if="{{item.isDefault}}" class="a-tag">默认</text>
+      </view>
+      <view class="a-region">{{item.region}} {{item.detail}}</view>
+      <view class="a-actions">
+        <text catchtap="setDefault" data-id="{{item._id}}">{{item.isDefault ? '✓ 默认' : '设为默认'}}</text>
+        <text catchtap="edit" data-id="{{item._id}}">编辑</text>
+        <text catchtap="remove" data-id="{{item._id}}">删除</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="add-btn" bindtap="add">+ 新增地址</view>
+</view>

@@ -1,0 +1,19 @@
+<view class="page">
+  <view wx:if="{{list.length === 0 && !loading}}" class="empty">
+    <view>💝</view>
+    <view>还没有收藏的宝贝</view>
+  </view>
+
+  <view class="goods-list">
+    <view class="g-item" wx:for="{{list}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+      <image src="{{item.image}}" class="g-img" mode="aspectFill"></image>
+      <view class="g-info">
+        <view class="g-name ellipsis-2">{{item.name}}</view>
+        <view class="flex-between" style="margin-top:auto">
+          <text class="price">{{item.price}}</text>
+          <text class="unfavor" catchtap="unfavor" data-id="{{item._id}}">取消</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

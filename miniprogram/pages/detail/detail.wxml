@@ -1,0 +1,104 @@
+<view class="page" wx:if="{{goods}}">
+  <!-- 顶部轮播 -->
+  <swiper class="top-swiper" indicator-dots autoplay circular>
+    <swiper-item wx:for="{{goods.images && goods.images.length ? goods.images : [goods.image]}}" wx:key="*this">
+      <image src="{{item}}" mode="aspectFill" class="top-img"></image>
+    </swiper-item>
+  </swiper>
+
+  <view class="info">
+    <view class="price-row">
+      <text class="big-price">¥{{goods.price}}</text>
+      <text class="origin" wx:if="{{goods.originPrice}}">¥{{goods.originPrice}}</text>
+      <text class="sales">已售 {{goods.sales || 0}}</text>
+    </view>
+    <view class="name">{{goods.name}}</view>
+    <view class="tags" wx:if="{{goods.tags && goods.tags.length}}">
+      <text class="tag" wx:for="{{goods.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="desc text-sub">{{goods.desc || ''}}</view>
+  </view>
+
+  <view class="card" bindtap="openSpec" data-type="spec">
+    <view class="card-row">
+      <text class="text-sub">已选</text>
+      <text>{{selectedSpec || '默认规格'}} x {{count}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">配送至</view>
+    <view class="card-row" bindtap="goAddress">
+      <text class="text-sub">地址</text>
+      <text class="ellipsis">{{addressText || '请选择收货地址'}}</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="card-row">
+      <text class="text-sub">运费</text>
+      <text>{{freightText}}</text>
+    </view>
+  </view>
+
+  <view class="card detail">
+    <view class="card-title">商品详情</view>
+    <rich-text nodes="{{goods.detail || goods.desc || ''}}"></rich-text>
+    <image wx:for="{{goods.detailImages || []}}" wx:key="*this" src="{{item}}" mode="widthFix" class="detail-img"></image>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="bar-side" bindtap="goHome">
+      <text>🏠</text>
+      <text>首页</text>
+    </view>
+    <view class="bar-side" bindtap="toggleFavor">
+      <text style="color:{{favored ? '#ff4d4f' : '#999'}}">{{favored ? '♥' : '♡'}}</text>
+      <text>收藏</text>
+    </view>
+    <view class="bar-side" bindtap="goCart">
+      <text>🛒</text>
+      <text>购物车</text>
+    </view>
+    <view class="bar-cart" bindtap="openSpec" data-type="cart">加入购物车</view>
+    <view class="bar-buy" bindtap="openSpec" data-type="buy">立即购买</view>
+  </view>
+
+  <!-- 规格弹层 -->
+  <view class="mask" wx:if="{{showSpec}}" bindtap="closeSpec"></view>
+  <view class="spec-panel {{showSpec ? 'show' : ''}}">
+    <view class="spec-head">
+      <image src="{{goods.image}}" class="spec-img"></image>
+      <view class="spec-head-info">
+        <view class="spec-price price">¥{{goods.price}}</view>
+        <view class="text-sub">库存 {{goods.stock || 0}}</view>
+        <view class="text-sub" wx:if="{{selectedSpec}}">已选：{{selectedSpec}}</view>
+      </view>
+      <view class="spec-close" bindtap="closeSpec">×</view>
+    </view>
+    <scroll-view scroll-y class="spec-body">
+      <view class="spec-group" wx:for="{{goods.specs}}" wx:key="name" wx:for-item="grp">
+        <view class="spec-group-name">{{grp.name}}</view>
+        <view class="spec-options">
+          <text class="spec-opt {{selectedSpecs[grp.name] === opt ? 'active' : ''}}"
+                wx:for="{{grp.options}}" wx:key="*this" wx:for-item="opt"
+                bindtap="selectSpec" data-group="{{grp.name}}" data-opt="{{opt}}">
+            {{opt}}
+          </text>
+        </view>
+      </view>
+
+      <view class="spec-group">
+        <view class="spec-group-name">数量</view>
+        <view class="qty-row">
+          <view class="qty-btn" bindtap="changeCount" data-delta="-1">-</view>
+          <view class="qty-num">{{count}}</view>
+          <view class="qty-btn" bindtap="changeCount" data-delta="1">+</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="spec-foot">
+      <view class="bar-cart" bindtap="onAddCart">加入购物车</view>
+      <view class="bar-buy" bindtap="onBuyNow">立即购买</view>
+    </view>
+  </view>
+</view>

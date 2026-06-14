@@ -1,0 +1,12 @@
+<view class="g-card" bindtap="onTap">
+  <image class="g-img" src="{{item.image}}" mode="aspectFill" lazy-load></image>
+  <view class="g-info">
+    <view class="g-name ellipsis-2">{{item.name}}</view>
+    <view class="g-desc text-sub ellipsis">{{item.desc || '新鲜烘焙，甜蜜一整天'}}</view>
+    <view class="g-row">
+      <text class="price">{{item.price}}</text>
+      <text class="price-old" wx:if="{{item.originPrice}}">{{item.originPrice}}</text>
+      <text class="g-sales text-sub">已售 {{item.sales || 0}}</text>
+    </view>
+  </view>
+</view>

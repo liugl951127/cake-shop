@@ -1,0 +1,23 @@
+.g-card {
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.04);
+}
+.g-img {
+  width: 200rpx; height: 200rpx;
+  background: #f0f0f0;
+  flex-shrink: 0;
+}
+.g-info {
+  flex: 1; padding: 16rpx 20rpx;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+.g-name { font-size: 28rpx; font-weight: 600; line-height: 1.4; }
+.g-desc { font-size: 22rpx; margin-top: 6rpx; }
+.g-row { display: flex; align-items: baseline; margin-top: 8rpx; }
+.g-sales { margin-left: auto; }

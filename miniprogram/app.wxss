@@ -1,0 +1,88 @@
+/* app.wxss - 全局样式 */
+page {
+  background: #f7f7f7;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 28rpx;
+  color: #333;
+  --primary: #ff7b9c;
+  --primary-light: #ffe4ec;
+  --primary-dark: #e85a82;
+  --text-main: #333;
+  --text-sub: #999;
+  --border: #eee;
+  --bg: #f7f7f7;
+  --price: #ff4d4f;
+  --white: #fff;
+}
+
+view, text, image, button, input, scroll-view, swiper, swiper-item {
+  box-sizing: border-box;
+}
+
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-1 { flex: 1; }
+
+.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ellipsis-2 {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; word-break: break-all;
+}
+
+/* 通用按钮 */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+  padding: 20rpx 0;
+  text-align: center;
+}
+.btn-primary[disabled] { background: #ccc; color: #fff; }
+
+.btn-outline {
+  background: #fff;
+  color: var(--primary);
+  border: 1rpx solid var(--primary);
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  padding: 16rpx 32rpx;
+}
+
+.btn-block { width: 100%; display: block; }
+button::after { border: none; }
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.04);
+}
+
+/* 文字 */
+.price { color: var(--price); font-weight: bold; }
+.price::before { content: '¥'; font-size: 80%; margin-right: 2rpx; }
+.price-old { color: #bbb; text-decoration: line-through; font-size: 24rpx; margin-left: 12rpx; }
+.text-sub { color: var(--text-sub); font-size: 24rpx; }
+.text-primary { color: var(--primary); }
+
+/* 占位 */
+.empty {
+  padding: 120rpx 0;
+  text-align: center;
+  color: var(--text-sub);
+}
+.empty image { width: 220rpx; height: 220rpx; }
+
+/* 分割 */
+.divider { height: 20rpx; }
+
+/* 通用弹层 */
+.mask {
+  position: fixed; left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1000;
+}

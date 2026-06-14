@@ -1,0 +1,45 @@
+<view class="page">
+  <view class="search-row">
+    <view class="search-input">
+      <text>🔍</text>
+      <input placeholder="搜索商品" value="{{keyword}}" bindinput="onKeywordInput" confirm-type="search" bindconfirm="onSearch"/>
+    </view>
+  </view>
+
+  <view class="body">
+    <scroll-view scroll-y class="cat-side">
+      <view class="cat-item {{currentCat === item._id ? 'active' : ''}}"
+            wx:for="{{categories}}" wx:key="_id"
+            bindtap="selectCat" data-id="{{item._id}}">
+        {{item.name}}
+      </view>
+    </scroll-view>
+
+    <scroll-view scroll-y class="goods-side" bindscrolltolower="onReachBottom">
+      <view class="goods-list">
+        <view class="g-item" wx:for="{{list}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+          <image src="{{item.image}}" mode="aspectFill" class="g-img"></image>
+          <view class="g-info">
+            <view class="g-name ellipsis-2">{{item.name}}</view>
+            <view class="g-desc text-sub ellipsis">{{item.desc || ''}}</view>
+            <view class="flex-between">
+              <view>
+                <text class="price">{{item.price}}</text>
+                <text class="price-old" wx:if="{{item.originPrice}}">{{item.originPrice}}</text>
+              </view>
+              <text class="text-sub">已售 {{item.sales || 0}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="empty" wx:if="{{!loading && list.length === 0}}">
+          <view>🍰</view>
+          <view>暂无商品</view>
+        </view>
+
+        <view class="loading-more" wx:if="{{loading}}">加载中...</view>
+        <view class="loading-more" wx:elif="{{finished && list.length > 0}}">— 没有更多了 —</view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

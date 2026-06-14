@@ -1,0 +1,23 @@
+.page { padding-bottom: 160rpx; }
+.addr-list { padding: 20rpx; }
+.a-item {
+  background: #fff; border-radius: 16rpx; padding: 24rpx; margin-bottom: 20rpx;
+  position: relative;
+}
+.a-line1 { display: flex; align-items: center; }
+.a-name { font-size: 30rpx; font-weight: 600; }
+.a-phone { margin-left: 20rpx; color: #666; }
+.a-tag { margin-left: 16rpx; background: var(--primary-light); color: var(--primary); font-size: 22rpx; padding: 2rpx 12rpx; border-radius: 6rpx; }
+.a-region { margin-top: 10rpx; color: #666; font-size: 26rpx; }
+.a-actions { margin-top: 20rpx; padding-top: 20rpx; border-top: 1rpx solid #f0f0f0; display: flex; }
+.a-actions text { flex: 1; color: #666; font-size: 26rpx; text-align: center; }
+.a-actions text:last-child { color: #ff4d4f; }
+
+.add-btn {
+  position: fixed; left: 20rpx; right: 20rpx; bottom: 30rpx;
+  background: var(--primary); color: #fff;
+  text-align: center; padding: 24rpx 0; border-radius: 999rpx; font-size: 30rpx;
+}
+
+.empty { padding: 200rpx 0; text-align: center; color: #999; }
+.empty view:first-child { font-size: 120rpx; }

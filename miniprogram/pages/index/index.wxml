@@ -1,0 +1,70 @@
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-bar" bindtap="goSearch">
+    <view class="search-input">
+      <text class="iconfont">🔍</text>
+      <text>搜索蛋糕、面包、甜点</text>
+    </view>
+  </view>
+
+  <!-- 轮播 -->
+  <swiper class="banner" indicator-dots autoplay circular interval="4000">
+    <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="onBannerTap" data-item="{{item}}">
+      <image src="{{item.image}}" mode="aspectFill" class="banner-img"></image>
+    </swiper-item>
+  </swiper>
+
+  <!-- 金刚区 -->
+  <view class="icons">
+    <view class="icon-item" wx:for="{{icons}}" wx:key="id" bindtap="onIconTap" data-id="{{item.id}}">
+      <view class="icon-circle" style="background:{{item.color}}">
+        <text>{{item.emoji}}</text>
+      </view>
+      <text class="icon-text">{{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 公告 -->
+  <view class="notice" wx:if="{{notice}}">
+    <text class="notice-icon">📣</text>
+    <text class="ellipsis">{{notice}}</text>
+  </view>
+
+  <!-- 限时活动 -->
+  <view class="seckill" wx:if="{{seckill.length}}">
+    <view class="seckill-title flex-between">
+      <text>⚡ 限时秒杀</text>
+      <text class="text-sub">每天 10:00 开抢</text>
+    </view>
+    <scroll-view scroll-x class="seckill-list">
+      <view class="seckill-item" wx:for="{{seckill}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+        <image src="{{item.image}}" mode="aspectFill"></image>
+        <view class="seckill-name ellipsis">{{item.name}}</view>
+        <view class="flex">
+          <text class="price seckill-price">{{item.price}}</text>
+          <text class="price-old seckill-old">{{item.originPrice}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 推荐 -->
+  <view class="section">
+    <view class="section-title">
+      <text>— 为你推荐 —</text>
+    </view>
+    <view class="goods-grid">
+      <view class="grid-item" wx:for="{{recommend}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+        <image src="{{item.image}}" mode="aspectFill" class="grid-img"></image>
+        <view class="grid-info">
+          <view class="grid-name ellipsis-2">{{item.name}}</view>
+          <view class="flex-between">
+            <text class="price">{{item.price}}</text>
+            <text class="grid-sales text-sub">已售 {{item.sales || 0}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="no-more text-sub">— 没有更多了 —</view>
+  </view>
+</view>

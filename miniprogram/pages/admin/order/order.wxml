@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="tabs">
+    <view class="tab {{status === '' ? 'active' : ''}}" bindtap="switchTab" data-v="">全部</view>
+    <view class="tab {{status === 0 ? 'active' : ''}}" bindtap="switchTab" data-v="0">待付款</view>
+    <view class="tab {{status === 1 ? 'active' : ''}}" bindtap="switchTab" data-v="1">已付款</view>
+    <view class="tab {{status === 2 ? 'active' : ''}}" bindtap="switchTab" data-v="2">制作中</view>
+    <view class="tab {{status === 3 ? 'active' : ''}}" bindtap="switchTab" data-v="3">配送中</view>
+    <view class="tab {{status === 4 ? 'active' : ''}}" bindtap="switchTab" data-v="4">已完成</view>
+  </view>
+
+  <view class="o-item" wx:for="{{list}}" wx:key="_id">
+    <view class="o-head flex-between">
+      <text class="text-sub">{{item.orderNo}}</text>
+      <text>{{item.createTime}}</text>
+    </view>
+    <view class="o-goods">
+      <view wx:for="{{item.items}}" wx:key="name" wx:for-item="g" class="og">
+        <image src="{{g.image}}" mode="aspectFill"></image>
+        <view class="og-name ellipsis">{{g.name}} x{{g.count}}</view>
+      </view>
+    </view>
+    <view class="o-info text-sub">
+      {{item.address.name}} {{item.address.phone}} | {{item.address.region}} {{item.address.detail}}
+    </view>
+    <view class="o-info text-sub" wx:if="{{item.remark}}">备注: {{item.remark}}</view>
+    <view class="o-foot flex-between">
+      <text>实付: <text class="price">¥{{item.totalPrice}}</text></text>
+      <view class="o-actions">
+        <view class="o-btn" wx:if="{{item.status === 1}}" bindtap="updateStatus" data-id="{{item._id}}" data-v="2">开始制作</view>
+        <view class="o-btn" wx:if="{{item.status === 2}}" bindtap="updateStatus" data-id="{{item._id}}" data-v="3">开始配送</view>
+        <view class="o-btn primary" wx:if="{{item.status === 3}}" bindtap="updateStatus" data-id="{{item._id}}" data-v="4">完成</view>
+      </view>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无订单</view>
+</view>

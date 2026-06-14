@@ -1,0 +1,47 @@
+<view class="page">
+  <view class="form">
+    <view class="form-row">
+      <text class="form-label">商品图</text>
+      <view class="img-picker" bindtap="chooseImage">
+        <image wx:if="{{form.image}}" src="{{form.image}}" mode="aspectFill"></image>
+        <text wx:else class="plus">+</text>
+      </view>
+    </view>
+    <view class="form-row">
+      <text class="form-label">名称</text>
+      <input class="form-input" value="{{form.name}}" bindinput="onI" data-k="name" placeholder="商品名称"/>
+    </view>
+    <view class="form-row">
+      <text class="form-label">描述</text>
+      <input class="form-input" value="{{form.desc}}" bindinput="onI" data-k="desc" placeholder="一句话描述"/>
+    </view>
+    <view class="form-row">
+      <text class="form-label">售价</text>
+      <input class="form-input" type="digit" value="{{form.price}}" bindinput="onI" data-k="price" placeholder="¥"/>
+    </view>
+    <view class="form-row">
+      <text class="form-label">原价</text>
+      <input class="form-input" type="digit" value="{{form.originPrice}}" bindinput="onI" data-k="originPrice" placeholder="¥ (划线价)"/>
+    </view>
+    <view class="form-row">
+      <text class="form-label">库存</text>
+      <input class="form-input" type="number" value="{{form.stock}}" bindinput="onI" data-k="stock" placeholder="0"/>
+    </view>
+    <view class="form-row">
+      <text class="form-label">分类</text>
+      <picker mode="selector" range="{{categories}}" range-key="name" value="{{catIndex}}" bindchange="onCatChange">
+        <view class="form-input">{{form.categoryName || '请选择'}}</view>
+      </picker>
+    </view>
+    <view class="form-row">
+      <text class="form-label">推荐</text>
+      <switch checked="{{form.recommend}}" bindchange="onSwitch" data-k="recommend" color="#ff7b9c"/>
+    </view>
+    <view class="form-row">
+      <text class="form-label">状态</text>
+      <switch checked="{{form.status === 1}}" bindchange="onStatus" color="#ff7b9c"/>
+    </view>
+  </view>
+
+  <view class="save-btn" bindtap="save">保存</view>
+</view>

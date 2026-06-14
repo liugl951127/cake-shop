@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "甜心蛋糕",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "goods-card": "/components/goods-card/goods-card"
+  }
+}

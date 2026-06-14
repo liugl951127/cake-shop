@@ -1,0 +1,71 @@
+<view class="page">
+  <!-- 地址 -->
+  <view class="addr" bindtap="selectAddress">
+    <view wx:if="{{address}}" class="addr-info">
+      <view class="flex">
+        <text class="a-name">{{address.name}}</text>
+        <text class="a-phone">{{address.phone}}</text>
+        <text wx:if="{{address.isDefault}}" class="a-tag">默认</text>
+      </view>
+      <view class="a-region">{{address.region}} {{address.detail}}</view>
+    </view>
+    <view wx:else class="addr-empty">请选择收货地址</view>
+    <text class="arrow">›</text>
+  </view>
+
+  <!-- 商品 -->
+  <view class="card">
+    <view class="g-item" wx:for="{{items}}" wx:key="_id">
+      <image src="{{item.image}}" class="g-img" mode="aspectFill"></image>
+      <view class="g-info">
+        <view class="g-name ellipsis-2">{{item.name}}</view>
+        <view class="g-spec text-sub ellipsis" wx:if="{{item.spec}}">{{item.spec}}</view>
+        <view class="flex-between">
+          <text class="price">{{item.price}}</text>
+          <text class="text-sub">x{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 配送 -->
+  <view class="card">
+    <view class="row">
+      <text class="label">配送方式</text>
+      <text>商家配送</text>
+    </view>
+    <view class="row">
+      <text class="label">送达时间</text>
+      <picker mode="multiSelector" range="{{timeRanges}}" value="{{timeIndex}}" bindchange="onTimeChange">
+        <view class="picker-val">{{timeText}} ›</view>
+      </picker>
+    </view>
+    <view class="row">
+      <text class="label">备注</text>
+      <input class="remark" placeholder="选填,请勿超过 50 字" maxlength="50" value="{{remark}}" bindinput="onRemarkInput"/>
+    </view>
+  </view>
+
+  <!-- 费用 -->
+  <view class="card">
+    <view class="row">
+      <text class="label">商品金额</text>
+      <text>¥{{goodsPrice}}</text>
+    </view>
+    <view class="row">
+      <text class="label">配送费</text>
+      <text>¥{{freight}}</text>
+    </view>
+    <view class="row" wx:if="{{discount > 0}}">
+      <text class="label">优惠</text>
+      <text style="color:var(--price)">-¥{{discount}}</text>
+    </view>
+  </view>
+
+  <view class="footer">
+    <view class="total">
+      实付: <text class="price" style="font-size:38rpx">¥{{totalPrice}}</text>
+    </view>
+    <view class="submit" bindtap="submitOrder">提交订单</view>
+  </view>
+</view>

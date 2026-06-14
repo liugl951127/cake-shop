@@ -1,0 +1,46 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/goods/goods",
+    "pages/detail/detail",
+    "pages/cart/cart",
+    "pages/order/order",
+    "pages/order/list/list",
+    "pages/order/detail/detail",
+    "pages/address/list/list",
+    "pages/address/edit/edit",
+    "pages/my/my",
+    "pages/favor/favor",
+    "pages/login/login",
+    "pages/webview/webview"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#ff7b9c",
+    "navigationBarTitleText": "甜心蛋糕",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f7f7f7",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#ff7b9c",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index",   "text": "首页", "iconPath": "images/tab-home.png",     "selectedIconPath": "images/tab-home-a.png" },
+      { "pagePath": "pages/goods/goods",  "text": "分类", "iconPath": "images/tab-cat.png",      "selectedIconPath": "images/tab-cat-a.png" },
+      { "pagePath": "pages/cart/cart",    "text": "购物车", "iconPath": "images/tab-cart.png",   "selectedIconPath": "images/tab-cart-a.png" },
+      { "pagePath": "pages/order/list/list", "text": "订单", "iconPath": "images/tab-order.png","selectedIconPath": "images/tab-order-a.png" },
+      { "pagePath": "pages/my/my",        "text": "我的", "iconPath": "images/tab-my.png",       "selectedIconPath": "images/tab-my-a.png" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于显示附近的门店和配送范围"
+    }
+  }
+}

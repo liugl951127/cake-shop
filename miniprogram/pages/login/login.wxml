@@ -1,0 +1,13 @@
+<view class="page">
+  <view class="logo">🎂</view>
+  <view class="brand">甜心蛋糕</view>
+  <view class="slogan">用心做好每一块蛋糕</view>
+
+  <view class="wechat-login" bindtap="onWxLogin">
+    <text>微信一键登录</text>
+  </view>
+
+  <view class="agreement">
+    登录即表示同意 <text class="text-primary" bindtap="goAgreement">《用户协议》</text> 和 <text class="text-primary" bindtap="goAgreement">《隐私政策》</text>
+  </view>
+</view>
