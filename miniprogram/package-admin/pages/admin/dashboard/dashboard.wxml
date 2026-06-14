@@ -95,4 +95,5 @@
   <view class="big-screen-btn" bindtap="goRealtime">📊 进入实时数据大屏</view>
   <view class="big-screen-btn secondary" bindtap="goPlugins">🔌 插件市场</view>
   <view class="big-screen-btn secondary" bindtap="goLowcode">🧩 低代码设计器</view>
+  <view class="big-screen-btn secondary" bindtap="goRisk">🛡️ 风控中心</view>
 </view>

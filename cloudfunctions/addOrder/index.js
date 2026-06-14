@@ -5,6 +5,7 @@ const { writeLog } = require('../common/orderLog.js');
 const { calcDiscount } = require('../common/member.js');
 const { lockCoupon, markCouponUsed, refundCoupon } = require('../common/coupon.js');
 const { calcBestDiscount } = require('../common/promo.js');
+const { guard: riskGuard } = require('../common/riskGuard.js');
 
 exports.main = auth(async (event) => {
   const {
@@ -17,6 +18,39 @@ exports.main = auth(async (event) => {
   if (!items || items.length === 0) throw new BizError('订单无商品');
   if (!address && !isSelfPickup) throw new BizError('请选择地址');
   if (isSelfPickup && !storeId) throw new BizError('请选择自提门店');
+
+  // === 统一风控闸门 ===
+  // 高额订单用 highOrder 场景(更严),普通用 pay
+  const scenario = (totalPrice >= 2000 || goodsPrice >= 1500) ? 'highOrder' : 'pay';
+  const risk = await riskGuard(event, {
+    scenario,
+    userId: event._userId,
+    openid: event._openid,
+    deviceId: event.deviceId || '',
+    ip: cloud.getWXContext().CLIENTIP || '',
+    amount: totalPrice,
+    extra: { address: address && address.address }
+  });
+  if (risk.decision === 'reject') {
+    throw new BizError(risk.message + ':' + (risk.factors || []).map(f => f.code).join(','));
+  }
+  if (risk.decision === 'verify') {
+    // 标记订单需要补认证(返回后前端引导用户去认证)
+    return ok({
+      needVerify: true,
+      requireAction: risk.requireAction,
+      riskLogId: risk.logId,
+      message: risk.message
+    });
+  }
+  if (risk.decision === 'manual') {
+    // 进入人工审核,订单先挂起
+    return ok({
+      pendingReview: true,
+      riskLogId: risk.logId,
+      message: risk.message
+    });
+  }
 
   const db = cloud.database();
   const _ = db.command;

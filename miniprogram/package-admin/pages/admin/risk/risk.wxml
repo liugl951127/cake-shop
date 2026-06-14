@@ -1,0 +1,143 @@
+<view class="page">
+  <view class="head">
+    <view class="big">🛡️ 风控中心</view>
+    <view class="sub">实时拦截 · 规则引擎 · 人工审核</view>
+  </view>
+
+  <!-- Tab -->
+  <view class="tabs">
+    <text class="t {{tab === 'dashboard' ? 'on' : ''}}" bindtap="setTab" data-k="dashboard">📊 大盘</text>
+    <text class="t {{tab === 'review' ? 'on' : ''}}" bindtap="setTab" data-k="review">⏳ 待审({{reviewList.length}})</text>
+    <text class="t {{tab === 'logs' ? 'on' : ''}}" bindtap="setTab" data-k="logs">📋 日志</text>
+    <text class="t {{tab === 'rules' ? 'on' : ''}}" bindtap="setTab" data-k="rules">⚙️ 规则</text>
+    <text class="t {{tab === 'blacklist' ? 'on' : ''}}" bindtap="setTab" data-k="blacklist">🚫 黑名单</text>
+  </view>
+
+  <!-- 大盘 -->
+  <view wx:if="{{tab === 'dashboard'}}">
+    <view class="kpi">
+      <view class="k"><text class="k-n">{{dash.today.total || 0}}</text><text class="k-l">今日检查</text></view>
+      <view class="k"><text class="k-n green">{{dash.today.pass || 0}}</text><text class="k-l">放行</text></view>
+      <view class="k"><text class="k-n orange">{{(dash.today.verify || 0) + (dash.today.manual || 0)}}</text><text class="k-l">需复核</text></view>
+      <view class="k"><text class="k-n red">{{dash.today.reject || 0}}</text><text class="k-l">拦截</text></view>
+    </view>
+    <view class="kpi-sm">
+      <view class="k2"><text class="k-n red">{{dash.today.rejectRate || 0}}%</text><text class="k-l">拦截率</text></view>
+      <view class="k2"><text class="k-n orange">{{dash.pendingReview || 0}}</text><text class="k-l">待审核</text></view>
+    </view>
+
+    <view class="card">
+      <view class="c-title">📈 7 日趋势</view>
+      <view class="trend">
+        <view class="t-row" wx:for="{{dash.trend}}" wx:key="date">
+          <text class="t-date">{{item.date}}</text>
+          <view class="t-bars">
+            <view class="bar pass" style="height: {{item.pass * 6}}rpx"></view>
+            <view class="bar verify" style="height: {{item.verify * 6}}rpx"></view>
+            <view class="bar manual" style="height: {{item.manual * 6}}rpx"></view>
+            <view class="bar reject" style="height: {{item.reject * 6}}rpx"></view>
+          </view>
+        </view>
+      </view>
+      <view class="legend">
+        <text class="lg pass">通过</text>
+        <text class="lg verify">补认证</text>
+        <text class="lg manual">人工</text>
+        <text class="lg reject">拦截</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="c-title">🔥 命中 Top 10 规则</view>
+      <view class="rule-row" wx:for="{{dash.topRules}}" wx:key="code">
+        <text class="r-code">{{item.code}}</text>
+        <text class="r-cnt">{{item.count}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 待审 -->
+  <view wx:if="{{tab === 'review'}}">
+    <view class="card" wx:for="{{reviewList}}" wx:key="_id" bindtap="onReview" data-i="{{index}}">
+      <view class="r-head">
+        <text class="r-scenario">{{item.scenario}}</text>
+        <text class="r-score" style="color: {{item.totalScore >= 90 ? '#ff5722' : '#ff9800'}}">{{item.totalScore}} 分</text>
+      </view>
+      <view class="r-row">
+        <text class="r-l">用户:</text><text>{{item.userId || '匿名'}}</text>
+      </view>
+      <view class="r-row">
+        <text class="r-l">金额:</text><text>¥{{item.amount || 0}}</text>
+      </view>
+      <view class="r-row">
+        <text class="r-l">时间:</text><text class="text-sub">{{item.createTimeText}}</text>
+      </view>
+      <view class="r-factors">
+        <text class="factor" wx:for="{{item.factors}}" wx:key="code" wx:for-item="f" wx:if="{{f.hit}}">
+          {{f.code}}({{f.weight}})
+        </text>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!reviewList.length}}">✅ 暂无待审核</view>
+  </view>
+
+  <!-- 日志 -->
+  <view wx:if="{{tab === 'logs'}}">
+    <view class="filters">
+      <text class="f {{fScenario === '' ? 'on' : ''}}" bindtap="setFScenario" data-k="">全部</text>
+      <text class="f {{fScenario === 'pay' ? 'on' : ''}}" bindtap="setFScenario" data-k="pay">下单</text>
+      <text class="f {{fScenario === 'withdraw' ? 'on' : ''}}" bindtap="setFScenario" data-k="withdraw">提现</text>
+      <text class="f {{fScenario === 'login' ? 'on' : ''}}" bindtap="setFScenario" data-k="login">登录</text>
+    </view>
+    <view class="card" wx:for="{{logs}}" wx:key="_id">
+      <view class="r-head">
+        <text class="r-scenario">{{item.scenario}}</text>
+        <text class="r-decision decision-{{item.decision}}">{{decText(item.decision)}}</text>
+      </view>
+      <view class="r-row"><text class="r-l">分数:</text><text>{{item.totalScore}} / 阈值 {{item.threshold.reject}}</text></view>
+      <view class="r-row"><text class="r-l">时间:</text><text class="text-sub">{{item.createTimeText}}</text></view>
+      <view class="r-factors">
+        <text class="factor" wx:for="{{item.factors}}" wx:key="code" wx:for-item="f" wx:if="{{f.hit}}">
+          {{f.code}}
+        </text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 规则 -->
+  <view wx:if="{{tab === 'rules'}}">
+    <view class="card">
+      <view class="c-title">🎯 决策阈值(各场景)</view>
+      <view class="th" wx:for="{{thresholds}}" wx:key="scenario">
+        <text class="th-name">{{item.scenario}}</text>
+        <text class="th-r">拒 ≥{{item.reject}}</text>
+        <text class="th-m">审 ≥{{item.manual}}</text>
+        <text class="th-v">验 ≥{{item.verify}}</text>
+      </view>
+    </view>
+    <view class="card">
+      <view class="c-title">📚 内置规则({{rulesList.builtin.length}})</view>
+      <view class="rl" wx:for="{{rulesList.builtin}}" wx:key="code">
+        <text class="rl-cat cat-{{item.category}}">{{item.category}}</text>
+        <text class="rl-code">{{item.code}}</text>
+        <text class="rl-w">{{item.weight}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 黑名单 -->
+  <view wx:if="{{tab === 'blacklist'}}">
+    <view class="add-bar" bindtap="onAddBlack">+ 加黑</view>
+    <view class="card" wx:for="{{blacklist}}" wx:key="_id">
+      <view class="r-head">
+        <text class="r-scenario">{{item.targetType}}</text>
+        <text class="r-decision" style="color: #ff5722">🚫 {{item.level}}</text>
+      </view>
+      <view class="r-row"><text class="r-l">值:</text><text>{{item.targetValue}}</text></view>
+      <view class="r-row"><text class="r-l">原因:</text><text class="text-sub">{{item.reason || '—'}}</text></view>
+      <view class="r-row"><text class="r-l">命中:</text><text>{{item.hits || 0}} 次 · 来源 {{item.source}}</text></view>
+      <view class="r-row"><text class="r-l">时间:</text><text class="text-sub">{{item.createTimeText}}</text></view>
+      <view class="r-actions" catchtap="onUnBlack" data-id="{{item._id}}">移黑</view>
+    </view>
+  </view>
+</view>

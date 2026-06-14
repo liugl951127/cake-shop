@@ -2,6 +2,7 @@
 // action:  overview / commission / withdraw / withdrawList / reconcile / withdrawApprove
 const { cloud, ok, fail, auth } = require('../common/index.js');
 const audit = require('../common/audit.js');
+const { guard: riskGuard } = require('../common/riskGuard.js');
 
 const COMMISSION_RATE = 0.05;  // 平台佣金 5%(分销)
 const MIN_WITHDRAW = 100;     // 最低提现 100 元
@@ -103,6 +104,26 @@ async function withdraw(event) {
   if (amount < MIN_WITHDRAW) return fail(`最低提现 ${MIN_WITHDRAW} 元`);
   if (amount > 50000) return fail('单次提现不可超过 50000');
   if (!account) return fail('提现账号必填');
+
+  // === 风控闸门 ===
+  const db0 = cloud.database();
+  const u = await db0.collection('users').doc(event._userId).get().catch(() => null);
+  const risk = await riskGuard(event, {
+    scenario: 'withdraw',
+    userId: event._userId,
+    openid: event._openid,
+    phone: u && u.data && u.data.phone,
+    idCardHash: u && u.data && u.data.idCardHash,
+    ip: cloud.getWXContext().CLIENTIP || '',
+    amount
+  });
+  if (risk.decision === 'reject') return fail(risk.message + ':' + (risk.factors || []).map(f => f.code).join(','), -403);
+  if (risk.decision === 'verify') {
+    return ok({ needVerify: true, requireAction: risk.requireAction, riskLogId: risk.logId, message: risk.message });
+  }
+  if (risk.decision === 'manual') {
+    return ok({ pendingReview: true, riskLogId: risk.logId, message: risk.message });
+  }
 
   const db = cloud.database();
   const now = Date.now();

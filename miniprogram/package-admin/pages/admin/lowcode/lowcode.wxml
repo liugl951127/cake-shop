@@ -1,18 +1,21 @@
 <view class="page">
   <view class="head">
-    <view class="big">🧩 低代码设计器</view>
-    <view class="sub">拖拽组件,所见即所得</view>
+    <view class="big">🧩 低代码 + 模板化</view>
+    <view class="sub">页面 / 报表 / 活动 / 表单 / 规则 / 模板市场</view>
   </view>
 
   <view class="tabs">
     <text class="t {{tab === 'page' ? 'on' : ''}}" bindtap="setTab" data-k="page">📄 页面</text>
     <text class="t {{tab === 'report' ? 'on' : ''}}" bindtap="setTab" data-k="report">📊 报表</text>
     <text class="t {{tab === 'campaign' ? 'on' : ''}}" bindtap="setTab" data-k="campaign">🎯 活动</text>
+    <text class="t {{tab === 'form' ? 'on' : ''}}" bindtap="setTab" data-k="form">📝 表单</text>
+    <text class="t {{tab === 'rule' ? 'on' : ''}}" bindtap="setTab" data-k="rule">⚙️ 规则</text>
+    <text class="t {{tab === 'market' ? 'on' : ''}}" bindtap="setTab" data-k="market">🏪 模板</text>
   </view>
 
-  <!-- 页面设计 -->
+  <!-- 页面 -->
   <view class="block" wx:if="{{tab === 'page'}}">
-    <view class="block-title">组件库</view>
+    <view class="block-title">组件库({{comps.length}})</view>
     <view class="comps">
       <view class="comp" wx:for="{{comps}}" wx:key="key" data-k="{{item.key}}" bindtap="onAddComp">
         <text class="c-icon">{{item.icon}}</text>
@@ -22,7 +25,7 @@
 
     <view class="block-title">已添加 ({{components.length}})</view>
     <view class="added" wx:if="{{components.length}}">
-      <view class="a" wx:for="{{components}}" wx:key="id" bindtap="onEditComp" data-i="{{index}}">
+      <view class="a" wx:for="{{components}}" wx:key="id" data-i="{{index}}" bindtap="onMoveUp">
         <text class="a-num">{{index + 1}}</text>
         <text class="a-icon">{{compsMap[item.type].icon}}</text>
         <text class="a-name">{{compsMap[item.type].name}}</text>
@@ -35,10 +38,10 @@
       <input class="in" placeholder="页面名称" value="{{pageName}}" bindinput="onPageName"/>
     </view>
     <view class="input-row">
-      <input class="in" placeholder="slug(URL 路径,如 about)" value="{{pageSlug}}" bindinput="onPageSlug"/>
+      <input class="in" placeholder="slug(URL)" value="{{pageSlug}}" bindinput="onPageSlug"/>
     </view>
-    <view class="submit" bindtap="onSavePage">保存草稿</view>
-    <view class="submit outline" bindtap="onPublish">发布</view>
+    <view class="submit" bindtap="onSavePage">💾 保存草稿</view>
+    <view class="submit outline" bindtap="onPublish">🚀 立即发布</view>
   </view>
 
   <!-- 报表 -->
@@ -61,7 +64,7 @@
       <text class="r {{report.dimension === 'shopId' ? 'on' : ''}}" bindtap="onDim" data-k="shopId">按门店</text>
       <text class="r {{report.dimension === 'category' ? 'on' : ''}}" bindtap="onDim" data-k="category">按分类</text>
     </view>
-    <view class="block-title">时间范围</view>
+    <view class="block-title">范围</view>
     <view class="radios">
       <text class="r {{report.range === 'today' ? 'on' : ''}}" bindtap="onRange" data-k="today">今日</text>
       <text class="r {{report.range === '7d' ? 'on' : ''}}" bindtap="onRange" data-k="7d">7 日</text>
@@ -76,26 +79,106 @@
     </view>
   </view>
 
-  <!-- 活动模板 -->
+  <!-- 活动 -->
   <view class="block" wx:if="{{tab === 'campaign'}}">
     <view class="block-title">活动类型</view>
     <view class="radios">
-      <text class="r {{campaign.type === 'full_reduce' ? 'on' : ''}}" bindtap="onCT" data-k="full_reduce">满减</text>
-      <text class="r {{campaign.type === 'discount' ? 'on' : ''}}" bindtap="onCT" data-k="discount">折扣</text>
-      <text class="r {{campaign.type === 'seckill' ? 'on' : ''}}" bindtap="onCT" data-k="seckill">秒杀</text>
-      <text class="r {{campaign.type === 'group' ? 'on' : ''}}" bindtap="onCT" data-k="group">拼团</text>
+      <text class="r {{campaign.type === 'full_reduce' ? 'on' : ''}}" bindtap="onCT" data-k="full_reduce">💰 满减</text>
+      <text class="r {{campaign.type === 'discount' ? 'on' : ''}}" bindtap="onCT" data-k="discount">🏷️ 折扣</text>
+      <text class="r {{campaign.type === 'seckill' ? 'on' : ''}}" bindtap="onCT" data-k="seckill">⚡ 秒杀</text>
+      <text class="r {{campaign.type === 'group' ? 'on' : ''}}" bindtap="onCT" data-k="group">👥 拼团</text>
+      <text class="r {{campaign.type === 'lucky_bag' ? 'on' : ''}}" bindtap="onCT" data-k="lucky_bag">🎁 福袋</text>
     </view>
+
+    <view class="block-title" wx:if="{{currentTemplate.fields}}">{{currentTemplate.name}} - 配置</view>
+    <view class="form-fields" wx:if="{{currentTemplate.fields}}">
+      <view class="ff" wx:for="{{currentTemplate.fields}}" wx:key="key">
+        <text class="ff-l">{{item.label}} <text wx:if="{{item.required}}" class="req">*</text></text>
+        <input class="ff-in" placeholder="输入{{item.label}}" data-k="{{item.key}}"
+               data-type="{{item.type}}" bindinput="onCfg" value="{{campaignCfg[item.key] || ''}}"/>
+      </view>
+    </view>
+
     <view class="input-row">
       <input class="in" placeholder="活动名称" value="{{campaign.name}}" bindinput="onCN"/>
     </view>
     <view class="submit" bindtap="onSaveCampaign">保存活动</view>
 
     <view class="block-title">已创建</view>
-    <view class="campaigns">
-      <view class="cm" wx:for="{{campaigns}}" wx:key="_id">
-        <text class="cm-name">{{item.name}}</text>
-        <text class="cm-type">{{item.type}}</text>
+    <view class="cm" wx:for="{{campaigns}}" wx:key="_id">
+      <text class="cm-name">{{item.name}}</text>
+      <text class="cm-type">{{item.type}}</text>
+    </view>
+  </view>
+
+  <!-- 表单 -->
+  <view class="block" wx:if="{{tab === 'form'}}">
+    <view class="block-title">添加字段</view>
+    <view class="form-types">
+      <view class="ft" wx:for="{{formTypes}}" wx:key="key" data-k="{{item.key}}" bindtap="onAddField">
+        <text class="ft-i">{{item.icon}}</text>
+        <text class="ft-n">{{item.name}}</text>
       </view>
+    </view>
+
+    <view class="block-title">表单字段 ({{formFields.length}})</view>
+    <view class="added" wx:if="{{formFields.length}}">
+      <view class="a" wx:for="{{formFields}}" wx:key="key" data-i="{{index}}">
+        <text class="a-icon">{{formTypesMap[item.type].icon}}</text>
+        <text class="a-name">{{item.label || formTypesMap[item.type].name}}</text>
+        <text class="a-req" wx:if="{{item.required}}">*</text>
+        <text class="a-x" catchtap="onDelField" data-i="{{index}}">×</text>
+      </view>
+    </view>
+    <view class="empty" wx:else>点击上方添加</view>
+
+    <view class="input-row">
+      <input class="in" placeholder="表单名称" value="{{formName}}" bindinput="onFormName"/>
+    </view>
+    <view class="submit" bindtap="onSaveForm">保存表单</view>
+  </view>
+
+  <!-- 规则 -->
+  <view class="block" wx:if="{{tab === 'rule'}}">
+    <view class="block-title">新建规则</view>
+    <view class="input-row">
+      <input class="in" placeholder="规则名" value="{{rule.name}}" bindinput="onRuleName"/>
+    </view>
+    <view class="input-row">
+      <input class="in" placeholder="触发器(如 order_paid)" value="{{rule.trigger}}" bindinput="onRuleTrigger"/>
+    </view>
+    <view class="input-row">
+      <input class="in" placeholder="条件(JS 表达式,留空 = 总是触发)" value="{{rule.condition}}" bindinput="onRuleCond"/>
+    </view>
+    <view class="input-row">
+      <input class="in" placeholder="动作(动作名或 JSON)" value="{{rule.action}}" bindinput="onRuleAction"/>
+    </view>
+    <view class="input-row">
+      <input class="in" type="number" placeholder="优先级(数字越大越优先)" value="{{rule.priority}}" bindinput="onRulePriority"/>
+    </view>
+    <view class="submit" bindtap="onSaveRule">保存规则</view>
+
+    <view class="block-title">已有规则</view>
+    <view class="rl-row" wx:for="{{rules}}" wx:key="_id">
+      <view class="rl-info">
+        <text class="rl-name">{{item.name}}</text>
+        <text class="rl-trigger">{{item.trigger}} · 优先 {{item.priority || 0}}</text>
+      </view>
+      <switch checked="{{item.status === 1}}" bindchange="onToggleRule" data-id="{{item._id}}"/>
+    </view>
+  </view>
+
+  <!-- 模板市场 -->
+  <view class="block" wx:if="{{tab === 'market'}}">
+    <view class="block-title">🏪 开箱即用模板</view>
+    <view class="tpl" wx:for="{{templates}}" wx:key="id" bindtap="onApplyTpl" data-id="{{item.id}}">
+      <text class="tpl-emoji">{{item.icon}}</text>
+      <view class="tpl-info">
+        <view class="tpl-name">{{item.name}}</view>
+        <view class="tpl-desc">{{item.description}}</view>
+        <view class="tpl-cat">{{item.category}}</view>
+      </view>
+      <text class="tpl-go">→</text>
     </view>
   </view>
 </view>
