@@ -6,6 +6,8 @@ import com.cakeshop.entity.Tenant;
 import com.cakeshop.repository.TenantRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -23,6 +25,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE + 10)  // 比 Spring Security 晚,比 Controller 早
 public class TenantInterceptor implements HandlerInterceptor {
 
     @Autowired private TenantRepository tenantRepository;
