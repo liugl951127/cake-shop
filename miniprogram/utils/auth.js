@@ -200,7 +200,7 @@ function checkLogin() {
 
 function requireLogin() {
   if (!checkLogin()) {
-    wx.navigateTo({ url: '/pages/login/login' });
+    nav.to('/pages/login/login');
     return false;
   }
   return true;

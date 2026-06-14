@@ -178,8 +178,8 @@ Page({
   },
   setStore(store) { this.setData({ store }); },
 
-  selectAddress() { wx.navigateTo({ url: '/pages/address/list/list?select=1' }); },
-  selectStore() { wx.navigateTo({ url: '/pages/store/list/list' }); },
+  selectAddress() { nav.to('/pages/address/list/list?select=1'); },
+  selectStore() { nav.to('/pages/store/list/list'); },
 
   setPickup(e) {
     const v = e.currentTarget.dataset.v === 'true';

@@ -99,12 +99,12 @@ Page({
     }
     const item = { ...g, count: this.data.count, spec: this.data.selectedSpec };
     wx.setStorageSync('buyNow', item);
-    wx.navigateTo({ url: '/pages/order/order?from=buynow' });
+    nav.to('/pages/order/order?from=buynow');
   },
 
-  goHome() { wx.switchTab({ url: '/pages/index/index' }); },
-  goCart() { wx.switchTab({ url: '/pages/cart/cart' }); },
-  goAddress() { wx.navigateTo({ url: '/pages/address/list/list?select=1' }); },
+  goHome() { nav.tab('/pages/index/index'); },
+  goCart() { nav.tab('/pages/cart/cart'); },
+  goAddress() { nav.to('/pages/address/list/list?select=1'); },
 
   setAddress(addr) {
     const addressText = `${addr.name} ${addr.phone} ${addr.region} ${addr.detail}`;

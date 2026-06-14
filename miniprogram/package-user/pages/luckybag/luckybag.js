@@ -60,7 +60,7 @@ Page({
 
   goUse() {
     if (this.data.result && this.data.result.prize.type === 'coupon') {
-      wx.navigateTo({ url: '/pages/coupon/center/center' });
+      nav.to('/pages/coupon/center/center');
     } else {
       wx.showToast({ title: '已到账,请在"我的-积分"查看' });
     }

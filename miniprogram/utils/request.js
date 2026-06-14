@@ -22,7 +22,7 @@ function request(name, data = {}, options = {}) {
           clearAuth();
           if (!silent) {
             wx.showToast({ title: '登录已失效,请重新登录', icon: 'none' });
-            setTimeout(() => wx.navigateTo({ url: '/pages/login/login' }), 800);
+            setTimeout(() => nav.to('/pages/login/login'), 800);
           }
           return reject(result);
         }

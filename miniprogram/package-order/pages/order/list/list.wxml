@@ -1,0 +1,46 @@
+<view class="container">
+  <view class="head">
+    <text class="title">📋 我的订单</text>
+  </view>
+
+  <!-- Tab -->
+  <view class="tabs">
+    <text class="t {{tab === -1 ? 'on' : ''}}" bindtap="setTab" data-k="-1">全部</text>
+    <text class="t {{tab === 0 ? 'on' : ''}}" bindtap="setTab" data-k="0">待付款</text>
+    <text class="t {{tab === 1 ? 'on' : ''}}" bindtap="setTab" data-k="1">待发货</text>
+    <text class="t {{tab === 2 ? 'on' : ''}}" bindtap="setTab" data-k="2">待收货</text>
+    <text class="t {{tab === 3 ? 'on' : ''}}" bindtap="setTab" data-k="3">待评价</text>
+  </view>
+
+  <view wx:if="{{list.length}}">
+    <view class="o-card" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onDetail">
+      <view class="o-head">
+        <text class="o-no">{{item.orderNo}}</text>
+        <text class="o-status status-{{item.status}}">{{statusText(item.status)}}</text>
+      </view>
+      <view class="o-goods" wx:if="{{item.goods && item.goods.length}}">
+        <view class="og" wx:for="{{item.goods}}" wx:key="goodsId" wx:for-item="g">
+          <image class="og-img" src="{{g.image}}" mode="aspectFill"></image>
+          <view class="og-info">
+            <view class="og-name line-1">{{g.name}}</view>
+            <view class="og-price">¥<text class="font-num">{{g.price}}</text> × {{g.count}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="o-foot">
+        <text class="o-time">{{item.createTimeText}}</text>
+        <text class="o-total">共 <text class="font-num">{{item.goodsCount || (item.goods && item.goods.length) || 0}}</text> 件 · 实付 <text class="o-price">¥<text class="font-num">{{item.totalPrice}}</text></text>
+      </view>
+      <view class="o-actions" catchtap="">
+        <view class="o-btn primary" wx:if="{{item.status === 0}}" catchtap="onPay" data-id="{{item._id}}">去支付</view>
+        <view class="o-btn" wx:if="{{item.status === 0}}" catchtap="onCancel" data-id="{{item._id}}">取消</view>
+        <view class="o-btn primary" wx:if="{{item.status === 2 || item.status === 3}}" catchtap="onConfirm" data-id="{{item._id}}">确认收货</view>
+        <view class="o-btn" catchtap="onDetail" data-id="{{item._id}}">详情</view>
+      </view>
+    </view>
+  </view>
+  <view class="empty" wx:else>
+    <text class="empty-emoji">📋</text>
+    <text>暂无订单</text>
+  </view>
+</view>

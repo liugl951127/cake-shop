@@ -104,7 +104,7 @@ Page({
   },
 
   goSearch() {
-    wx.navigateTo({ url: '/pages/search/search' });
+    nav.to('/pages/search/search');
   },
 
   onIconTap(e) {
@@ -119,9 +119,9 @@ Page({
     }
   },
 
-  goSeckill() { wx.navigateTo({ url: '/pages/seckill/seckill' }); },
-  goGroup() { wx.navigateTo({ url: '/pages/group/list/list' }); },
-  goCoupon() { wx.navigateTo({ url: '/pages/coupon/center/center' }); },
-  goMember() { wx.navigateTo({ url: '/pages/member/member' }); },
-  goStore() { wx.navigateTo({ url: '/pages/store/list/list' }); }
+  goSeckill() { nav.to('/pages/seckill/seckill'); },
+  goGroup() { nav.to('/pages/group/list/list'); },
+  goCoupon() { nav.to('/pages/coupon/center/center'); },
+  goMember() { nav.to('/pages/member/member'); },
+  goStore() { nav.to('/pages/store/list/list'); }
 });

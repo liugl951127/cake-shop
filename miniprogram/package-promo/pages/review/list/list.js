@@ -95,6 +95,6 @@ Page({
 
   onAppend(e) {
     const id = e.currentTarget.dataset.id;
-    wx.navigateTo({ url: '/package-promo/pages/review/edit/edit?reviewId=' + id });
+    nav.to('/package-promo/pages/review/edit/edit?reviewId=' + id);
   }
 });

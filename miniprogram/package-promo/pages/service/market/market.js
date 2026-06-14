@@ -33,10 +33,10 @@ Page({
     } catch (e) {}
   },
 
-  goCustom() { wx.navigateTo({ url: '/package-promo/pages/service/custom/custom' }); },
-  goBulk() { wx.navigateTo({ url: '/package-promo/pages/service/bulk/bulk' }); },
-  goBirthday() { wx.navigateTo({ url: '/package-promo/pages/service/birthday/birthday' }); },
-  goSubscribe() { wx.navigateTo({ url: '/package-promo/pages/service/subscribe/subscribe' }); },
-  goGift() { wx.navigateTo({ url: '/package-promo/pages/service/gift/gift' }); },
-  goCust() { wx.switchTab({ url: '/pages/chat/session/session' }).catch(() => wx.navigateTo({ url: '/package-chat/pages/chat/session/session' })); }
+  goCustom() { nav.to('/package-promo/pages/service/custom/custom'); },
+  goBulk() { nav.to('/package-promo/pages/service/bulk/bulk'); },
+  goBirthday() { nav.to('/package-promo/pages/service/birthday/birthday'); },
+  goSubscribe() { nav.to('/package-promo/pages/service/subscribe/subscribe'); },
+  goGift() { nav.to('/package-promo/pages/service/gift/gift'); },
+  goCust() { nav.tab('/pages/chat/session/session').catch(() => nav.to('/package-chat/pages/chat/session/session')); }
 });

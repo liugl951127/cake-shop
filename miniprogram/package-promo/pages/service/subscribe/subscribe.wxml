@@ -1,0 +1,27 @@
+<view class="page">
+  <view class="head">
+    <text class="big">🔔 消息订阅</text>
+    <text class="sub">不错过任何优惠上新</text>
+  </view>
+
+  <view class="list">
+    <view class="item" wx:for="{{items}}" wx:key="id">
+      <view class="i-emoji">{{item.emoji}}</view>
+      <view class="i-info">
+        <view class="i-name">{{item.name}}</view>
+        <view class="i-desc">{{item.desc}}</view>
+      </view>
+      <view class="i-btn {{item.subscribed ? 'on' : ''}}" bindtap="onToggle" data-i="{{index}}">
+        {{item.subscribed ? '已订阅' : '订阅'}}
+      </view>
+    </view>
+  </view>
+
+  <view class="notice">
+    <text>💡 订阅后,我们会在以下情况主动通知您:</text>
+    <text>· 订单状态变化(支付/发货/送达)</text>
+    <text>· 优惠活动上新</text>
+    <text>· 优惠券即将过期</text>
+    <text>· 生日专属福利</text>
+  </view>
+</view>

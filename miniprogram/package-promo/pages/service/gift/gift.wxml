@@ -1,0 +1,49 @@
+<view class="page">
+  <view class="head">
+    <text class="big">🎁 送礼服务</text>
+    <text class="sub">匿名送心意,心意到 · 身份保密</text>
+  </view>
+
+  <view class="card">
+    <view class="form-item">
+      <text class="lbl">收礼人手机 <text class="req">*</text></text>
+      <input class="in" type="number" maxlength="11" placeholder="对方手机号" value="{{form.phone}}" bindinput="onK" data-k="phone"/>
+    </view>
+    <view class="form-item">
+      <text class="lbl">收礼人姓名</text>
+      <input class="in" placeholder="可不填" value="{{form.name}}" bindinput="onK" data-k="name"/>
+    </view>
+    <view class="form-item">
+      <text class="lbl">贺卡留言 <text class="req">*</text></text>
+      <textarea class="ta" placeholder="写下你的心意..." maxlength="200" value="{{form.message}}" bindinput="onK" data-k="message"/>
+    </view>
+    <view class="form-item">
+      <text class="lbl">是否匿名</text>
+      <view class="anon" bindtap="toggleAnon">
+        <text class="cb {{form.anonymous ? 'on' : ''}}">✓</text>
+        <text>匿名送礼,收礼人看不到您的信息</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="lbl">选择商品</view>
+    <view class="goods" bindtap="onPickGoods">
+      <image wx:if="{{picked.image}}" class="g-img" src="{{picked.image}}" mode="aspectFill"></image>
+      <view wx:else class="g-img g-add">+ 选择商品</view>
+      <view class="g-info" wx:if="{{picked.name}}">
+        <view class="g-name">{{picked.name}}</view>
+        <view class="g-price">¥{{picked.price}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="lbl">送达时间</view>
+    <picker mode="date" value="{{form.deliverDate}}" start="{{today}}" bindchange="onDate">
+      <view class="picker">{{form.deliverDate || '请选择日期'}}</view>
+    </picker>
+  </view>
+
+  <view class="submit" bindtap="onSubmit">🎁 立即送礼</view>
+</view>

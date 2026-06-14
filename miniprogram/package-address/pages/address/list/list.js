@@ -28,7 +28,7 @@ Page({
   },
 
   add() {
-    wx.navigateTo({ url: '/pages/address/edit/edit' });
+    nav.to('/pages/address/edit/edit');
   },
 
   edit(e) {

@@ -16,7 +16,7 @@ Page({
     this.setData({ loading: false });
   },
 
-  add() { wx.navigateTo({ url: '/pages/admin/edit/edit' }); },
+  add() { nav.to('/pages/admin/edit/edit'); },
   edit(e) { wx.navigateTo({ url: `/pages/admin/edit/edit?id=${e.currentTarget.dataset.id}` }); },
 
   async del(e) {

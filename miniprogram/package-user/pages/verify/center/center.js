@@ -41,7 +41,7 @@ Page({
     if (this.data.status.realName.verified) {
       return wx.showModal({ title: '已实名', content: `已认证: ${this.data.status.realName.name}`, showCancel: false });
     }
-    wx.navigateTo({ url: '/package-user/pages/verify/realname/realname' });
+    nav.to('/package-user/pages/verify/realname/realname');
   },
 
   goLiveness() {
@@ -51,13 +51,13 @@ Page({
     if (this.data.status.liveness.verified) {
       return wx.showModal({ title: '已通过', content: '已完成活体认证', showCancel: false });
     }
-    wx.navigateTo({ url: '/package-user/pages/verify/liveness/liveness' });
+    nav.to('/package-user/pages/verify/liveness/liveness');
   },
 
   goBank() {
     if (!this.data.status.realName.verified) {
       return wx.showToast({ title: '请先完成实名认证', icon: 'none' });
     }
-    wx.navigateTo({ url: '/package-user/pages/verify/bank/bank' });
+    nav.to('/package-user/pages/verify/bank/bank');
   }
 });

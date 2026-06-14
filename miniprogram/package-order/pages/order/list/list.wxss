@@ -1,0 +1,38 @@
+.container { min-height: 100vh; background: #f7f7f7; }
+.head { padding: 30rpx; }
+.head .title { font-size: 44rpx; font-weight: 700; color: #1a1a1a; }
+
+.tabs { display: flex; background: #fff; padding: 0 16rpx; }
+.t { flex: 1; text-align: center; padding: 24rpx 0; font-size: 26rpx; color: #666; position: relative; }
+.t.on { color: #ff7b9c; font-weight: 600; }
+.t.on::after { content: ''; position: absolute; bottom: 0; left: 30%; right: 30%; height: 4rpx; background: #ff7b9c; border-radius: 2rpx; }
+
+.o-card { background: #fff; margin: 20rpx; border-radius: 12rpx; padding: 24rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04); }
+.o-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16rpx; border-bottom: 1rpx solid #f5f5f5; }
+.o-no { color: #999; font-size: 24rpx; }
+.o-status { padding: 4rpx 16rpx; border-radius: 999rpx; font-size: 22rpx; background: #f5f5f5; color: #666; }
+.o-status.status-0 { background: #ffebee; color: #c62828; }
+.o-status.status-1, .o-status.status-2 { background: #e3f2fd; color: #1976d2; }
+.o-status.status-3 { background: #e8f5e9; color: #2e7d32; }
+.o-status.status-4 { background: #f3e5f5; color: #6a1b9a; }
+.o-status.status--1, .o-status.status--2 { background: #fafafa; color: #999; }
+
+.o-goods { padding: 16rpx 0; }
+.og { display: flex; padding: 12rpx 0; }
+.og-img { width: 120rpx; height: 120rpx; border-radius: 8rpx; background: #f5f5f5; }
+.og-info { flex: 1; margin-left: 16rpx; min-width: 0; }
+.og-name { font-size: 26rpx; color: #333; }
+.og-price { font-size: 24rpx; color: #999; margin-top: 6rpx; }
+
+.o-foot { display: flex; justify-content: space-between; align-items: center; padding-top: 16rpx; border-top: 1rpx solid #f5f5f5; font-size: 24rpx; color: #999; }
+.o-time { color: #999; }
+.o-total { color: #333; }
+.o-price { color: #ff5722; font-weight: 600; }
+
+.o-actions { display: flex; justify-content: flex-end; gap: 16rpx; margin-top: 16rpx; }
+.o-btn { padding: 12rpx 24rpx; border: 1rpx solid #ddd; border-radius: 999rpx; font-size: 24rpx; color: #666; }
+.o-btn.primary { background: linear-gradient(135deg, #ff7b9c, #ff9a6e); color: #fff; border: none; }
+
+.empty { text-align: center; padding: 100rpx 0; color: #999; }
+.empty-emoji { display: block; font-size: 120rpx; opacity: 0.5; margin-bottom: 16rpx; }
+.font-num { font-family: 'DIN Alternate', monospace; }

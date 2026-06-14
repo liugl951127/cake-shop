@@ -63,35 +63,35 @@ Page({
   // ===== 跳转 =====
   goLogin() {
     if (this.data.userInfo.openid) return;
-    wx.navigateTo({ url: '/pages/login/login' });
+    nav.to('/pages/login/login');
   },
-  goWallet() { wx.navigateTo({ url: '/package-user/pages/finance/center/center' }); },
-  goCoupon() { wx.navigateTo({ url: '/package-user/pages/coupon/center/center' }); },
-  goBalance() { wx.navigateTo({ url: '/package-user/pages/finance/center/center' }); },
-  goOrder() { wx.navigateTo({ url: '/package-order/pages/order/list/list' }); },
-  goOrderList() { wx.navigateTo({ url: '/package-order/pages/order/list/list' }); },
+  goWallet() { nav.to('/package-user/pages/finance/center/center'); },
+  goCoupon() { nav.to('/package-user/pages/coupon/center/center'); },
+  goBalance() { nav.to('/package-user/pages/finance/center/center'); },
+  goOrder() { nav.to('/package-order/pages/order/list/list'); },
+  goOrderList() { nav.to('/package-order/pages/order/list/list'); },
   goOrderType(e) {
     const i = e.currentTarget.dataset.i;
     wx.navigateTo({ url: `/package-order/pages/order/list/list?status=${i}` });
   },
-  goFavor() { wx.navigateTo({ url: '/pages/favor/favor' }).catch(() => {}); },
-  goMember() { wx.navigateTo({ url: '/package-user/pages/member/member' }); },
-  goStore() { wx.navigateTo({ url: '/package-user/pages/store/list/list' }); },
-  goInvite() { wx.navigateTo({ url: '/package-user/pages/invite/invite' }); },
-  goService() { wx.navigateTo({ url: '/package-promo/pages/service/market/market' }); },
-  goVerify() { wx.navigateTo({ url: '/package-user/pages/verify/center/center' }); },
-  goFinance() { wx.navigateTo({ url: '/package-user/pages/finance/center/center' }); },
+  goFavor() { nav.to('/pages/favor/favor').catch(() => {}); },
+  goMember() { nav.to('/package-user/pages/member/member'); },
+  goStore() { nav.to('/package-user/pages/store/list/list'); },
+  goInvite() { nav.to('/package-user/pages/invite/invite'); },
+  goService() { nav.to('/package-promo/pages/service/market/market'); },
+  goVerify() { nav.to('/package-user/pages/verify/center/center'); },
+  goFinance() { nav.to('/package-user/pages/finance/center/center'); },
   goChat() {
-    wx.navigateTo({ url: '/package-chat/pages/chat/session/session' }).catch(() => {
-      wx.switchTab({ url: '/pages/my/my' });
+    nav.to('/package-chat/pages/chat/session/session').catch(() => {
+      nav.tab('/pages/my/my');
     });
   },
-  goAddress() { wx.navigateTo({ url: '/package-address/pages/address/list/list' }); },
-  goAgreement() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=agreement' }); },
-  goPrivacy() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=privacy' }); },
-  goAbout() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=about' }); },
-  goSeckill() { wx.navigateTo({ url: '/package-user/pages/seckill/seckill' }); },
-  goGroup() { wx.navigateTo({ url: '/package-promo/pages/group/list/list' }); },
-  goLuckyBag() { wx.navigateTo({ url: '/package-user/pages/luckybag/luckybag' }); },
-  goCustom() { wx.navigateTo({ url: '/package-promo/pages/service/custom/custom' }); }
+  goAddress() { nav.to('/package-address/pages/address/list/list'); },
+  goAgreement() { nav.to('/package-cms/pages/cms/page/page?slug=agreement'); },
+  goPrivacy() { nav.to('/package-cms/pages/cms/page/page?slug=privacy'); },
+  goAbout() { nav.to('/package-cms/pages/cms/page/page?slug=about'); },
+  goSeckill() { nav.to('/package-user/pages/seckill/seckill'); },
+  goGroup() { nav.to('/package-promo/pages/group/list/list'); },
+  goLuckyBag() { nav.to('/package-user/pages/luckybag/luckybag'); },
+  goCustom() { nav.to('/package-promo/pages/service/custom/custom'); }
 });

@@ -147,6 +147,8 @@ exports.main = auth(async (event) => {
       items,
       address: address || null,
       remark: remark || '',
+      isGift: !!event.isGift,
+      giftMsg: event.giftMsg || '',
       timeText: timeText || '尽快送达',
       isSelfPickup: !!isSelfPickup,
       storeId: storeId || '',

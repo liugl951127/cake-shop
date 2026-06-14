@@ -51,10 +51,10 @@ Page({
     const selected = this.data.list.filter(i => i.selected);
     if (selected.length === 0) return wx.showToast({ title: '请选择商品', icon: 'none' });
     wx.setStorageSync('checkoutItems', selected);
-    wx.navigateTo({ url: '/pages/order/order?from=cart' });
+    nav.to('/pages/order/order?from=cart');
   },
 
   goShopping() {
-    wx.switchTab({ url: '/pages/goods/goods' });
+    nav.tab('/pages/goods/goods');
   }
 });
