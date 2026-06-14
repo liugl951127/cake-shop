@@ -1,0 +1,54 @@
+<view class="page">
+  <view class="hero">
+    <view class="h-label">可提现余额</view>
+    <view class="h-amount">¥{{account.available || '0.00'}}</view>
+    <view class="h-tip">提现最低 {{account.minWithdraw || 100}} 元,T+1 到账</view>
+    <view class="h-btns">
+      <view class="b" bindtap="onWithdraw">立即提现</view>
+      <view class="b outline" bindtap="onReconcile">对账</view>
+    </view>
+  </view>
+
+  <view class="stat">
+    <view class="s">
+      <text class="s-n">¥{{account.total || 0}}</text>
+      <text class="s-l">累计收入</text>
+    </view>
+    <view class="s">
+      <text class="s-n">¥{{account.commission || 0}}</text>
+      <text class="s-l">平台佣金</text>
+    </view>
+    <view class="s">
+      <text class="s-n">¥{{account.withdrawn || 0}}</text>
+      <text class="s-l">已提现</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="c-title">📊 今日 / 本月</view>
+    <view class="row"><text>今日营业额</text><text class="val">¥{{overview.today.revenue || 0}} · {{overview.today.count || 0}} 单</text></view>
+    <view class="row"><text>本月营业额</text><text class="val">¥{{overview.month.revenue || 0}} · {{overview.month.count || 0}} 单</text></view>
+    <view class="row"><text>待结算</text><text class="val orange">¥{{overview.pending.amount || 0}} · {{overview.pending.count || 0}} 单</text></view>
+  </view>
+
+  <view class="card">
+    <view class="c-title">📋 提现记录</view>
+    <view class="tab">
+      <text class="t {{wt === -999 ? 'on' : ''}}" bindtap="setWT" data-k="-999">全部</text>
+      <text class="t {{wt === 0 ? 'on' : ''}}" bindtap="setWT" data-k="0">审核中</text>
+      <text class="t {{wt === 1 ? 'on' : ''}}" bindtap="setWT" data-k="1">处理中</text>
+      <text class="t {{wt === 2 ? 'on' : ''}}" bindtap="setWT" data-k="2">已到账</text>
+    </view>
+    <view class="withdraws" wx:if="{{withdraws.length}}">
+      <view class="w" wx:for="{{withdraws}}" wx:key="_id">
+        <view class="w-top">
+          <text class="w-amt">¥{{item.amount}}</text>
+          <text class="w-status status-{{item.status}}">{{wtText(item.status)}}</text>
+        </view>
+        <view class="w-time">{{item.createTimeText}}</view>
+        <view class="w-time" wx:if="{{item.auditNote}}">备注: {{item.auditNote}}</view>
+      </view>
+    </view>
+    <view class="empty" wx:else>暂无记录</view>
+  </view>
+</view>

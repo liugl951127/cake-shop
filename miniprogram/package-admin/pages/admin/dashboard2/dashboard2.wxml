@@ -1,0 +1,129 @@
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="title">📊 实时数据大屏</view>
+    <view class="time">{{nowText}}</view>
+    <view class="refresh" bindtap="load">🔄 刷新</view>
+    <view class="theme" bindtap="toggleTheme">🌗</view>
+  </view>
+
+  <!-- 核心指标 -->
+  <view class="kpi-row">
+    <view class="kpi">
+      <view class="k-label">今日营业额</view>
+      <view class="k-value">¥{{data.sales.todayAmount || 0}}</view>
+      <view class="k-sub {{data.sales.dayOverDay >= 0 ? 'up' : 'down'}}">
+        {{data.sales.dayOverDay >= 0 ? '↑' : '↓'}} {{Math.abs(data.sales.dayOverDay || 0)}}% vs 昨日
+      </view>
+    </view>
+    <view class="kpi">
+      <view class="k-label">今日订单</view>
+      <view class="k-value">{{data.sales.todayCount || 0}}</view>
+      <view class="k-sub">客单 ¥{{data.sales.avgOrderAmount || 0}}</view>
+    </view>
+  </view>
+
+  <view class="kpi-row">
+    <view class="kpi sm">
+      <view class="k-label">7 日活跃</view>
+      <view class="k-value sm-v">{{data.users.active7Days || 0}}</view>
+    </view>
+    <view class="kpi sm">
+      <view class="k-label">新用户</view>
+      <view class="k-value sm-v">+{{data.users.newToday || 0}}</view>
+    </view>
+    <view class="kpi sm">
+      <view class="k-label">在线坐席</view>
+      <view class="k-value sm-v">{{data.customerService.onlineAgents || 0}}</view>
+    </view>
+  </view>
+
+  <!-- 7 日趋势 -->
+  <view class="card">
+    <view class="c-title">📈 7 日销售趋势</view>
+    <view class="chart">
+      <view class="bar-row" wx:for="{{data.trend}}" wx:key="date">
+        <text class="bar-date">{{item.date}}</text>
+        <view class="bar-track">
+          <view class="bar-fill" style="width: {{(item.amount / maxAmount * 100)}}%; height: 24rpx;"></view>
+        </view>
+        <text class="bar-val">¥{{item.amount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 漏斗 -->
+  <view class="card">
+    <view class="c-title">🌊 转化漏斗(今日)</view>
+    <view class="funnel">
+      <view class="f-step" wx:for="{{data.funnel}}" wx:key="name">
+        <view class="f-name">{{item.name}}</view>
+        <view class="f-bar" style="width: {{getFunnelWidth(item.value, data.funnel)}}%;"></view>
+        <view class="f-val">{{item.value}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 实时订单(滚动) -->
+  <view class="card">
+    <view class="c-title">⚡ 实时订单
+      <text class="c-tip">5 分钟内 · {{data.realtime.last5minCount || 0}} 单</text>
+    </view>
+    <scroll-view scroll-y class="realtime">
+      <view class="r-row" wx:for="{{data.realtime.last5minOrders}}" wx:key="_id">
+        <text class="r-amount">¥{{item.totalPrice}}</text>
+        <text class="r-no">{{item.orderNo}}</text>
+        <text class="r-time">{{item.timeText}}</text>
+      </view>
+      <view class="empty" wx:if="{{!data.realtime.last5minCount}}">暂无</view>
+    </scroll-view>
+  </view>
+
+  <!-- TOP 10 商品 -->
+  <view class="card">
+    <view class="c-title">🏆 今日热卖 TOP 10</view>
+    <view class="top-list">
+      <view class="t-row" wx:for="{{data.topGoods}}" wx:key="id" wx:if="{{index < 10}}">
+        <text class="t-rank {{index < 3 ? 'top3' : ''}}">{{index + 1}}</text>
+        <image class="t-img" src="{{item.image || '/images/placeholder.png'}}" mode="aspectFill"></image>
+        <view class="t-info">
+          <view class="t-name">{{item.name}}</view>
+          <view class="t-sub">销 {{item.count}} 件 · 销售额 ¥{{item.amount}}</view>
+        </view>
+      </view>
+      <view class="empty" wx:if="{{!data.topGoods.length}}">暂无数据</view>
+    </view>
+  </view>
+
+  <!-- 客服状态 -->
+  <view class="card">
+    <view class="c-title">💬 客服状态</view>
+    <view class="cs-row">
+      <view class="cs">
+        <text class="cs-n">{{data.customerService.onlineAgents || 0}}</text>
+        <text class="cs-l">在线坐席</text>
+      </view>
+      <view class="cs">
+        <text class="cs-n">{{data.customerService.activeSessions || 0}}</text>
+        <text class="cs-l">进行中会话</text>
+      </view>
+      <view class="cs">
+        <text class="cs-n">{{data.customerService.pendingSessions || 0}}</text>
+        <text class="cs-l">待接入</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 营销效果 -->
+  <view class="card">
+    <view class="c-title">🎯 营销效果(今日)</view>
+    <view class="m-row">
+      <text class="m-l">活动订单</text><text class="m-v">{{data.marketing.promoOrders || 0}}</text>
+    </view>
+    <view class="m-row">
+      <text class="m-l">活动订单占比</text><text class="m-v">{{data.marketing.promoConversion || 0}}%</text>
+    </view>
+    <view class="m-row">
+      <text class="m-l">优惠总额</text><text class="m-v red">¥{{data.marketing.promoSavedAmount || 0}}</text>
+    </view>
+  </view>
+</view>

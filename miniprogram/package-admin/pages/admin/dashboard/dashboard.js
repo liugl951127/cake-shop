@@ -26,6 +26,8 @@ Page({
     return Math.max(10, (count / max) * 70);
   },
 
+  goRealtime() { wx.navigateTo({ url: '/package-admin/pages/admin/dashboard2/dashboard2' }); },
+
   fWidth(rate) {
     return Math.max(20, Math.min(100, Number(rate) || 0));
   }

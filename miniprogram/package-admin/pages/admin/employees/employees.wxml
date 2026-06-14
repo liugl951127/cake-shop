@@ -1,0 +1,31 @@
+<view class="page">
+  <view class="head">
+    <view class="big">👥 员工权限管理</view>
+    <view class="sub">RBAC · 6 角色 · 22 权限点</view>
+  </view>
+
+  <view class="add-btn" bindtap="onAdd">+ 新增员工</view>
+
+  <view class="role-card">
+    <view class="r-row" wx:for="{{roles}}" wx:key="key">
+      <text class="r-name">{{item.name}}</text>
+      <text class="r-perm">{{item.perms}} 个权限</text>
+    </view>
+  </view>
+
+  <view class="list">
+    <view class="emp" wx:for="{{list}}" wx:key="_id">
+      <view class="e-info">
+        <view class="e-name">{{item.name}}</view>
+        <view class="e-phone">{{item.phone}}</view>
+      </view>
+      <view class="e-role role-{{item.role}}">{{roleMap[item.role] || item.role}}</view>
+      <view class="e-status" wx:if="{{item.status === 0}}">已禁用</view>
+      <view class="e-act">
+        <text class="e-btn" catchtap="onToggle" data-i="{{index}}">{{item.status === 1 ? '禁用' : '启用'}}</text>
+        <text class="e-btn" catchtap="onChangeRole" data-i="{{index}}">改角色</text>
+      </view>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{!list.length}}">暂无员工</view>
+</view>

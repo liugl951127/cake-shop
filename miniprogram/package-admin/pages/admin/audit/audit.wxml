@@ -1,0 +1,33 @@
+<view class="page">
+  <view class="head">
+    <view class="big">📋 审计日志</view>
+    <view class="sub">所有敏感操作留痕,可追溯</view>
+  </view>
+
+  <view class="filters">
+    <text class="f {{filter === '' ? 'on' : ''}}" bindtap="setFilter" data-k="">全部</text>
+    <text class="f {{filter === 'order' ? 'on' : ''}}" bindtap="setFilter" data-k="order">订单</text>
+    <text class="f {{filter === 'goods' ? 'on' : ''}}" bindtap="setFilter" data-k="goods">商品</text>
+    <text class="f {{filter === 'finance' ? 'on' : ''}}" bindtap="setFilter" data-k="finance">财务</text>
+    <text class="f {{filter === 'user' ? 'on' : ''}}" bindtap="setFilter" data-k="user">用户</text>
+  </view>
+
+  <view class="list">
+    <view class="l-row" wx:for="{{list}}" wx:key="_id">
+      <view class="l-head">
+        <text class="l-action action-{{item.action}}">{{item.action}}</text>
+        <text class="l-time">{{item.createTimeText}}</text>
+      </view>
+      <view class="l-detail">
+        <text>操作人: {{item.operatorName || item.operatorId || 'system'}}</text>
+        <text wx:if="{{item.targetType}}"> · 目标: {{item.targetType}}#{{item.targetId}}</text>
+      </view>
+      <view class="l-detail" wx:if="{{item.detail}}">
+        <text>详情: {{item.detail}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{!list.length}}">暂无日志</view>
+
+  <view class="more" bindtap="loadMore" wx:if="{{hasMore}}">加载更多</view>
+</view>

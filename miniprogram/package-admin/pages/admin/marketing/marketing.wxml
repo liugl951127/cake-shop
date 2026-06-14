@@ -1,0 +1,43 @@
+<view class="page">
+  <view class="head">
+    <view class="big">🎯 营销自动化</view>
+    <view class="sub">每天 8:00 自动运行,以下为各规则近 7 天效果</view>
+  </view>
+
+  <view class="trigger-bar">
+    <view class="t-btn" bindtap="onRunAll">⚡ 立即执行</view>
+    <view class="t-btn" bindtap="onDryRun">🧪 模拟演练</view>
+  </view>
+
+  <view class="rule-list">
+    <view class="r" wx:for="{{rules}}" wx:key="code">
+      <view class="r-head">
+        <text class="r-icon">{{item.icon}}</text>
+        <text class="r-name">{{item.name}}</text>
+        <text class="r-tag {{item.running ? 'on' : ''}}" bindtap="onRunOne" data-c="{{item.code}}">
+          {{item.running ? '运行中' : '执行'}}
+        </text>
+      </view>
+      <view class="r-desc">{{item.description}}</view>
+      <view class="r-stat">
+        <view class="rs">
+          <text class="rs-n">{{item.totalSent || 0}}</text>
+          <text class="rs-l">近 7 天触达</text>
+        </view>
+        <view class="rs">
+          <text class="rs-n">{{item.totalConverted || 0}}</text>
+          <text class="rs-l">转化订单</text>
+        </view>
+        <view class="rs">
+          <text class="rs-n">{{item.conversionRate || 0}}%</text>
+          <text class="rs-l">转化率</text>
+        </view>
+      </view>
+      <view class="r-log" wx:if="{{item.lastRunText}}">
+        上次执行: {{item.lastRunText}} · 触达 {{item.lastSent || 0}}
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!rules.length}}">暂无规则</view>
+</view>

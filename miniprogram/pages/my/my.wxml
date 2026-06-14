@@ -89,6 +89,10 @@
       <view class="f-icon" style="background:#e0fff0">🛡️</view>
       <text>实名认证</text>
     </view>
+    <view class="f-item" bindtap="goFinance">
+      <view class="f-icon" style="background:#e6fff5">💰</view>
+      <text>财务中心</text>
+    </view>
     <view class="f-item" bindtap="goFavor">
       <view class="f-icon" style="background:#e6f7e6">♥</view>
       <text>我的收藏</text>

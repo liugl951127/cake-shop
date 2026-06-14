@@ -43,7 +43,8 @@
         "pages/verify/center/center",
         "pages/verify/realname/realname",
         "pages/verify/liveness/liveness",
-        "pages/verify/bank/bank"
+        "pages/verify/bank/bank",
+        "pages/finance/center/center"
       ]
     },
     {
@@ -78,6 +79,10 @@
         "pages/admin/goods/goods",
         "pages/admin/order/order",
         "pages/admin/edit/edit",
+        "pages/admin/dashboard2/dashboard2",
+        "pages/admin/marketing/marketing",
+        "pages/admin/employees/employees",
+        "pages/admin/audit/audit",
         "pages/admin/dashboard/dashboard"
       ]
     },

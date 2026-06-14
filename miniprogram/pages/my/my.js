@@ -44,6 +44,7 @@ Page({
   goInvite() { wx.navigateTo({ url: '/package-user/pages/invite/invite' }); },
   goService() { wx.navigateTo({ url: '/package-promo/pages/service/market/market' }); },
   goVerify() { wx.navigateTo({ url: '/package-user/pages/verify/center/center' }); },
+  goFinance() { wx.navigateTo({ url: '/package-user/pages/finance/center/center' }); },
 
   goOrderList() { wx.switchTab({ url: '/pages/order/list/list' }); },
   goAddress() { wx.navigateTo({ url: '/package-address/pages/address/list/list' }); },
