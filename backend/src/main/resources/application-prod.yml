@@ -1,0 +1,19 @@
+# 生产环境配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:rm-xxxx.mysql.rds.aliyuncs.com}:${MYSQL_PORT:3306}/${MYSQL_DB:cake_shop}?useSSL=true&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8
+    username: ${MYSQL_USER:cake_shop}
+    password: ${MYSQL_PASSWORD}
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 10
+      min-idle: 10
+      max-active: 50
+      max-wait: 30000
+
+  redis:
+    host: ${REDIS_HOST:r-xxxx.redis.rds.aliyuncs.com}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD}
+    timeout: 5000ms

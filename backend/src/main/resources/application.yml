@@ -1,0 +1,113 @@
+# ============================================
+# 甜心蛋糕 - Spring Boot 配置
+# ============================================
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  tomcat:
+    max-threads: 200
+    max-connections: 2000
+
+spring:
+  application:
+    name: cakeshop-backend
+  profiles:
+    active: dev
+
+  # Jackson
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: NON_NULL
+
+  # 文件上传
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+  # 业务日志
+  output:
+    ansi:
+      enabled: always
+
+# ============================================
+# 自定义配置
+# ============================================
+cakeshop:
+  # 业务配置
+  business:
+    commission-rate: 0.05          # 平台佣金 5%
+    min-withdraw: 100              # 最低提现
+    max-withdraw: 50000            # 单次最高提现
+    order-expire-minutes: 30       # 订单过期(分)
+    auto-confirm-days: 7           # 自动确认收货(天)
+
+  # 鉴权
+  security:
+    jwt-secret: ${JWT_SECRET:cake-shop-jwt-secret-2024-change-me}
+    jwt-ttl: 604800000             # 7 天
+    jwt-header: Authorization
+    jwt-prefix: "Bearer "
+    ignore-urls:
+      - /auth/login
+      - /auth/refresh
+      - /doc.html
+      - /swagger-ui/**
+      - /v3/api-docs/**
+      - /v2/api-docs/**
+      - /webjars/**
+
+  # RBAC 角色权限
+  rbac:
+    super-admin: ["*"]
+    admin: ["order:*", "goods:*", "user:*", "marketing:*", "finance:read", "agent:*"]
+    operator: ["goods:write", "order:read", "marketing:write", "user:read"]
+    finance: ["finance:*", "order:read"]
+    customer-service: ["agent:read", "agent:write", "user:read", "order:read"]
+    readonly: ["*:read"]
+
+  # 微信云函数 HTTP 触发器
+  wechat:
+    cloudbase:
+      env-id: ${TCB_ENV_ID:cake-shop-prod-xxxx}
+      api-base: https://${TCB_ENV_ID:cake-shop-prod-xxxx}.ap-shanghai.tcb-api.tencentcloud.com
+      timeout-ms: 8000
+
+# ============================================
+# MyBatis-Plus
+# ============================================
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.cakeshop.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    mapper-locations: classpath*:mapper/**/*.xml
+
+# ============================================
+# 日志
+# ============================================
+logging:
+  level:
+    root: INFO
+    com.cakeshop: DEBUG
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# ============================================
+# SpringDoc / Knife4j
+# ============================================
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
