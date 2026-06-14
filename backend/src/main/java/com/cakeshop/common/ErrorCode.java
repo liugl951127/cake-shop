@@ -39,6 +39,22 @@ public enum ErrorCode {
     INVENTORY_NOT_ENOUGH(2301, "库存不足"),
     PERMISSION_DENIED(2401, "权限不足"),
 
+    // 客服/聊天 3xxx
+    CHAT_SESSION_NOT_FOUND(3001, "会话不存在"),
+    CHAT_SESSION_CLOSED(3002, "会话已关闭"),
+    CHAT_NOT_PARTICIPANT(3003, "非会话参与方"),
+    CHAT_MESSAGE_TOO_LONG(3004, "消息内容过长"),
+    CHAT_MESSAGE_INVALID(3005, "消息格式错误"),
+    CHAT_UPLOAD_FAILED(3006, "文件上传失败"),
+    CHAT_RICH_TEXT_INVALID(3007, "富文本格式不合法"),
+
+    // 行为埋点 4xxx
+    BEHAVIOR_LOG_INVALID(4001, "行为日志格式错误"),
+    BEHAVIOR_LOG_TOO_LARGE(4002, "行为日志过大"),
+    BEHAVIOR_DEVICE_NOT_FOUND(4003, "设备指纹未识别"),
+    HISTORY_QUERY_TOO_MANY(4101, "查询范围过大"),
+    HISTORY_EXPORT_FAILED(4102, "导出失败"),
+
     // 系统错误 5xxx
     SYSTEM_ERROR(5000, "系统异常"),
     DB_ERROR(5001, "数据库异常"),

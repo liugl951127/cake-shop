@@ -1,0 +1,9 @@
+{
+  "name": "cake-shop-cf",
+  "version": "1.0.0",
+  "description": "Cake Shop Cloud Function",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

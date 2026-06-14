@@ -38,6 +38,22 @@ const ErrorCode = {
   INVENTORY_NOT_ENOUGH: 2301,
   PERMISSION_DENIED: 2401,
 
+  // 客服/聊天 3xxx
+  CHAT_SESSION_NOT_FOUND: 3001,
+  CHAT_SESSION_CLOSED: 3002,
+  CHAT_NOT_PARTICIPANT: 3003,
+  CHAT_MESSAGE_TOO_LONG: 3004,
+  CHAT_MESSAGE_INVALID: 3005,
+  CHAT_UPLOAD_FAILED: 3006,
+  CHAT_RICH_TEXT_INVALID: 3007,
+
+  // 行为埋点 4xxx
+  BEHAVIOR_LOG_INVALID: 4001,
+  BEHAVIOR_LOG_TOO_LARGE: 4002,
+  BEHAVIOR_DEVICE_NOT_FOUND: 4003,
+  HISTORY_QUERY_TOO_MANY: 4101,
+  HISTORY_EXPORT_FAILED: 4102,
+
   // 系统错误 5xxx
   SYSTEM_ERROR: 5000,
   DB_ERROR: 5001,
@@ -74,6 +90,20 @@ const ErrorMessage = {
   [ErrorCode.POINTS_NOT_ENOUGH]: '积分不足',
   [ErrorCode.INVENTORY_NOT_ENOUGH]: '库存不足',
   [ErrorCode.PERMISSION_DENIED]: '权限不足',
+  // 客服 3xxx
+  [ErrorCode.CHAT_SESSION_NOT_FOUND]: '会话不存在',
+  [ErrorCode.CHAT_SESSION_CLOSED]: '会话已关闭',
+  [ErrorCode.CHAT_NOT_PARTICIPANT]: '非会话参与方',
+  [ErrorCode.CHAT_MESSAGE_TOO_LONG]: '消息内容过长',
+  [ErrorCode.CHAT_MESSAGE_INVALID]: '消息格式错误',
+  [ErrorCode.CHAT_UPLOAD_FAILED]: '文件上传失败',
+  [ErrorCode.CHAT_RICH_TEXT_INVALID]: '富文本格式不合法',
+  // 行为 4xxx
+  [ErrorCode.BEHAVIOR_LOG_INVALID]: '行为日志格式错误',
+  [ErrorCode.BEHAVIOR_LOG_TOO_LARGE]: '行为日志过大',
+  [ErrorCode.BEHAVIOR_DEVICE_NOT_FOUND]: '设备指纹未识别',
+  [ErrorCode.HISTORY_QUERY_TOO_MANY]: '查询范围过大',
+  [ErrorCode.HISTORY_EXPORT_FAILED]: '导出失败',
   [ErrorCode.SYSTEM_ERROR]: '系统异常',
   [ErrorCode.DB_ERROR]: '数据库异常',
   [ErrorCode.CACHE_ERROR]: '缓存异常',

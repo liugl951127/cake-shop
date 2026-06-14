@@ -1,4 +1,6 @@
 // app.js
+const tracker = require('./utils/tracker.js');
+
 App({
   globalData: {
     userInfo: null,
@@ -19,6 +21,9 @@ App({
     this.globalData.lang = lang;
     this.checkUpdate();
     this.silentLogin();
+    // 初始化行为埋点 SDK
+    tracker.init({ app: this });
+    tracker.login('wechat-silent');
   },
 
   onShow() {

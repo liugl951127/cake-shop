@@ -1,0 +1,64 @@
+<!--  rich-message  富文本消息渲染组件  -->
+<view class="rich-msg {{className}}" wx:if="{{nodes && nodes.length}}">
+  <block wx:for="{{nodes}}" wx:key="*this" wx:for-item="n">
+    <!-- 文本/格式 -->
+    <text wx:if="{{n.t==='text'}}" class="rk rk-text" decode>{{n.v}}</text>
+    <text wx:elif="{{n.t==='b'}}" class="rk rk-b" decode>{{n.v}}</text>
+    <text wx:elif="{{n.t==='i'}}" class="rk rk-i" decode>{{n.v}}</text>
+    <text wx:elif="{{n.t==='u'}}" class="rk rk-u" decode>{{n.v}}</text>
+    <text wx:elif="{{n.t==='s'}}" class="rk rk-s" decode>{{n.v}}</text>
+    <text wx:elif="{{n.t==='code'}}" class="rk rk-code" decode>{{n.v}}</text>
+    <text wx:elif="{{n.t==='at'}}" class="rk rk-at" decode>@{{n.v}}</text>
+    <text wx:elif="{{n.t==='emoji'}}" class="rk rk-emoji">{{n.v}}</text>
+    <text wx:elif="{{n.t==='br'}}">\n</text>
+
+    <!-- 链接 -->
+    <text wx:elif="{{n.t==='a'}}"
+      class="rk rk-link"
+      data-href="{{n.a.href}}"
+      bindtap="onTapLink"
+      decode>{{n.v}}</text>
+
+    <!-- 图片 -->
+    <image wx:elif="{{n.t==='img'}}"
+      class="rk rk-img"
+      src="{{n.v}}"
+      mode="{{n.a && n.a.mode || 'widthFix'}}"
+      data-url="{{n.v}}"
+      data-list="{{imgList}}"
+      bindtap="onPreviewImage"
+      lazy-load="true" />
+
+    <!-- 引用 -->
+    <view wx:elif="{{n.t==='blockquote'}}" class="rk rk-bq">
+      <text decode>{{n.v}}</text>
+    </view>
+
+    <!-- 商品卡 -->
+    <view wx:elif="{{n.t==='product_card'}}"
+      class="rk rk-product"
+      data-id="{{n.v}}"
+      bindtap="onTapProduct">
+      <image class="rk-p-thumb" src="{{n.a.image}}" mode="aspectFill" />
+      <view class="rk-p-info">
+        <view class="rk-p-name">{{n.a.name}}</view>
+        <view class="rk-p-price">¥{{n.a.price}}</view>
+      </view>
+    </view>
+
+    <!-- 订单卡 -->
+    <view wx:elif="{{n.t==='order_card'}}"
+      class="rk rk-order"
+      data-id="{{n.v}}"
+      bindtap="onTapOrder">
+      <view class="rk-o-title">订单 {{n.a.orderNo}}</view>
+      <view class="rk-o-status">{{n.a.statusText}}</view>
+      <view class="rk-o-amount">¥{{n.a.total}}</view>
+    </view>
+  </block>
+</view>
+
+<!-- 退化:普通文本 -->
+<view wx:elif="{{content}}" class="rich-msg rich-fallback">
+  <text decode user-select="{{selectable}}">{{content}}</text>
+</view>
