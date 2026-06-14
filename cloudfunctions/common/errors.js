@@ -104,6 +104,16 @@ const ErrorCode = {
   TRANSFER_NOT_ALLOWED: 4903,
   TRANSFER_LOG_MISSING: 4904,
 
+  // 会话生命周期 50xx
+  SESSION_ALREADY_CLOSED: 5001,
+  SESSION_ALREADY_TRANSFERRED: 5002,
+  SESSION_NOT_ASSIGNED: 5003,
+  SESSION_NO_PERMISSION: 5004,
+  HANGUP_NOT_ALLOWED: 5005,
+  HANGUP_BY_OTHER: 5006,
+  WECOM_MSG_TYPE_INVALID: 5007,
+  WECOM_REPLY_RATE_LIMIT: 5008,
+
   // 系统错误 5xxx
   SYSTEM_ERROR: 5000,
   DB_ERROR: 5001,
@@ -196,6 +206,15 @@ const ErrorMessage = {
   [ErrorCode.TRANSFER_FAILED]: '转接失败',
   [ErrorCode.TRANSFER_NOT_ALLOWED]: '不允许转接',
   [ErrorCode.TRANSFER_LOG_MISSING]: '转接记录缺失',
+  // 会话生命周期
+  [ErrorCode.SESSION_ALREADY_CLOSED]: '会话已关闭',
+  [ErrorCode.SESSION_ALREADY_TRANSFERRED]: '会话已转接',
+  [ErrorCode.SESSION_NOT_ASSIGNED]: '会话未分配',
+  [ErrorCode.SESSION_NO_PERMISSION]: '无会话权限',
+  [ErrorCode.HANGUP_NOT_ALLOWED]: '不允许挂断',
+  [ErrorCode.HANGUP_BY_OTHER]: '已被对方挂断',
+  [ErrorCode.WECOM_MSG_TYPE_INVALID]: '企微消息类型无效',
+  [ErrorCode.WECOM_REPLY_RATE_LIMIT]: '回复过于频繁',
   [ErrorCode.SYSTEM_ERROR]: '系统异常',
   [ErrorCode.DB_ERROR]: '数据库异常',
   [ErrorCode.CACHE_ERROR]: '缓存异常',

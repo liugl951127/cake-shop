@@ -1,0 +1,37 @@
+<!--  挂断 / 评价 组件  -->
+<view class="hu-bar" wx:if="{{visible}}">
+  <view class="hu-state {{statusClass}}" wx:if="{{status}}">
+    <text class="hu-dot"></text>
+    <text>{{statusText}}</text>
+  </view>
+  <view class="hu-actions">
+    <button class="hu-btn" bindtap="onRate" wx:if="{{closed}}" disabled>
+      ⭐ 评价({{rateScore || '未评'}})
+    </button>
+    <button class="hu-btn primary" bindtap="onHangup" wx:else loading="{{loading}}">
+      📞 结束咨询
+    </button>
+  </view>
+</view>
+
+<!-- 评价弹层 -->
+<view class="hu-mask" wx:if="{{showRate}}" bindtap="closeRate"></view>
+<view class="hu-rate {{showRate ? 'show' : ''}}">
+  <view class="hu-rate-title">为本次服务评分</view>
+  <view class="hu-rate-stars">
+    <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+      class="hu-star {{rateScore >= item ? 'on' : ''}}"
+      bindtap="setRate" data-s="{{item}}">★</text>
+  </view>
+  <view class="hu-rate-tags">
+    <text wx:for="{{rateTagsOptions}}" wx:key="*this"
+      class="hu-tag {{rateTags.includes(item) ? 'on' : ''}}"
+      bindtap="toggleTag" data-t="{{item}}">{{item}}</text>
+  </view>
+  <textarea class="hu-rate-comment" placeholder="说点什么吧..." maxlength="200"
+    value="{{rateComment}}" bindinput="onRateComment"/>
+  <view class="hu-rate-btns">
+    <view class="hu-rate-btn" bindtap="closeRate">跳过</view>
+    <view class="hu-rate-btn primary" bindtap="submitRate">提交</view>
+  </view>
+</view>

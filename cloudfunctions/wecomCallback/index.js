@@ -118,6 +118,59 @@ async function handleEvent(evt) {
       logger.warn('wecom save chat fail', { e: e.message });
     }
   }
+  // 会话状态变更: 客服接起 / 关闭 / 转接
+  else if (evt.Event === 'kf_session_change' || evt.Event === 'kf_session') {
+    const { Status, HangupBy } = require('../common/session.js');
+    const sessionId = evt.OpenKfId && evt.ExternalUserId
+      ? `wecom_${evt.OpenKfId}_${evt.ExternalUserId}`
+      : null;
+    if (!sessionId) return;
+    // evt.ChangeType:
+    //   servicer_change / servicer_close / client_close / transfer
+    const changeType = evt.ChangeType || '';
+    if (changeType === 'servicer_close' || changeType === 'client_close') {
+      // 客服/客户在企微端关闭
+      const status = 'closed';
+      const closedBy = changeType === 'client_close' ? HangupBy.CLIENT : HangupBy.AGENT;
+      try {
+        const sess = await db.collection('chat_sessions').where({ wecomSessionId: sessionId }).limit(1).get();
+        if (sess.data && sess.data.length) {
+          await db.collection('chat_sessions').doc(sess.data[0]._id).update({
+            data: {
+              status, closedAt: now, closedBy,
+              updatedAt: now
+            }
+          });
+          // 系统消息
+          await db.collection('chat_messages').add({
+            data: {
+              sessionId: sess.data[0]._id,
+              type: 'system', from: 'system', fromRole: 'system',
+              content: changeType === 'client_close' ? '客户已结束咨询' : '客服已结束服务',
+              ts: now, created: now
+            }
+          });
+        }
+      } catch (e) {
+        logger.warn('close session fail', { e: e.message });
+      }
+    } else if (changeType === 'servicer_change' || changeType === 'transfer') {
+      // 转接
+      try {
+        const sess = await db.collection('chat_sessions').where({ wecomSessionId: sessionId }).limit(1).get();
+        if (sess.data && sess.data.length) {
+          await db.collection('chat_sessions').doc(sess.data[0]._id).update({
+            data: {
+              servicerUserId: evt.NewServicerUserId || '',
+              transferredToWeCom: true,
+              transferredAt: now,
+              updatedAt: now
+            }
+          });
+        }
+      } catch (e) {}
+    }
+  }
   // 其他事件暂只记录
   try {
     await db.collection('wecom_events').add({

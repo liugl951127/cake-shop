@@ -33,12 +33,20 @@
   </scroll-view>
 
   <!-- 转人工按钮 (v20+) -->
-  <transfer-human wx:if="{{sessionId && !transferredToWeCom}}"
+  <transfer-human wx:if="{{sessionId && !transferredToWeCom && status !== 'closed'}}"
     session-id="{{sessionId}}"
     user-id="{{userId}}"
     openid="{{openid}}"
     bind:success="onTransferSuccess"
     bind:error="onTransferError" />
+
+  <!-- 挂断按钮 + 评价 (v21+) -->
+  <hangup-bar wx:if="{{sessionId}}"
+    session-id="{{sessionId}}"
+    user-id="{{userId}}"
+    status="{{status}}"
+    bind:hangup="onHangup"
+    bind:rated="onRated" />
 
   <!-- 评价弹层 -->
   <view class="mask" wx:if="{{showRate}}" bindtap="closeRate"></view>

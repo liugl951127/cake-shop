@@ -204,6 +204,65 @@ async function sendKfMessage(openKfId, toExternalUserId, msgType, msgBody) {
   return res;
 }
 
+// ============== 客服会话状态 ==============
+/**
+ * 获取客服会话状态
+ *   GET /cgi-bin/kf/session/get
+ */
+async function getKfSession(openKfId, externalUserId) {
+  const token = await getAccessToken();
+  const url = `${WECOM_API}/cgi-bin/kf/session/get?access_token=${token}` +
+              `&open_kfid=${encodeURIComponent(openKfId)}` +
+              `&external_userid=${encodeURIComponent(externalUserId)}`;
+  const res = await request(url);
+  if (res.errcode !== 0) {
+    logger.warn('wecom session get fail', { errcode: res.errcode, errmsg: res.errmsg });
+    throw new BizError(ErrorCode.WECOM_API_ERROR, res.errmsg);
+  }
+  return res;
+}
+
+/**
+ * 客服关闭会话(主动挂断)
+ *   POST /cgi-bin/kf/session/close
+ */
+async function closeKfSession(openKfId, externalUserId, servicerUserId) {
+  const token = await getAccessToken();
+  const body = JSON.stringify({
+    open_kfid: openKfId,
+    external_userid: externalUserId,
+    servicer_userid: servicerUserId
+  });
+  const res = await request(`${WECOM_API}/cgi-bin/kf/session/close?access_token=${token}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+  if (res.errcode !== 0) {
+    logger.error('wecom close fail', { errcode: res.errcode, errmsg: res.errmsg });
+    throw new BizError(ErrorCode.WECOM_API_ERROR, res.errmsg);
+  }
+  return res;
+}
+
+/**
+ * 客服转接会话
+ *   POST /cgi-bin/kf/session/transfer
+ */
+async function transferKfSession(openKfId, externalUserId, fromServicerUserId, toServicerUserId) {
+  const token = await getAccessToken();
+  const body = JSON.stringify({
+    open_kfid: openKfId,
+    external_userid: externalUserId,
+    servicer_userid: fromServicerUserId,
+    new_servicer_userid: toServicerUserId
+  });
+  const res = await request(`${WECOM_API}/cgi-bin/kf/session/transfer?access_token=${token}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+  if (res.errcode !== 0) {
+    logger.error('wecom transfer fail', { errcode: res.errcode, errmsg: res.errmsg });
+    throw new BizError(ErrorCode.WECOM_API_ERROR, res.errmsg);
+  }
+  return res;
+}
+
 // ============== 客服链接(小程序用) ==============
 /**
  * 生成小程序"联系客服"参数
@@ -237,5 +296,8 @@ module.exports = {
   delKfAccount,
   sendKfMessage,
   getKfChatLink,
+  getKfSession,
+  closeKfSession,
+  transferKfSession,
   WECOM_API
 };

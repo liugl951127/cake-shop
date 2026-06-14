@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="sakura">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>企微客服台 · 甜心蛋糕管理后台</title>
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <style>
+    .agent-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      height: calc(100vh - 180px);
+    }
+    @media (max-width: 768px) {
+      .agent-layout { grid-template-columns: 1fr; }
+    }
+    .session-list {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow-y: auto;
+    }
+    .session-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .session-item:hover { background: var(--bg-secondary); }
+    .session-item.active {
+      background: var(--primary-50);
+      border-left: 3px solid var(--primary);
+    }
+    .session-item .name { font-weight: 500; font-size: 14px; }
+    .session-item .preview {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .session-item .meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+    .session-item .unread {
+      background: var(--danger);
+      color: white;
+      border-radius: 10px;
+      padding: 0 6px;
+      font-size: 11px;
+    }
+
+    .chat-panel {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    .msg {
+      margin-bottom: 12px;
+      display: flex;
+    }
+    .msg.me { justify-content: flex-end; }
+    .msg .bubble {
+      max-width: 60%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+    .msg.me .bubble {
+      background: var(--primary-gradient);
+      color: white;
+    }
+    .msg.system { justify-content: center; }
+    .msg.system .bubble {
+      background: transparent;
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+    .msg .time { font-size: 10px; color: var(--text-tertiary); margin-top: 4px; }
+    .msg.me .time { text-align: right; }
+
+    .chat-input {
+      padding: 12px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input input { flex: 1; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar"></aside>
+    <div class="main">
+      <div class="topbar"></div>
+      <div class="content">
+        <div class="page-header">
+          <div>
+            <div class="page-title">企微客服台</div>
+            <div class="page-subtitle">会话列表 + 主动发消息 + 主动挂断</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn" onclick="loadSessions()">🔄 刷新</button>
+          </div>
+        </div>
+
+        <div class="agent-layout">
+          <div class="session-list" id="sessionList">
+            <div class="empty">加载中...</div>
+          </div>
+
+          <div class="chat-panel">
+            <div class="chat-header">
+              <div>
+                <div id="chatTitle" style="font-weight:600">选择一个会话</div>
+                <div id="chatSub" style="font-size:12px;color:var(--text-secondary)"></div>
+              </div>
+              <div>
+                <button class="btn btn-sm btn-danger" id="btnClose" onclick="closeSession()" disabled>📞 挂断</button>
+              </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+              <div class="empty">从左侧选择会话</div>
+            </div>
+            <div class="chat-input">
+              <input class="form-control" id="msgInput" placeholder="输入消息后按回车发送" disabled
+                bindinput="" />
+              <button class="btn btn-primary" id="btnSend" onclick="sendMsg()" disabled>发送</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/request.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/router.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    AdminMenu.mountLayout({ active: 'wecom', breadcrumb: ['客服', '企微客服台'] });
+
+    let activeSession = null;
+    let sessions = [];
+
+    async function loadSessions() {
+      try {
+        const r = await http.post('/wecom/agent/session/list', { size: 50 });
+        sessions = (r.data && r.data.list) || [];
+        renderSessionList();
+      } catch (e) {
+        document.getElementById('sessionList').innerHTML = '<div class="empty">加载失败</div>';
+      }
+    }
+
+    function renderSessionList() {
+      if (sessions.length === 0) {
+        document.getElementById('sessionList').innerHTML = '<div class="empty">暂无会话</div>';
+        return;
+      }
+      document.getElementById('sessionList').innerHTML = sessions.map(s => {
+        const lastMsg = (s.recentMessages && s.recentMessages[s.recentMessages.length - 1]) || {};
+        const unread = (s.unread && s.unread.agent) || 0;
+        const isActive = activeSession && activeSession._id === s._id;
+        return `
+          <div class="session-item ${isActive ? 'active' : ''}" data-id="${s._id}" onclick="selectSession('${s._id}')">
+            <div style="display:flex;justify-content:space-between">
+              <span class="name">${App.escape((s.userId || s.openid || '客户').slice(-8))}</span>
+              ${unread ? `<span class="unread">${unread}</span>` : ''}
+            </div>
+            <div class="preview">${App.escape(lastMsg.content || s.lastMessage || '...')}</div>
+            <div class="meta">
+              <span>${App.escape(s.status)}</span>
+              <span>${App.formatTime(s.lastTs || s.updatedAt)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function selectSession(id) {
+      activeSession = sessions.find(s => s._id === id);
+      if (!activeSession) return;
+      renderSessionList();
+      document.getElementById('chatTitle').textContent = (activeSession.userId || activeSession.openid || '').slice(-12) + ' (' + activeSession.status + ')';
+      document.getElementById('chatSub').textContent = `sessionId: ${activeSession._id}`;
+      document.getElementById('msgInput').disabled = false;
+      document.getElementById('btnSend').disabled = false;
+      document.getElementById('btnClose').disabled = activeSession.status === 'closed';
+      // 拉历史
+      try {
+        const r = await http.post('/wecom/agent/session/history', { sessionId: id, size: 100 });
+        const list = (r.data && r.data.list) || [];
+        renderMessages(list);
+      } catch (e) {
+        document.getElementById('chatMessages').innerHTML = '<div class="empty">加载失败</div>';
+      }
+    }
+
+    function renderMessages(list) {
+      if (list.length === 0) {
+        document.getElementById('chatMessages').innerHTML = '<div class="empty">无消息</div>';
+        return;
+      }
+      document.getElementById('chatMessages').innerHTML = list.map(m => {
+        if (m.fromRole === 'system') {
+          return `<div class="msg system"><div class="bubble">${App.escape(m.content || '')}<div class="time">${App.formatTime(m.ts)}</div></div></div>`;
+        }
+        const isMe = m.fromRole === 'agent';
+        return `<div class="msg ${isMe ? 'me' : ''}">
+          <div class="bubble">
+            ${App.escape(m.content || '')}
+            <div class="time">${App.formatTime(m.ts)}</div>
+          </div>
+        </div>`;
+      }).join('');
+      // 滚到底
+      const m = document.getElementById('chatMessages');
+      m.scrollTop = m.scrollHeight;
+    }
+
+    async function sendMsg() {
+      const input = document.getElementById('msgInput');
+      const text = input.value.trim();
+      if (!text || !activeSession) return;
+      input.value = '';
+      try {
+        await http.post('/wecom/agent/send', {
+          sessionId: activeSession._id,
+          type: 'text',
+          content: text,
+          openKfId: activeSession.transferredKfId,
+          externalUserId: activeSession.openid || activeSession.userId,
+          agentId: 'admin'
+        });
+        // 重新拉历史
+        selectSession(activeSession._id);
+      } catch (e) {}
+    }
+
+    async function closeSession() {
+      if (!activeSession) return;
+      if (!await App.confirm('确认挂断该会话?', '挂断')) return;
+      try {
+        await http.post('/wecom/agent/session/close', {
+          sessionId: activeSession._id,
+          openKfId: activeSession.transferredKfId,
+          externalUserId: activeSession.openid || activeSession.userId,
+          servicerUserId: 'admin',
+          reason: 'agent_request'
+        });
+        App.toast.success('已挂断');
+        loadSessions();
+        activeSession = null;
+        document.getElementById('chatTitle').textContent = '选择一个会话';
+        document.getElementById('chatMessages').innerHTML = '<div class="empty">已挂断</div>';
+        document.getElementById('msgInput').disabled = true;
+        document.getElementById('btnSend').disabled = true;
+        document.getElementById('btnClose').disabled = true;
+      } catch (e) {}
+    }
+
+    // 回车发送
+    document.getElementById('msgInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMsg();
+    });
+
+    // 自动刷新
+    loadSessions();
+    setInterval(loadSessions, 10000);
+  </script>
+</body>
+</html>

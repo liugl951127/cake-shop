@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "在线客服",
   "usingComponents": {
-    "transfer-human": "/components/transfer-human/index"
+    "transfer-human": "/components/transfer-human/index",
+    "hangup-bar": "/components/hangup-bar/index"
   }
 }

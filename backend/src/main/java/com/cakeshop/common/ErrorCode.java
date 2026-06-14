@@ -105,6 +105,16 @@ public enum ErrorCode {
     TRANSFER_NOT_ALLOWED(4903, "不允许转接"),
     TRANSFER_LOG_MISSING(4904, "转接记录缺失"),
 
+    // 会话生命周期 50xx
+    SESSION_ALREADY_CLOSED(5001, "会话已关闭"),
+    SESSION_ALREADY_TRANSFERRED(5002, "会话已转接"),
+    SESSION_NOT_ASSIGNED(5003, "会话未分配"),
+    SESSION_NO_PERMISSION(5004, "无会话权限"),
+    HANGUP_NOT_ALLOWED(5005, "不允许挂断"),
+    HANGUP_BY_OTHER(5006, "已被对方挂断"),
+    WECOM_MSG_TYPE_INVALID(5007, "企微消息类型无效"),
+    WECOM_REPLY_RATE_LIMIT(5008, "回复过于频繁"),
+
     // 系统错误 5xxx
     SYSTEM_ERROR(5000, "系统异常"),
     DB_ERROR(5001, "数据库异常"),
