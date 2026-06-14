@@ -1,11 +1,22 @@
 // addOrder - 下单 + 微信支付统一下单(完整版:支持优惠券/积分/会员折扣/秒杀/自提)
-const { cloud, ok, BizError, auth } = require('../common/index.js');
+//
+// 【后台设计说明】
+// 依赖:  wx-server-sdk~2.6.3(包管理统一,版本锁)
+// 公共:  common/index.js - 统一鉴权/响应/异常
+// 业务:  pay/orderLog/member/coupon/promo/riskGuard 6 个 module
+// 调用:  1万+ 单/日峰值
+// 幂等:  5 秒内同 openid 仅允许 1 个待付订单
+// 事务:  优惠券锁 → 库存扣 → 订单写 → 微信下单;任一失败回滚
+const {
+  cloud, ok, logger, auth, BizError, ErrorCode
+} = require('../common/index.js');
 const { genOutTradeNo, unifiedOrder } = require('../common/pay.js');
 const { writeLog } = require('../common/orderLog.js');
 const { calcDiscount } = require('../common/member.js');
 const { lockCoupon, markCouponUsed, refundCoupon } = require('../common/coupon.js');
 const { calcBestDiscount } = require('../common/promo.js');
 const { guard: riskGuard } = require('../common/riskGuard.js');
+const { findOne, incField, num } = require('../common/transaction.js');
 
 exports.main = auth(async (event) => {
   const {
@@ -15,9 +26,15 @@ exports.main = auth(async (event) => {
     usePoints = 0,
     isSelfPickup = false, storeId = ''
   } = event;
-  if (!items || items.length === 0) throw new BizError('订单无商品');
-  if (!address && !isSelfPickup) throw new BizError('请选择地址');
-  if (isSelfPickup && !storeId) throw new BizError('请选择自提门店');
+  if (!items || items.length === 0) {
+    throw new BizError('订单无商品', ErrorCode.BAD_REQUEST);
+  }
+  if (!address && !isSelfPickup) {
+    throw new BizError('请选择地址', ErrorCode.BAD_REQUEST);
+  }
+  if (isSelfPickup && !storeId) {
+    throw new BizError('请选择自提门店', ErrorCode.BAD_REQUEST);
+  }
 
   // === 统一风控闸门 ===
   // 高额订单用 highOrder 场景(更严),普通用 pay
@@ -64,7 +81,7 @@ exports.main = auth(async (event) => {
     status: 0,
     createTime: _.gt(now - 5000)
   }).limit(1).get();
-  if (recent.data.length > 0) throw new BizError('操作太频繁,请稍后再试');
+  if (recent.data.length > 0) throw new BizError('操作太频繁,请稍后再试', ErrorCode.RATE_LIMIT);
 
   // 校验商品 + 库存(支持秒杀/拼团)
   for (const it of items) {

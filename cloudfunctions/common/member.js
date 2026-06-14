@@ -12,10 +12,11 @@ const POINTS_PER_YUAN = 1;
 const SIGNIN_POINTS = 5;
 
 function getLevel(exp) {
-  for (const lv of LEVELS) {
-    if (exp >= lv.min && exp <= lv.max) return lv;
+  // 从高到低找第一个 exp >= min
+  for (let i = LEVELS.length - 1; i >= 0; i--) {
+    if (exp >= LEVELS[i].min) return LEVELS[i];
   }
-  return LEVELS[LEVELS.length - 1];
+  return LEVELS[0];
 }
 
 function getNextLevel(exp) {

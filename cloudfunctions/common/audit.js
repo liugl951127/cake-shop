@@ -1,6 +1,6 @@
 // 通用审计日志工具
 // 各业务云函数可调 audit.write(event, action, target, detail) 自动留痕
-const { cloud } = require('./index.js');
+const { cloud, logger } = require('./index.js');
 
 async function write(event, action, targetType, targetId, detail) {
   try {
@@ -12,13 +12,14 @@ async function write(event, action, targetType, targetId, detail) {
         targetType,
         targetId: targetId || '',
         detail: typeof detail === 'object' ? JSON.stringify(detail) : String(detail || ''),
-        ip: '',
+        ip: cloud.getWXContext().CLIENTIP || '',
         userAgent: '',
         createTime: Date.now()
       }
     });
   } catch (e) {
-    console.error('[audit] write fail:', e.message);
+    // 审计失败不应阻塞主业务,只记日志
+    logger.error('[audit] write fail', e, { action, targetType });
   }
 }
 

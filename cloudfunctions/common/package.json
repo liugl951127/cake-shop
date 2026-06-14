@@ -1,8 +1,20 @@
 {
-  "name": "common",
+  "name": "@cake-shop/common",
   "version": "1.0.0",
-  "description": "云函数公共依赖",
+  "description": "云函数公共依赖(鉴权/响应/异常/日志/缓存/事务/支付/订单/会员/券/营销/风控/AI/审核/下单/RBAC/转接/物流/上传/审计)",
+  "main": "index.js",
   "dependencies": {
     "wx-server-sdk": "~2.6.3"
-  }
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "wechat",
+    "cloud-function",
+    "common",
+    "auth",
+    "log",
+    "cache"
+  ]
 }

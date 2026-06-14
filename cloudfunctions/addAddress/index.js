@@ -1,4 +1,4 @@
-const { cloud, ok, BizError, auth } = require('../common/index.js');
+const { cloud, ok, auth, BizError, ErrorCode, logger } = require('../common/index.js');
 
 exports.main = auth(async (event) => {
   const {
@@ -8,10 +8,10 @@ exports.main = auth(async (event) => {
     isDefault, lng, lat
   } = event;
 
-  if (!name) throw new BizError('请填写姓名');
-  if (!/^1\d{10}$/.test(phone)) throw new BizError('手机号格式错误');
-  if (!region && !(provinceName && cityName && districtName)) throw new BizError('请选择地区');
-  if (!detail || detail.length < 5) throw new BizError('详细地址至少 5 个字');
+  if (!name) throw new BizError('请填写姓名', ErrorCode.BAD_REQUEST);
+  if (!/^1\d{10}$/.test(phone)) throw new BizError('手机号格式错误', ErrorCode.BAD_REQUEST);
+  if (!region && !(provinceName && cityName && districtName)) throw new BizError('请选择地区', ErrorCode.BAD_REQUEST);
+  if (!detail || detail.length < 5) throw new BizError('详细地址至少 5 个字', ErrorCode.BAD_REQUEST);
 
   const finalRegion = region || `${provinceName} ${cityName} ${districtName}`;
 
@@ -27,7 +27,7 @@ exports.main = auth(async (event) => {
 
   // 单用户最多 20 个地址
   const cnt = await db.collection('addresses').where({ _openid: event._openid }).count();
-  if (cnt.total >= 20) throw new BizError('收货地址最多 20 个,请先删除不常用的');
+  if (cnt.total >= 20) throw new BizError('收货地址最多 20 个,请先删除不常用的', ErrorCode.RATE_LIMIT);
 
   const res = await db.collection('addresses').add({
     data: {

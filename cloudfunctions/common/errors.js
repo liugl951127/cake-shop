@@ -1,0 +1,111 @@
+// common/errors.js - 统一错误码 + 异常体系
+// 用法:
+//   const { BizError, ErrorCode, ok, fail } = require('../common/errors.js');
+//   throw new BizError('用户不存在', ErrorCode.NOT_FOUND);
+//   return ok({ user });
+//   return fail('参数错误', ErrorCode.BAD_REQUEST);
+
+const ErrorCode = {
+  // 通用 0/-1
+  OK: 0,
+  FAIL: -1,
+
+  // 业务错误 1xxx
+  BAD_REQUEST: 1001,          // 参数错误
+  UNAUTHORIZED: 1002,         // 未登录
+  TOKEN_EXPIRED: 1003,        // token 失效
+  FORBIDDEN: 1004,            // 无权限
+  NOT_FOUND: 1005,            // 资源不存在
+  CONFLICT: 1006,             // 资源冲突
+  RATE_LIMIT: 1007,           // 限流
+  EXPIRED: 1008,              // 已过期
+  USED: 1009,                 // 已使用
+  OUT_OF_STOCK: 1010,         // 库存不足
+  AMOUNT_INVALID: 1011,       // 金额无效
+  RISK_REJECT: 1012,          // 风控拒绝
+  RISK_VERIFY: 1013,          // 风控要求补认证
+  RISK_REVIEW: 1014,          // 风控转人工
+
+  // 业务错误 2xxx
+  ORDER_NOT_FOUND: 2001,
+  ORDER_STATUS_INVALID: 2002,
+  ORDER_PAID: 2003,
+  ORDER_REFUNDING: 2004,
+  COUPON_USED: 2101,
+  COUPON_EXPIRED: 2102,
+  COUPON_NOT_MATCH: 2103,
+  POINTS_NOT_ENOUGH: 2201,
+  INVENTORY_NOT_ENOUGH: 2301,
+  PERMISSION_DENIED: 2401,
+
+  // 系统错误 5xxx
+  SYSTEM_ERROR: 5000,
+  DB_ERROR: 5001,
+  CACHE_ERROR: 5002,
+  EXTERNAL_API_ERROR: 5003,
+  TIMEOUT: 5004
+};
+
+// 错误码 -> 默认提示
+const ErrorMessage = {
+  [ErrorCode.OK]: 'ok',
+  [ErrorCode.FAIL]: '操作失败',
+  [ErrorCode.BAD_REQUEST]: '参数错误',
+  [ErrorCode.UNAUTHORIZED]: '请先登录',
+  [ErrorCode.TOKEN_EXPIRED]: '登录已失效,请重新登录',
+  [ErrorCode.FORBIDDEN]: '无权限',
+  [ErrorCode.NOT_FOUND]: '资源不存在',
+  [ErrorCode.CONFLICT]: '资源冲突',
+  [ErrorCode.RATE_LIMIT]: '操作太频繁',
+  [ErrorCode.EXPIRED]: '已过期',
+  [ErrorCode.USED]: '已使用',
+  [ErrorCode.OUT_OF_STOCK]: '库存不足',
+  [ErrorCode.AMOUNT_INVALID]: '金额无效',
+  [ErrorCode.RISK_REJECT]: '操作已被风控拦截',
+  [ErrorCode.RISK_VERIFY]: '需要补充身份验证',
+  [ErrorCode.RISK_REVIEW]: '正在人工审核',
+  [ErrorCode.ORDER_NOT_FOUND]: '订单不存在',
+  [ErrorCode.ORDER_STATUS_INVALID]: '订单状态错误',
+  [ErrorCode.ORDER_PAID]: '订单已支付',
+  [ErrorCode.ORDER_REFUNDING]: '订单退款中',
+  [ErrorCode.COUPON_USED]: '优惠券已使用',
+  [ErrorCode.COUPON_EXPIRED]: '优惠券已过期',
+  [ErrorCode.COUPON_NOT_MATCH]: '优惠券不满足条件',
+  [ErrorCode.POINTS_NOT_ENOUGH]: '积分不足',
+  [ErrorCode.INVENTORY_NOT_ENOUGH]: '库存不足',
+  [ErrorCode.PERMISSION_DENIED]: '权限不足',
+  [ErrorCode.SYSTEM_ERROR]: '系统异常',
+  [ErrorCode.DB_ERROR]: '数据库异常',
+  [ErrorCode.CACHE_ERROR]: '缓存异常',
+  [ErrorCode.EXTERNAL_API_ERROR]: '外部服务异常',
+  [ErrorCode.TIMEOUT]: '请求超时'
+};
+
+class BizError extends Error {
+  constructor(msg, code = ErrorCode.FAIL, data = null) {
+    super(msg);
+    this.name = 'BizError';
+    this.code = code;
+    this.data = data;
+  }
+}
+
+// 把异常转成 { code, msg, data }
+function errorToResponse(err) {
+  if (err instanceof BizError) {
+    return { code: err.code, msg: err.msg || ErrorMessage[err.code] || '操作失败', data: err.data };
+  }
+  return { code: ErrorCode.SYSTEM_ERROR, msg: err.message || '系统异常', data: null };
+}
+
+const ok = (data = null, msg = 'ok') => ({ code: ErrorCode.OK, msg, data });
+const fail = (msg, code = ErrorCode.FAIL, data = null) => ({ code, msg, data });
+
+module.exports = {
+  ErrorCode,
+  ErrorMessage,
+  BizError,
+  errorToResponse,
+  ok,
+  fail
+};
