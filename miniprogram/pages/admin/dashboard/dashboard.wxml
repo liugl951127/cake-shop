@@ -1,0 +1,94 @@
+<view class="page" wx:if="{{data}}">
+  <!-- 概览卡片 -->
+  <view class="cards">
+    <view class="c-card">
+      <view class="c-label">今日订单</view>
+      <view class="c-val">{{data.overview.todayOrders}}</view>
+    </view>
+    <view class="c-card">
+      <view class="c-label">今日销售额</view>
+      <view class="c-val">¥{{data.overview.todaySales}}</view>
+    </view>
+    <view class="c-card">
+      <view class="c-label">本周订单</view>
+      <view class="c-val">{{data.overview.weekOrders}}</view>
+    </view>
+    <view class="c-card">
+      <view class="c-label">本月销售额</view>
+      <view class="c-val">¥{{data.overview.monthSales}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="row"><text class="label">累计用户</text><text class="val">{{data.overview.totalUsers}}</text></view>
+    <view class="row"><text class="label">累计订单</text><text class="val">{{data.overview.totalOrders}}</text></view>
+    <view class="row"><text class="label">累计销售额</text><text class="val price">¥{{data.overview.totalSales}}</text></view>
+    <view class="row"><text class="label">待付款订单</text><text class="val">{{data.overview.pendingOrders}}</text></view>
+  </view>
+
+  <!-- 销售趋势 -->
+  <view class="card">
+    <view class="card-title">近 7 天销售趋势</view>
+    <view class="chart">
+      <view class="bar-col" wx:for="{{data.trend}}" wx:key="date">
+        <view class="bar-val">{{item.count}}</view>
+        <view class="bar" style="height:{{barHeight(item.count, maxCount)}}%">
+          <text>¥{{item.amount}}</text>
+        </view>
+        <view class="bar-date">{{item.date}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 订单状态分布 -->
+  <view class="card">
+    <view class="card-title">订单状态分布</view>
+    <view class="status-grid">
+      <view class="s-block" wx:for="{{statusList}}" wx:key="value">
+        <view class="s-name" style="color:{{item.color}}">{{item.name}}</view>
+        <view class="s-count">{{item.count || 0}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 转化漏斗 -->
+  <view class="card">
+    <view class="card-title">转化漏斗</view>
+    <view class="funnel">
+      <view class="f-row">
+        <text class="f-label">浏览</text>
+        <view class="f-bar" style="width:100%; background:#5b8cff">
+          <text>{{data.conversion.view}}</text>
+        </view>
+      </view>
+      <view class="f-row">
+        <text class="f-label">加购</text>
+        <view class="f-bar" style="width:{{fWidth(data.conversion.cartRate)}}%; background:#9c27b0">
+          <text>{{data.conversion.cart}} ({{data.conversion.cartRate}}%)</text>
+        </view>
+      </view>
+      <view class="f-row">
+        <text class="f-label">下单</text>
+        <view class="f-bar" style="width:{{fWidth(data.conversion.orderRate)}}%; background:#4caf50">
+          <text>{{data.conversion.order}} ({{data.conversion.orderRate}}%)</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热销 Top 10 -->
+  <view class="card">
+    <view class="card-title">热销商品 Top 10</view>
+    <view class="hot-list">
+      <view class="hot-item" wx:for="{{data.hotGoods}}" wx:key="_id">
+        <text class="hot-rank {{index < 3 ? 'top' : ''}}">{{index + 1}}</text>
+        <image class="hot-img" src="{{item.image}}" mode="aspectFill"/>
+        <view class="hot-info">
+          <view class="hot-name ellipsis">{{item.name}}</view>
+          <view class="hot-price price">¥{{item.price}}</view>
+        </view>
+        <view class="hot-sales">销量 {{item.sales}}</view>
+      </view>
+    </view>
+  </view>
+</view>

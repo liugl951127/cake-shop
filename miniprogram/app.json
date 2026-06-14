@@ -20,7 +20,13 @@
     "pages/group/list/list",
     "pages/group/detail/detail",
     "pages/store/list/list",
-    "pages/logistics/logistics"
+    "pages/logistics/logistics",
+    "pages/chat/session/session",
+    "pages/chat/admin/admin",
+    "pages/chat/adminChat/adminChat",
+    "pages/admin/dashboard/dashboard",
+    "pages/cms/notice/notice",
+    "pages/cms/page/page"
   ],
   "window": {
     "backgroundTextStyle": "light",

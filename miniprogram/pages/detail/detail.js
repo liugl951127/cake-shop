@@ -1,5 +1,5 @@
 const { request } = require('../../utils/request.js');
-const { requireLogin } = require('../../utils/auth.js');
+const { requireLogin, getUser } = require('../../utils/auth.js');
 const cart = require('../../utils/cart.js');
 
 Page({
@@ -13,12 +13,16 @@ Page({
     address: null,
     addressText: '',
     favored: false,
-    freightText: '免运费'
+    freightText: '免运费',
+    recommendList: []
   },
 
   onLoad(options) {
     this.setData({ id: options.id });
     this.loadDetail();
+    this.loadRecommend();
+    // 上报浏览埋点
+    request('trackBehavior', { action: 'view', goodsId: options.id }, { loading: false, silent: true });
   },
 
   onShow() {
@@ -43,6 +47,16 @@ Page({
     try {
       const list = await request('getFavorites', {}, { loading: false });
       this.setData({ favored: list.some(i => i._id === this.data.id) });
+    } catch (e) {}
+  },
+
+  async loadRecommend() {
+    try {
+      const list = await request('getRecommend', {
+        goodsId: this.data.id,
+        pageSize: 6
+      }, { loading: false, silent: true });
+      this.setData({ recommendList: list });
     } catch (e) {}
   },
 

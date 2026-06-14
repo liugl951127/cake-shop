@@ -1,0 +1,14 @@
+.page { padding: 20rpx; padding-bottom: 40rpx; }
+.n-item {
+  background: #fff; border-radius: 16rpx; padding: 24rpx;
+  margin-bottom: 20rpx; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+}
+.n-head { display: flex; align-items: center; }
+.n-top {
+  background: #ff5722; color: #fff; font-size: 20rpx;
+  padding: 2rpx 10rpx; border-radius: 4rpx; margin-right: 12rpx;
+}
+.n-title { font-size: 30rpx; font-weight: 600; flex: 1; }
+.n-content { color: #666; font-size: 26rpx; margin-top: 12rpx; line-height: 1.6; }
+.n-time { color: #999; font-size: 22rpx; margin-top: 12rpx; }
+.empty { text-align: center; color: #999; padding: 200rpx 0; }

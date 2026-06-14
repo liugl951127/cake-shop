@@ -46,6 +46,8 @@ Page({
   goFavor() { wx.navigateTo({ url: '/pages/favor/favor' }); },
   goAdminGoods() { wx.navigateTo({ url: '/pages/admin/goods/goods' }); },
   goAdminOrders() { wx.navigateTo({ url: '/pages/admin/order/order' }); },
+  goChat() { wx.navigateTo({ url: '/pages/chat/session/session' }); },
+  goChatAdmin() { wx.navigateTo({ url: '/pages/chat/admin/admin' }); },
 
   contact() {
     wx.showModal({ title: '客服', content: '工作时间 9:00-21:00\n电话: 400-888-8888\n微信: cake_service', showCancel: false });
@@ -53,5 +55,14 @@ Page({
 
   about() {
     wx.showModal({ title: '甜心蛋糕 v2.0', content: '用心做好每一块蛋糕 🍰', showCancel: false });
-  }
+  },
+
+  goChat() { wx.navigateTo({ url: '/pages/chat/session/session' }); },
+  goChatAdmin() { wx.navigateTo({ url: '/pages/chat/admin/admin' }); },
+  goNotice() { wx.navigateTo({ url: '/pages/cms/notice/notice' }); },
+  goAgreement() { wx.navigateTo({ url: '/pages/cms/page/page?slug=agreement' }); },
+  goPrivacy() { wx.navigateTo({ url: '/pages/cms/page/page?slug=privacy' }); },
+  goFaq() { wx.navigateTo({ url: '/pages/cms/page/page?slug=faq' }); },
+  goAbout() { wx.navigateTo({ url: '/pages/cms/page/page?slug=about' }); },
+  goAdminDashboard() { wx.navigateTo({ url: '/pages/admin/dashboard/dashboard' }); }
 });

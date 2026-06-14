@@ -1,0 +1,29 @@
+<view class="page">
+  <view class="info-bar">
+    <text>用户: {{userName}}</text>
+    <text class="close" bindtap="onClose">结束会话</text>
+  </view>
+
+  <scroll-view scroll-y scroll-into-view="{{lastMessageId}}" class="messages">
+    <view wx:for="{{messages}}" wx:key="messageId" id="msg-{{item.messageId}}"
+          class="msg {{item.fromType === 'admin' ? 'right' : 'left'}}">
+      <view class="m-avatar" wx:if="{{item.fromType !== 'admin'}}">
+        {{item.fromName || '用户'}}
+      </view>
+      <view class="m-bubble">
+        <view class="m-text" wx:if="{{item.type === 'text'}}">{{item.content}}</view>
+        <view class="m-text" wx:elif="{{item.fromType === 'system'}}" style="color:#999;font-size:24rpx;text-align:center;">{{item.content}}</view>
+        <view class="m-time">{{item.timeText}}</view>
+      </view>
+      <view class="m-avatar me" wx:if="{{item.fromType === 'admin'}}">
+        <image src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"/>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="input-bar">
+    <input class="input" placeholder="回复用户" value="{{inputText}}"
+           bindinput="onInput" bindconfirm="onSend" confirm-type="send"/>
+    <view class="send-btn" bindtap="onSend">发送</view>
+  </view>
+</view>

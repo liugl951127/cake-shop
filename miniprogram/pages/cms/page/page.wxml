@@ -1,0 +1,4 @@
+<view class="page">
+  <view class="title" wx:if="{{page.title}}">{{page.title}}</view>
+  <rich-text class="content" nodes="{{page.content || '加载中...'}}"></rich-text>
+</view>

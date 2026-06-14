@@ -46,6 +46,17 @@
     <image wx:for="{{goods.detailImages || []}}" wx:key="*this" src="{{item}}" mode="widthFix" class="detail-img"></image>
   </view>
 
+  <view class="card" wx:if="{{recommendList.length}}">
+    <view class="card-title">看了又看</view>
+    <scroll-view scroll-x class="also-list">
+      <view class="also-item" wx:for="{{recommendList}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+        <image src="{{item.image}}" mode="aspectFill" class="also-img"></image>
+        <view class="also-name ellipsis">{{item.name}}</view>
+        <view class="also-price price">{{item.price}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
   <view class="bottom-bar">
     <view class="bar-side" bindtap="goHome">
       <text>🏠</text>

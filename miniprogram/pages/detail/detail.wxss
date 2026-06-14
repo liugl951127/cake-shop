@@ -22,6 +22,15 @@
 .detail rich-text { font-size: 26rpx; line-height: 1.6; }
 .detail-img { width: 100%; margin-top: 20rpx; border-radius: 8rpx; }
 
+.also-list { white-space: nowrap; }
+.also-item {
+  display: inline-block; width: 200rpx; margin-right: 20rpx;
+  background: #fff;
+}
+.also-img { width: 200rpx; height: 200rpx; border-radius: 12rpx; background: #f0f0f0; }
+.also-name { font-size: 24rpx; margin: 8rpx 0; }
+.also-price { font-size: 26rpx; font-weight: bold; }
+
 .bottom-bar {
   position: fixed; left: 0; right: 0; bottom: 0;
   background: #fff; height: 100rpx; display: flex;

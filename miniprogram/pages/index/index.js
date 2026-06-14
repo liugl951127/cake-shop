@@ -24,9 +24,13 @@ Page({
   },
 
   onLoad() {
-    login().catch(() => {});
+    login().then(u => this.setData({ userOpenid: u.openid })).catch(() => {});
     this.loadRecommend();
     this.loadSeckill();
+  },
+
+  onShow() {
+    if (this.data.userOpenid) this.loadPersonalized();
   },
 
   onPullDownRefresh() {
@@ -55,6 +59,19 @@ Page({
       });
     } catch (e) {}
     this.setData({ loading: false });
+  },
+
+  // 个性化推荐(后插入顶部)
+  async loadPersonalized() {
+    try {
+      const list = await request('getRecommend', {
+        openid: this.data.userOpenid,
+        pageSize: 6
+      }, { loading: false, silent: true });
+      if (list.length) {
+        this.setData({ recommend: [...list, ...this.data.recommend] });
+      }
+    } catch (e) {}
   },
 
   async loadSeckill() {
