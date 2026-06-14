@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="sakura">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>聊天记录 · 甜心蛋糕管理后台</title>
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <style>
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filter-bar .form-control { width: auto; }
+    .msg-list { display: flex; flex-direction: column; gap: 8px; }
+    .msg-item {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+    }
+    .msg-item .head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .msg-item .head .who { font-weight: 500; }
+    .msg-item .head .time { color: var(--text-tertiary); font-size: 12px; }
+    .msg-item .body { color: var(--text-primary); }
+    .msg-item .body img { max-width: 240px; border-radius: 4px; }
+    .msg-item .rich { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar"></aside>
+    <div class="main">
+      <div class="topbar"></div>
+      <div class="content">
+        <div class="page-header">
+          <div>
+            <div class="page-title">聊天记录</div>
+            <div class="page-subtitle">可回溯查询所有客服/客户消息</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn" onclick="exportData()">📥 导出</button>
+            <button class="btn btn-primary" onclick="loadData()">🔍 查询</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="filter-bar">
+              <input class="form-control" id="fSessionId" placeholder="会话 ID" style="width:200px" />
+              <select class="form-control" id="fType" style="width:120px">
+                <option value="">全部类型</option>
+                <option value="text">文本</option>
+                <option value="image">图片</option>
+                <option value="rich">富文本</option>
+                <option value="file">文件</option>
+                <option value="product_card">商品卡</option>
+                <option value="order_card">订单卡</option>
+                <option value="system">系统</option>
+              </select>
+              <input class="form-control" id="fKeyword" placeholder="搜索关键字" style="width:200px" />
+              <input class="form-control" id="fStart" type="date" style="width:140px" />
+              <input class="form-control" id="fEnd" type="date" style="width:140px" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">查询结果 <span class="badge" id="resultCount">0</span></div>
+            <div class="card-actions">
+              <button class="btn btn-sm" onclick="prevPage()">上一页</button>
+              <span id="pageInfo" style="padding:6px 8px;font-size:12px">1 / 1</span>
+              <button class="btn btn-sm" onclick="nextPage()">下一页</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="msgList" class="msg-list"><div class="loading-full">加载中...</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/request.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/router.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    AdminMenu.mountLayout({ active: 'chat-history', breadcrumb: ['客服', '聊天记录'] });
+    let page = 1, size = 20, total = 0, list = [];
+
+    function renderMessage(m) {
+      const typeBadge = {
+        text: 'badge', image: 'badge-info', rich: 'badge-primary',
+        file: 'badge-warning', product_card: 'badge-success', order_card: 'badge-info', system: 'badge-danger'
+      }[m.type] || 'badge';
+      let body = '';
+      if (m.type === 'image') {
+        const url = m.extra && m.extra.url;
+        body = url ? `<img src="${url}" />` : '<em>图片消息</em>';
+      } else if (m.type === 'rich') {
+        body = `<div class="rich">${renderRich(m.rich)}</div>`;
+      } else if (m.type === 'file') {
+        body = `<a href="${m.extra && m.extra.url || '#'}" target="_blank">${App.escape(m.extra && m.extra.name || '文件')}</a>`;
+      } else if (m.type === 'product_card' || m.type === 'order_card') {
+        body = `<pre style="background:var(--bg-tertiary);padding:8px;border-radius:4px">${App.escape(App.json2str(m.extra))}</pre>`;
+      } else {
+        body = App.escape(m.content || '');
+      }
+      return `
+        <div class="msg-item">
+          <div class="head">
+            <div>
+              <span class="badge ${typeBadge}">${m.type}</span>
+              <span class="who">${App.escape(m.fromName || m.from || '匿名')}</span>
+              <span class="badge" style="margin-left:6px">${m.fromRole || 'user'}</span>
+            </div>
+            <div class="time">${App.formatTime(m.ts)}</div>
+          </div>
+          <div class="body">${body}</div>
+        </div>
+      `;
+    }
+    function renderRich(nodes) {
+      if (!Array.isArray(nodes)) return '';
+      return nodes.map(n => {
+        if (n.t === 'br') return '<br/>';
+        if (n.t === 'img') return `<img src="${n.v}" />`;
+        if (n.t === 'a') return `<a href="${n.a && n.a.href}" target="_blank">${App.escape(n.v)}</a>`;
+        if (n.t === 'b' || n.t === 'i' || n.t === 'u' || n.t === 's') return `<${n.t}>${App.escape(n.v)}</${n.t}>`;
+        return App.escape(n.v || '');
+      }).join('');
+    }
+
+    async function loadData() {
+      const sessionId = document.getElementById('fSessionId').value.trim();
+      const type = document.getElementById('fType').value;
+      const keyword = document.getElementById('fKeyword').value.trim();
+      const start = document.getElementById('fStart').value;
+      const end = document.getElementById('fEnd').value;
+      if (!sessionId && !keyword) {
+        App.toast.warning('请输入会话 ID 或搜索关键字');
+        return;
+      }
+      const body = {
+        sessionId: sessionId || undefined,
+        type: type || undefined,
+        keyword: keyword || undefined,
+        startTs: start ? new Date(start).getTime() : undefined,
+        endTs: end ? new Date(end).getTime() + 86400000 : undefined,
+        page, size, withRich: true
+      };
+      try {
+        const r = await http.post('/history/chat', body);
+        list = r.data && r.data.list || [];
+        total = r.data && r.data.total || 0;
+        document.getElementById('resultCount').textContent = total + ' 条';
+        document.getElementById('pageInfo').textContent = page + ' / ' + Math.max(1, Math.ceil(total / size));
+        document.getElementById('msgList').innerHTML = list.length
+          ? list.map(renderMessage).join('')
+          : '<div class="empty">未找到符合条件的消息</div>';
+      } catch (e) {
+        document.getElementById('msgList').innerHTML = '<div class="empty">查询失败</div>';
+      }
+    }
+    function prevPage() { if (page > 1) { page--; loadData(); } }
+    function nextPage() { if (page * size < total) { page++; loadData(); } }
+    function exportData() { App.toast.info('导出功能: 后端调 exportHistory 云函数,单次最多 5000 条'); }
+  </script>
+</body>
+</html>

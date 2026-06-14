@@ -58,6 +58,10 @@ cakeshop:
       - /v3/api-docs/**
       - /v2/api-docs/**
       - /webjars/**
+      # 后台 H5 静态资源
+      - /
+      - /index.html
+      - /pages/**
 
   # RBAC 角色权限
   rbac:

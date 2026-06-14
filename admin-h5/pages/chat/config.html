@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="sakura">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>聊天配置 · 甜心蛋糕管理后台</title>
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <style>
+    .config-list { display: flex; flex-direction: column; gap: 12px; }
+    .config-item {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .config-item .drag {
+      color: var(--text-tertiary);
+      cursor: grab;
+    }
+    .config-item .content { flex: 1; }
+    .config-item .content .title { font-weight: 500; }
+    .config-item .content .desc {
+      color: var(--text-secondary);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .config-item .tags { display: flex; gap: 4px; margin-top: 4px; }
+
+    .rich-editor { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px; }
+    .rich-editor .toolbar {
+      display: flex; gap: 4px; flex-wrap: wrap;
+      padding-bottom: 8px; margin-bottom: 8px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .rich-editor .toolbar button {
+      padding: 4px 8px; font-size: 12px;
+      border: 1px solid var(--border); background: var(--bg-primary);
+      border-radius: 4px; cursor: pointer;
+    }
+    .rich-editor .toolbar button:hover { border-color: var(--primary); }
+    .rich-editor textarea {
+      width: 100%; min-height: 120px;
+      border: none; background: transparent;
+      font-family: inherit; font-size: 14px;
+      outline: none; resize: vertical;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar"></aside>
+    <div class="main">
+      <div class="topbar"></div>
+      <div class="content">
+        <div class="page-header">
+          <div>
+            <div class="page-title">聊天配置</div>
+            <div class="page-subtitle">动态配置客服欢迎语、快捷回复、关键词自动回复</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn" onclick="loadConfig()">🔄 刷新</button>
+            <button class="btn btn-primary" onclick="saveConfig()">💾 保存</button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" data-tab="welcome">欢迎语</div>
+          <div class="tab" data-tab="quickReply">快捷回复</div>
+          <div class="tab" data-tab="autoReply">自动回复</div>
+          <div class="tab" data-tab="transfer">转接规则</div>
+          <div class="tab" data-tab="blacklist">黑名单</div>
+        </div>
+
+        <!-- 欢迎语 -->
+        <div class="card tab-pane" data-pane="welcome">
+          <div class="card-header">
+            <div class="card-title">欢迎语配置</div>
+            <span class="badge badge-info">用户进线时自动发送</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">启用欢迎语</label>
+              <label class="switch">
+                <input type="checkbox" id="welcomeEnabled" />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">欢迎语内容(支持富文本)</label>
+              <div class="rich-editor">
+                <div class="toolbar">
+                  <button data-tag="b">加粗</button>
+                  <button data-tag="i">斜体</button>
+                  <button data-tag="emoji">😀</button>
+                  <button data-tag="img">图片</button>
+                  <button data-tag="product_card">商品卡</button>
+                </div>
+                <textarea id="welcomeText" placeholder="欢迎光临甜心蛋糕!请问需要什么帮助?"></textarea>
+              </div>
+              <div class="form-help">支持换行,可用变量 {用户昵称} {时间}</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">发送延迟(秒)</label>
+              <input class="form-control" type="number" id="welcomeDelay" value="0" min="0" max="30" />
+              <div class="form-help">建议 0~2 秒,模拟真人</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快捷回复 -->
+        <div class="card tab-pane" data-pane="quickReply" style="display:none">
+          <div class="card-header">
+            <div class="card-title">快捷回复模板</div>
+            <button class="btn btn-sm btn-primary" onclick="addQuickReply()">+ 新增</button>
+          </div>
+          <div class="card-body">
+            <div class="config-list" id="quickReplyList">
+              <div class="loading-full">加载中...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 自动回复 -->
+        <div class="card tab-pane" data-pane="autoReply" style="display:none">
+          <div class="card-header">
+            <div class="card-title">关键词自动回复</div>
+            <button class="btn btn-sm btn-primary" onclick="addAutoReply()">+ 新增</button>
+          </div>
+          <div class="card-body">
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px">
+              匹配规则: 触发关键词 → 自动发送回复。优先级按列表顺序。
+            </p>
+            <div class="config-list" id="autoReplyList">
+              <div class="loading-full">加载中...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 转接规则 -->
+        <div class="card tab-pane" data-pane="transfer" style="display:none">
+          <div class="card-header">
+            <div class="card-title">转接规则</div>
+            <button class="btn btn-sm btn-primary" onclick="addTransferRule()">+ 新增</button>
+          </div>
+          <div class="card-body">
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px">
+              根据关键词自动转接给指定的客服组
+            </p>
+            <div class="config-list" id="transferList">
+              <div class="loading-full">加载中...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 黑名单 -->
+        <div class="card tab-pane" data-pane="blacklist" style="display:none">
+          <div class="card-header">
+            <div class="card-title">用户黑名单</div>
+            <button class="btn btn-sm btn-primary" onclick="addBlacklist()">+ 新增</button>
+          </div>
+          <div class="card-body">
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px">
+              黑名单用户进入时会话会被自动拒绝
+            </p>
+            <div class="config-list" id="blacklistList">
+              <div class="loading-full">加载中...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/request.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/router.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    AdminMenu.mountLayout({ active: 'chat-config', breadcrumb: ['客服', '聊天配置'] });
+
+    let config = { welcome: { enabled: true, text: '', delay: 0 }, quickReplies: [], autoReplies: [], transferRules: [], blacklist: [] };
+
+    // Tab 切换
+    document.querySelectorAll('.tab').forEach(t => {
+      t.onclick = () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+        document.querySelector(`[data-pane="${t.dataset.tab}"]`).style.display = '';
+      };
+    });
+
+    // 富文本 toolbar
+    document.querySelectorAll('.rich-editor .toolbar button').forEach(btn => {
+      btn.onclick = () => {
+        const tag = btn.dataset.tag;
+        const ta = document.getElementById('welcomeText');
+        const start = ta.selectionStart, end = ta.selectionEnd;
+        const sel = ta.value.substring(start, end) || '内容';
+        const insert = '[' + tag + ':' + sel + ']';
+        ta.value = ta.value.substring(0, start) + insert + ta.value.substring(end);
+        App.toast.info('已插入 ' + tag);
+      };
+    });
+
+    async function loadConfig() {
+      try {
+        const r = await http.post('/chat/config/get', {});
+        if (r.data) config = r.data;
+      } catch (e) {
+        // 离线 fallback: 用本地 storage
+        const local = localStorage.getItem('__chat_config__');
+        if (local) config = JSON.parse(local);
+      }
+      render();
+    }
+
+    function render() {
+      // 欢迎语
+      document.getElementById('welcomeEnabled').checked = config.welcome.enabled;
+      document.getElementById('welcomeText').value = config.welcome.text;
+      document.getElementById('welcomeDelay').value = config.welcome.delay;
+
+      // 快捷回复
+      const qr = document.getElementById('quickReplyList');
+      if (config.quickReplies.length === 0) {
+        qr.innerHTML = '<div class="empty">还没有快捷回复,点击新增</div>';
+      } else {
+        qr.innerHTML = config.quickReplies.map((q, i) => `
+          <div class="config-item">
+            <span class="drag">⋮⋮</span>
+            <div class="content">
+              <div class="title">${App.escape(q.title)}</div>
+              <div class="desc">${App.escape(q.content)}</div>
+              <div class="tags">${(q.tags || []).map(t => '<span class="badge badge-primary">' + App.escape(t) + '</span>').join('')}</div>
+            </div>
+            <button class="btn btn-sm" onclick="editQuickReply(${i})">编辑</button>
+            <button class="btn btn-sm danger" onclick="delQuickReply(${i})">删除</button>
+          </div>
+        `).join('');
+      }
+
+      // 自动回复
+      const ar = document.getElementById('autoReplyList');
+      if (config.autoReplies.length === 0) {
+        ar.innerHTML = '<div class="empty">还没有自动回复规则</div>';
+      } else {
+        ar.innerHTML = config.autoReplies.map((a, i) => `
+          <div class="config-item">
+            <span class="drag">⋮⋮</span>
+            <div class="content">
+              <div class="title">触发: ${(a.keywords || []).map(k => '<span class="badge">' + App.escape(k) + '</span>').join(' ')}</div>
+              <div class="desc">回复: ${App.escape(a.reply)}</div>
+            </div>
+            <button class="btn btn-sm" onclick="editAutoReply(${i})">编辑</button>
+            <button class="btn btn-sm danger" onclick="delAutoReply(${i})">删除</button>
+          </div>
+        `).join('');
+      }
+
+      // 转接
+      const tr = document.getElementById('transferList');
+      if (config.transferRules.length === 0) {
+        tr.innerHTML = '<div class="empty">还没有转接规则</div>';
+      } else {
+        tr.innerHTML = config.transferRules.map((t, i) => `
+          <div class="config-item">
+            <span class="drag">⋮⋮</span>
+            <div class="content">
+              <div class="title">关键词: ${(t.keywords || []).map(k => '<span class="badge">' + App.escape(k) + '</span>').join(' ')}</div>
+              <div class="desc">→ 转给 <span class="badge badge-info">${App.escape(t.targetGroup || '默认组')}</span></div>
+            </div>
+            <button class="btn btn-sm danger" onclick="delTransfer(${i})">删除</button>
+          </div>
+        `).join('');
+      }
+
+      // 黑名单
+      const bl = document.getElementById('blacklistList');
+      if (config.blacklist.length === 0) {
+        bl.innerHTML = '<div class="empty">黑名单为空</div>';
+      } else {
+        bl.innerHTML = config.blacklist.map((b, i) => `
+          <div class="config-item">
+            <span class="drag">⋮⋮</span>
+            <div class="content">
+              <div class="title">${App.escape(b.target)}</div>
+              <div class="desc">原因: ${App.escape(b.reason || '-')}</div>
+            </div>
+            <button class="btn btn-sm danger" onclick="delBlacklist(${i})">删除</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    async function saveConfig() {
+      // 收集欢迎语
+      config.welcome.enabled = document.getElementById('welcomeEnabled').checked;
+      config.welcome.text = document.getElementById('welcomeText').value;
+      config.welcome.delay = Number(document.getElementById('welcomeDelay').value);
+      try {
+        await http.post('/chat/config/save', config);
+        App.toast.success('已保存到云端');
+      } catch (e) {
+        localStorage.setItem('__chat_config__', JSON.stringify(config));
+        App.toast.warning('已保存到本地(后端未通)');
+      }
+    }
+
+    // CRUD
+    async function addQuickReply() {
+      const title = await App.prompt('快捷回复标题:');
+      if (!title) return;
+      const content = await App.prompt('快捷回复内容:');
+      if (!content) return;
+      config.quickReplies.push({ title, content, tags: [] });
+      render();
+    }
+    function editQuickReply(i) {
+      const q = config.quickReplies[i];
+      const content = prompt('内容:', q.content);
+      if (content != null) { q.content = content; render(); }
+    }
+    function delQuickReply(i) { config.quickReplies.splice(i, 1); render(); }
+
+    async function addAutoReply() {
+      const kw = await App.prompt('触发关键词(多个用空格分隔):');
+      if (!kw) return;
+      const reply = await App.prompt('自动回复:');
+      if (!reply) return;
+      config.autoReplies.push({ keywords: kw.split(/\s+/), reply });
+      render();
+    }
+    function editAutoReply(i) {
+      const a = config.autoReplies[i];
+      const reply = prompt('回复:', a.reply);
+      if (reply != null) { a.reply = reply; render(); }
+    }
+    function delAutoReply(i) { config.autoReplies.splice(i, 1); render(); }
+
+    async function addTransferRule() {
+      const kw = await App.prompt('关键词(空格分隔):');
+      if (!kw) return;
+      const target = await App.prompt('目标客服组:');
+      if (!target) return;
+      config.transferRules.push({ keywords: kw.split(/\s+/), targetGroup: target });
+      render();
+    }
+    function delTransfer(i) { config.transferRules.splice(i, 1); render(); }
+
+    async function addBlacklist() {
+      const target = await App.prompt('黑名单目标(openid/手机号):');
+      if (!target) return;
+      const reason = await App.prompt('原因:');
+      config.blacklist.push({ target, reason });
+      render();
+    }
+    function delBlacklist(i) { config.blacklist.splice(i, 1); render(); }
+
+    loadConfig();
+  </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+/* ============================================
+   甜心蛋糕 - 管理后台设计系统
+   4 套主题: 樱花(默认)/ 商务蓝 / 深邃暗 / 简约白
+   响应式: PC(>=1200) / PAD(768-1199) / 移动(<768)
+   ============================================ */
+
+/* ================== 主题: 樱花(默认) ================== */
+:root,
+[data-theme="sakura"] {
+  --primary: #ff7b9c;
+  --primary-light: #ffb3c6;
+  --primary-dark: #e85a82;
+  --primary-50: #fff0f3;
+  --primary-100: #ffd6e2;
+  --primary-200: #ffb3c6;
+  --primary-gradient: linear-gradient(135deg, #ff7b9c 0%, #ff9a6e 100%);
+  --primary-shadow: 0 4rpx 12rpx rgba(255, 123, 156, 0.3);
+
+  --accent: #ff9a6e;
+  --accent-light: #ffd4b8;
+
+  --success: #4caf50;
+  --success-light: #e8f5e9;
+  --warning: #ff9800;
+  --warning-light: #fff3e0;
+  --danger: #ff5252;
+  --danger-light: #ffebee;
+  --info: #2196f3;
+  --info-light: #e3f2fd;
+
+  --text-primary: #1a1a1a;
+  --text-secondary: #666;
+  --text-tertiary: #999;
+  --text-inverse: #fff;
+
+  --bg-primary: #fff;
+  --bg-secondary: #fafafa;
+  --bg-tertiary: #f5f5f5;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+
+  --border: #e8e8e8;
+  --border-light: #f0f0f0;
+  --border-dark: #d9d9d9;
+
+  --shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+
+  --radius-sm: 4rpx;
+  --radius-md: 8rpx;
+  --radius-lg: 16rpx;
+  --radius-xl: 24rpx;
+  --radius-full: 9999rpx;
+}
+
+/* ================== 主题: 商务蓝 ================== */
+[data-theme="blue"] {
+  --primary: #2563eb;
+  --primary-light: #60a5fa;
+  --primary-dark: #1d4ed8;
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+  --primary-shadow: 0 4rpx 12rpx rgba(37, 99, 235, 0.3);
+  --accent: #06b6d4;
+  --accent-light: #cffafe;
+}
+
+/* ================== 主题: 深邃暗 ================== */
+[data-theme="dark"] {
+  --primary: #ff7b9c;
+  --primary-light: #ffb3c6;
+  --primary-dark: #e85a82;
+  --primary-50: #2a1a20;
+  --primary-100: #3d2530;
+  --primary-200: #4d2a39;
+  --primary-gradient: linear-gradient(135deg, #ff7b9c 0%, #ff9a6e 100%);
+  --primary-shadow: 0 4rpx 12rpx rgba(255, 123, 156, 0.5);
+
+  --text-primary: #f0f0f0;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #808080;
+  --text-inverse: #1a1a1a;
+
+  --bg-primary: #1a1a1f;
+  --bg-secondary: #23232a;
+  --bg-tertiary: #2a2a32;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  --border: #3a3a42;
+  --border-light: #2f2f37;
+  --border-dark: #4a4a55;
+}
+
+/* ================== 主题: 简约白 ================== */
+[data-theme="plain"] {
+  --primary: #333;
+  --primary-light: #666;
+  --primary-dark: #000;
+  --primary-50: #fafafa;
+  --primary-100: #f0f0f0;
+  --primary-200: #e0e0e0;
+  --primary-gradient: linear-gradient(135deg, #555 0%, #333 100%);
+  --primary-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+  --accent: #888;
+  --accent-light: #ddd;
+}
+
+/* ================== 通用: rpx 缩放(管理端 1rem=16px) ================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { color: var(--primary-dark); }
+img { max-width: 100%; display: block; }
+button, input, select, textarea { font-family: inherit; }
+
+/* 滚动条 */
+::-webkit-scrollbar { width: 8rpx; height: 8rpx; }
+::-webkit-scrollbar-track { background: var(--bg-tertiary); }
+::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 4rpx; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }

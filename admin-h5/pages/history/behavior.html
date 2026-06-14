@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="sakura">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>行为回溯 · 甜心蛋糕管理后台</title>
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <style>
+    .timeline { position: relative; padding-left: 20px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 6px; top: 0; bottom: 0;
+      width: 2px; background: var(--border);
+    }
+    .timeline-item {
+      position: relative; padding: 8px 0 8px 24px;
+    }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -2px; top: 14px;
+      width: 10px; height: 10px;
+      background: var(--primary);
+      border-radius: 50%;
+    }
+    .timeline-item .ti-time { font-size: 12px; color: var(--text-tertiary); }
+    .timeline-item .ti-type {
+      display: inline-block;
+      padding: 1px 6px;
+      background: var(--primary-50);
+      color: var(--primary-dark);
+      border-radius: 4px;
+      font-size: 11px;
+      margin-right: 6px;
+    }
+    .timeline-item .ti-page { color: var(--text-secondary); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar"></aside>
+    <div class="main">
+      <div class="topbar"></div>
+      <div class="content">
+        <div class="page-header">
+          <div>
+            <div class="page-title">行为回溯</div>
+            <div class="page-subtitle">查看客户在应用内的浏览/操作全链路</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input class="form-control" id="fUserId" placeholder="用户 ID" style="width:160px" />
+              <input class="form-control" id="fDeviceId" placeholder="设备 ID" style="width:200px" />
+              <select class="form-control" id="fType" style="width:140px">
+                <option value="">全部事件</option>
+                <option value="page_view">浏览</option>
+                <option value="element_click">点击</option>
+                <option value="page_stay">停留</option>
+                <option value="search">搜索</option>
+                <option value="add_cart">加购</option>
+                <option value="pay_success">支付</option>
+              </select>
+              <input class="form-control" id="fStart" type="date" style="width:140px" />
+              <input class="form-control" id="fEnd" type="date" style="width:140px" />
+              <button class="btn btn-primary" onclick="loadData()">🔍 查询</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">行为时间线 <span class="badge" id="resultCount">0</span></div>
+          </div>
+          <div class="card-body">
+            <div id="result" class="timeline">
+              <div class="empty">请输入查询条件</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/request.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/router.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    AdminMenu.mountLayout({ active: 'behavior', breadcrumb: ['运营', '行为回溯'] });
+
+    async function loadData() {
+      const body = {
+        userId: document.getElementById('fUserId').value.trim() || undefined,
+        deviceId: document.getElementById('fDeviceId').value.trim() || undefined,
+        type: document.getElementById('fType').value || undefined,
+        startTs: document.getElementById('fStart').value ? new Date(document.getElementById('fStart').value).getTime() : undefined,
+        endTs: document.getElementById('fEnd').value ? new Date(document.getElementById('fEnd').value).getTime() + 86400000 : undefined,
+        page: 1, size: 200
+      };
+      if (!body.userId && !body.deviceId) {
+        App.toast.warning('请输入用户 ID 或设备 ID');
+        return;
+      }
+      try {
+        const r = await http.post('/history/behavior', body);
+        const list = r.data && r.data.list || [];
+        document.getElementById('resultCount').textContent = (r.data && r.data.total || 0) + ' 条';
+        if (list.length === 0) {
+          document.getElementById('result').innerHTML = '<div class="empty">未找到数据</div>';
+          return;
+        }
+        document.getElementById('result').innerHTML = list.map(l => `
+          <div class="timeline-item">
+            <div class="ti-time">${App.formatTime(l.ts)}</div>
+            <div>
+              <span class="ti-type">${l.type}</span>
+              <span class="ti-page">${App.escape(l.page || '')} ${l.element ? '/ ' + App.escape(l.element) : ''}</span>
+            </div>
+            ${l.payload ? '<pre style="font-size:11px;background:var(--bg-tertiary);padding:6px;margin-top:4px;border-radius:4px;overflow-x:auto">' + App.escape(App.json2str(l.payload)) + '</pre>' : ''}
+          </div>
+        `).join('');
+      } catch (e) {
+        document.getElementById('result').innerHTML = '<div class="empty">查询失败</div>';
+      }
+    }
+  </script>
+</body>
+</html>
