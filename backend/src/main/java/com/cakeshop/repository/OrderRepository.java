@@ -25,4 +25,7 @@ public interface OrderRepository extends BaseMapper<Order> {
 
     @Select("SELECT status, COUNT(*) AS cnt FROM orders WHERE create_time >= #{start} GROUP BY status")
     List<Map<String, Object>> statusDistribution(LocalDateTime start);
+
+    @Select("SELECT IFNULL(SUM(stock), 0) FROM goods WHERE status = 1 AND deleted = 0")
+    Long totalStock();
 }

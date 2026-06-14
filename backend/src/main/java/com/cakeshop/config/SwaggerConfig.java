@@ -1,44 +1,39 @@
 package com.cakeshop.config;
 
-import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.Components;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.service.SecurityScheme;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Collections;
-
+/**
+ * OpenAPI 3 配置(Spring Boot 2.7 / springdoc-openapi)
+ *   - 取代 springfox(Spring Boot 2.6+ 不兼容)
+ *   - UI 路径: /swagger-ui/index.html
+ *   - JSON 路径: /v3/api-docs
+ */
 @Configuration
-@EnableSwagger2
-@EnableKnife4j
 public class SwaggerConfig {
 
     @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-            .apiInfo(apiInfo())
-            .select()
-            .apis(RequestHandlerSelectors.basePackage("com.cakeshop.controller"))
-            .paths(PathSelectors.any())
-            .build()
-            .securitySchemes(Collections.singletonList(
-                new springfox.documentation.service.ApiKey("Bearer", "Authorization", "header")
-            ));
-    }
-
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-            .title("甜心蛋糕 - 管理后台 API")
-            .description("Spring Boot 2.7 商家管理后台,集成微信云函数")
-            .contact(new Contact("MiniMax", "https://github.com/liugl951127/cake-shop", "noreply@liugl"))
-            .version("1.0.0")
-            .build();
+    public OpenAPI cakeshopOpenAPI() {
+        return new OpenAPI()
+            .info(new Info()
+                .title("甜心蛋糕 - 管理后台 API")
+                .description("Spring Boot 2.7 商家管理后台,集成微信云函数")
+                .version("1.0.0")
+                .contact(new Contact()
+                    .name("MiniMax")
+                    .url("https://github.com/liugl951127/cake-shop")))
+            .components(new Components()
+                .addSecuritySchemes("Bearer",
+                    new SecurityScheme()
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")))
+            .addSecurityItem(new SecurityRequirement().addList("Bearer"));
     }
 }

@@ -2,8 +2,8 @@ package com.cakeshop.controller;
 
 import com.cakeshop.common.Result;
 import com.cakeshop.integration.WechatCloudClient;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,13 +15,13 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/wecom/agent")
-@Api(tags = "企微客服台")
+@Tag(name = "企微客服台")
 public class WeComAgentController {
 
     @Autowired private WechatCloudClient cloudClient;
 
     @PostMapping("/session/list")
-    @ApiOperation("企微会话列表(客服台)")
+    @Operation(summary = "企微会话列表(客服台)")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER_SERVICE')")
     public Result<Map<String, Object>> sessionList(@RequestBody Map<String, Object> body) {
         Map<String, Object> req = new HashMap<>(body);
@@ -30,7 +30,7 @@ public class WeComAgentController {
     }
 
     @PostMapping("/session/history")
-    @ApiOperation("企微会话聊天历史")
+    @Operation(summary = "企微会话聊天历史")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER_SERVICE')")
     public Result<Map<String, Object>> history(@RequestBody Map<String, Object> body) {
         Map<String, Object> req = new HashMap<>(body);
@@ -39,21 +39,21 @@ public class WeComAgentController {
     }
 
     @PostMapping("/send")
-    @ApiOperation("客服主动发消息")
+    @Operation(summary = "客服主动发消息")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER_SERVICE')")
     public Result<Map<String, Object>> send(@RequestBody Map<String, Object> body) {
         return invoke("wecomSendText", body);
     }
 
     @PostMapping("/session/close")
-    @ApiOperation("客服主动挂断")
+    @Operation(summary = "客服主动挂断")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER_SERVICE')")
     public Result<Map<String, Object>> close(@RequestBody Map<String, Object> body) {
         return invoke("wecomCloseSession", body);
     }
 
     @PostMapping("/client/hangup")
-    @ApiOperation("客户主动挂断")
+    @Operation(summary = "客户主动挂断")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER_SERVICE')")
     public Result<Map<String, Object>> clientHangup(@RequestBody Map<String, Object> body) {
         return invoke("clientHangup", body);

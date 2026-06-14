@@ -1,0 +1,33 @@
+# 测试环境 - H2 + 跳过 Druid 严格连接
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:cake_test;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 测试模式:不真正连接,启动时跳过
+      initial-size: 0
+      min-idle: 0
+      max-active: 1
+      test-while-idle: false
+      test-on-borrow: false
+      test-on-return: false
+      validation-query: "SELECT 1"
+  # 不让 Spring 自动跑 schema.sql(里面是 MySQL 专属语法)
+  sql:
+    init:
+      mode: never
+  # 禁用 Redis / Redisson 自动配置(测试环境不依赖)
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+      - org.redisson.spring.starter.RedissonAutoConfigurationV2
+      - org.redisson.spring.starter.RedissonAutoConfiguration
+
+cakeshop:
+  security:
+    ignore-urls:
+      - /**

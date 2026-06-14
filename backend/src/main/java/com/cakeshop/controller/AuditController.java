@@ -7,8 +7,8 @@ import com.cakeshop.common.Result;
 import com.cakeshop.entity.AuditLog;
 import com.cakeshop.repository.AuditLogRepository;
 import com.cakeshop.security.TenantContext;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,13 +21,13 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/audit")
-@Api(tags = "审计中心")
+@Tag(name = "审计中心")
 public class AuditController {
 
     @Autowired private AuditLogRepository auditLogRepository;
 
     @GetMapping
-    @ApiOperation("审计日志查询")
+    @Operation(summary = "审计日志查询")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER_SERVICE', 'READONLY')")
     public Result<Page<AuditLog>> list(
         @RequestParam(defaultValue = "1") int page,
@@ -53,11 +53,11 @@ public class AuditController {
     }
 
     @GetMapping("/{id}/replay")
-    @ApiOperation("操作回放 - 返回 before/after diff")
+    @Operation(summary = "操作回放 - 返回 before/after diff")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public Result<Map<String, Object>> replay(@PathVariable Long id) {
         AuditLog a = auditLogRepository.selectById(id);
-        if (a == null) return Result.fail(com.cakeshop.common.ErrorCode.NOT_FOUND, "审计不存在");
+        if (a == null) return Result.fail(com.cakeshop.common.ErrorCode.NOT_FOUND.getCode(), "审计不存在");
         // 简单 diff
         Map<String, Object> result = new HashMap<>();
         result.put("audit", a);
@@ -68,7 +68,7 @@ public class AuditController {
     }
 
     @GetMapping("/dashboard")
-    @ApiOperation("审计大盘 - 关键操作统计")
+    @Operation(summary = "审计大盘 - 关键操作统计")
     public Result<Map<String, Object>> dashboard() {
         Map<String, Object> r = new HashMap<>();
         // 最近 24h

@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cakeshop.common.Result;
 import com.cakeshop.entity.Goods;
 import com.cakeshop.service.GoodsService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,13 +19,13 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/goods")
-@Api(tags = "商品管理")
+@Tag(name = "商品管理")
 public class GoodsController {
 
     @Autowired private GoodsService goodsService;
 
     @GetMapping
-    @ApiOperation("商品分页")
+    @Operation(summary = "商品分页")
     public Result<Page<Goods>> page(
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20") int size,
@@ -39,13 +39,13 @@ public class GoodsController {
     }
 
     @GetMapping("/{id}")
-    @ApiOperation("商品详情")
+    @Operation(summary = "商品详情")
     public Result<Goods> get(@PathVariable Long id) {
         return Result.ok(goodsService.getOrThrow(id));
     }
 
     @PostMapping
-    @ApiOperation("创建商品")
+    @Operation(summary = "创建商品")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'OPERATOR')")
     public Result<Goods> create(@RequestBody Goods g) {
         if (g.getStock() == null) g.setStock(0);
@@ -58,7 +58,7 @@ public class GoodsController {
     }
 
     @PutMapping("/{id}")
-    @ApiOperation("更新商品")
+    @Operation(summary = "更新商品")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'OPERATOR')")
     public Result<Goods> update(@PathVariable Long id, @RequestBody Goods g) {
         g.setId(id);
@@ -67,7 +67,7 @@ public class GoodsController {
     }
 
     @PostMapping("/{id}/onSale")
-    @ApiOperation("上架")
+    @Operation(summary = "上架")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'OPERATOR')")
     public Result<Void> onSale(@PathVariable Long id) {
         Goods g = new Goods();
@@ -78,7 +78,7 @@ public class GoodsController {
     }
 
     @PostMapping("/{id}/offSale")
-    @ApiOperation("下架")
+    @Operation(summary = "下架")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'OPERATOR')")
     public Result<Void> offSale(@PathVariable Long id) {
         Goods g = new Goods();
@@ -89,7 +89,7 @@ public class GoodsController {
     }
 
     @PostMapping("/{id}/stock/adjust")
-    @ApiOperation("调库存")
+    @Operation(summary = "调库存")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'OPERATOR')")
     public Result<Void> adjustStock(@PathVariable Long id, @RequestBody Map<String, Integer> body) {
         Integer delta = body.get("delta");

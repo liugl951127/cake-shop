@@ -8,8 +8,8 @@ import com.cakeshop.entity.PerformanceMetric;
 import com.cakeshop.repository.ErrorReportRepository;
 import com.cakeshop.repository.PerformanceMetricRepository;
 import com.cakeshop.security.TenantContext;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,14 +22,14 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/monitor")
-@Api(tags = "监控中心")
+@Tag(name = "监控中心")
 public class MonitorController {
 
     @Autowired private PerformanceMetricRepository metricRepository;
     @Autowired private ErrorReportRepository errorRepository;
 
     @GetMapping("/perf")
-    @ApiOperation("性能指标查询")
+    @Operation(summary = "性能指标查询")
     public Result<Page<PerformanceMetric>> perf(
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20") int size,
@@ -46,7 +46,7 @@ public class MonitorController {
     }
 
     @GetMapping("/perf/aggregate")
-    @ApiOperation("性能指标聚合")
+    @Operation(summary = "性能指标聚合")
     public Result<List<Map<String, Object>>> perfAggregate(
         @RequestParam(required = false) Long startTs,
         @RequestParam(required = false) Long endTs
@@ -58,7 +58,7 @@ public class MonitorController {
     }
 
     @GetMapping("/errors")
-    @ApiOperation("异常列表")
+    @Operation(summary = "异常列表")
     public Result<Page<ErrorReport>> errors(
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20") int size,
@@ -77,7 +77,7 @@ public class MonitorController {
     }
 
     @GetMapping("/dashboard")
-    @ApiOperation("监控大盘")
+    @Operation(summary = "监控大盘")
     public Result<Map<String, Object>> dashboard() {
         Map<String, Object> r = new HashMap<>();
         long dayAgo = System.currentTimeMillis() - 24 * 60 * 60 * 1000;

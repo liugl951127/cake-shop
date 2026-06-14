@@ -2,8 +2,8 @@ package com.cakeshop.controller;
 
 import com.cakeshop.common.Result;
 import com.cakeshop.service.HistoryQueryService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,34 +14,34 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/history")
-@Api(tags = "历史回溯")
+@Tag(name = "历史回溯")
 public class HistoryController {
 
     @Autowired private HistoryQueryService historyService;
 
     @PostMapping("/chat")
-    @ApiOperation("查询聊天历史(可按时间/类型/关键字)")
+    @Operation(summary = "查询聊天历史(可按时间/类型/关键字)")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER_SERVICE')")
     public Result<Map<String, Object>> queryChat(@RequestBody Map<String, Object> body) {
         return Result.ok(historyService.queryChat(body));
     }
 
     @PostMapping("/behavior")
-    @ApiOperation("查询行为日志(可按用户/事件/页面)")
+    @Operation(summary = "查询行为日志(可按用户/事件/页面)")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER_SERVICE', 'READONLY')")
     public Result<Map<String, Object>> queryBehavior(@RequestBody Map<String, Object> body) {
         return Result.ok(historyService.queryBehavior(body));
     }
 
     @PostMapping("/behavior/groupBySession")
-    @ApiOperation("按会话汇总行为")
+    @Operation(summary = "按会话汇总行为")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER_SERVICE', 'READONLY')")
     public Result<Map<String, Object>> groupBySession(@RequestBody Map<String, Object> body) {
         return Result.ok(historyService.groupBySession(body));
     }
 
     @PostMapping("/export")
-    @ApiOperation("导出历史(批量,超 5000 自动分段)")
+    @Operation(summary = "导出历史(批量,超 5000 自动分段)")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'FINANCE')")
     public Result<Map<String, Object>> export(@RequestBody Map<String, Object> body) {
         return Result.ok(historyService.export(body));

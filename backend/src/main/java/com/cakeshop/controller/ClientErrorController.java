@@ -5,8 +5,8 @@ import com.cakeshop.common.Result;
 import com.cakeshop.entity.ErrorReport;
 import com.cakeshop.repository.ErrorReportRepository;
 import com.cakeshop.security.TenantContext;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 @RestController
 @RequestMapping("/client-errors")
-@Api(tags = "客户端异常上报")
+@Tag(name = "客户端异常上报")
 public class ClientErrorController {
 
     @Autowired private ErrorReportRepository errorRepository;
@@ -31,15 +31,15 @@ public class ClientErrorController {
     private static final long DEDUP_WINDOW = 5 * 60 * 1000;
 
     @PostMapping
-    @ApiOperation("上报异常(5分钟同指纹去重)")
+    @Operation(summary = "上报异常(5分钟同指纹去重)")
     public Result<Map<String, Object>> report(@RequestBody Map<String, Object> body) {
         String message = (String) body.get("message");
         String stack = (String) body.getOrDefault("stack", "");
         if (message == null || message.isEmpty()) {
-            return Result.fail(ErrorCode.BAD_REQUEST, "message 必填");
+            return Result.fail(ErrorCode.BAD_REQUEST.getCode(), "message 必填");
         }
         if (message.length() > 2000) {
-            return Result.fail(ErrorCode.BAD_REQUEST, "message 过长");
+            return Result.fail(ErrorCode.BAD_REQUEST.getCode(), "message 过长");
         }
 
         // 指纹

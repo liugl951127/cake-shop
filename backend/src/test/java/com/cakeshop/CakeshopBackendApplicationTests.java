@@ -7,20 +7,28 @@ import com.cakeshop.security.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 启动 + JWT + 错误码基础测试
+ * 启动测试:用 H2 + mock Redis
+ * 不连接真实 MySQL/Redis,只验证 Bean 装配 + 基础功能
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class CakeshopBackendApplicationTests {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    @Autowired private JwtUtil jwtUtil;
+
+    // Mock 掉 Redis,不让它真连
+    @MockBean private StringRedisTemplate stringRedisTemplate;
 
     @Test
     void contextLoads() {
+        // 关键:ApplicationContext 能起来 = 所有 Bean 装配成功
     }
 
     @Test
@@ -36,6 +44,8 @@ class CakeshopBackendApplicationTests {
     void errorCodeMapping() {
         assertEquals(0, ErrorCode.OK.getCode());
         assertEquals(2001, ErrorCode.ORDER_NOT_FOUND.getCode());
+        assertEquals(4801, ErrorCode.WECOM_CONFIG_MISSING.getCode());
+        assertEquals(5001, ErrorCode.SESSION_ALREADY_CLOSED.getCode());
     }
 
     @Test

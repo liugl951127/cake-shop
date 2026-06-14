@@ -24,9 +24,9 @@
     <description>甜心蛋糕 - 商家管理后台(Spring Boot)</description>
 
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- 版本管理 -->
@@ -81,6 +81,13 @@
             <version>${druid.version}</version>
         </dependency>
 
+        <!-- H2 内存数据库(测试) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- 缓存 + 会话 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -123,11 +130,11 @@
             <version>${fastjson.version}</version>
         </dependency>
 
-        <!-- API 文档(Swagger 3) -->
+        <!-- API 文档(springdoc-openapi, Spring Boot 2.7 兼容) -->
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
-            <version>${knife4j.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.7.0</version>
         </dependency>
 
         <!-- 对象存储(MinIO,可选,文件存储) -->

@@ -5,8 +5,8 @@ import com.cakeshop.common.ErrorCode;
 import com.cakeshop.common.Result;
 import com.cakeshop.entity.Employee;
 import com.cakeshop.service.EmployeeService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,20 +18,20 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/employees")
-@Api(tags = "员工管理(RBAC)")
+@Tag(name = "员工管理(RBAC)")
 public class EmployeeController {
 
     @Autowired private EmployeeService employeeService;
 
     @GetMapping
-    @ApiOperation("员工列表")
+    @Operation(summary = "员工列表")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public Result<List<Employee>> list() {
         return Result.ok(employeeService.listAll());
     }
 
     @PostMapping
-    @ApiOperation("新增员工")
+    @Operation(summary = "新增员工")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public Result<Employee> create(@RequestBody Map<String, String> body) {
         return Result.ok(employeeService.create(
@@ -40,7 +40,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/{id}/role")
-    @ApiOperation("修改角色")
+    @Operation(summary = "修改角色")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public Result<Void> changeRole(@PathVariable Long id, @RequestBody Map<String, String> body) {
         employeeService.changeRole(id, body.get("role"));
@@ -48,7 +48,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/{id}/status")
-    @ApiOperation("启用/禁用")
+    @Operation(summary = "启用/禁用")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public Result<Void> changeStatus(@PathVariable Long id, @RequestBody Map<String, Integer> body) {
         Integer status = body.get("status");

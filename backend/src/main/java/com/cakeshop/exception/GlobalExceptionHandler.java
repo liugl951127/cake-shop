@@ -46,7 +46,10 @@ public class GlobalExceptionHandler {
             .map(fe -> fe.getField() + ":" + fe.getDefaultMessage())
             .collect(Collectors.joining(","));
         log.warn("[Validation] {}", msg);
-        return Result.fail(ErrorCode.BAD_REQUEST, msg);
+        Result<Void> r = new Result<>();
+        r.setCode(ErrorCode.BAD_REQUEST.getCode());
+        r.setMsg(msg);
+        return r;
     }
 
     @ExceptionHandler(BindException.class)
@@ -54,7 +57,10 @@ public class GlobalExceptionHandler {
         String msg = e.getBindingResult().getFieldErrors().stream()
             .map(FieldError::getDefaultMessage)
             .collect(Collectors.joining(","));
-        return Result.fail(ErrorCode.BAD_REQUEST, msg);
+        Result<Void> r = new Result<>();
+        r.setCode(ErrorCode.BAD_REQUEST.getCode());
+        r.setMsg(msg);
+        return r;
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -62,29 +68,42 @@ public class GlobalExceptionHandler {
         String msg = e.getConstraintViolations().stream()
             .map(ConstraintViolation::getMessage)
             .collect(Collectors.joining(","));
-        return Result.fail(ErrorCode.BAD_REQUEST, msg);
+        Result<Void> r = new Result<>();
+        r.setCode(ErrorCode.BAD_REQUEST.getCode());
+        r.setMsg(msg);
+        return r;
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Result<Void>> handleAccess(AccessDeniedException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body(Result.fail(ErrorCode.FORBIDDEN));
+        Result<Void> r = new Result<>();
+        r.setCode(ErrorCode.FORBIDDEN.getCode());
+        r.setMsg(ErrorCode.FORBIDDEN.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(r);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Result<Void>> handleAuth(AuthenticationException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(Result.fail(ErrorCode.UNAUTHORIZED));
+        Result<Void> r = new Result<>();
+        r.setCode(ErrorCode.UNAUTHORIZED.getCode());
+        r.setMsg(ErrorCode.UNAUTHORIZED.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(r);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public Result<Void> handleIllegal(IllegalArgumentException e) {
-        return Result.fail(ErrorCode.BAD_REQUEST, e.getMessage());
+        Result<Void> r = new Result<>();
+        r.setCode(ErrorCode.BAD_REQUEST.getCode());
+        r.setMsg(e.getMessage());
+        return r;
     }
 
     @ExceptionHandler(Exception.class)
     public Result<Void> handleAll(Exception e, HttpServletRequest req) {
         log.error("[Unhandled] {} {}", req.getMethod(), req.getRequestURI(), e);
-        return Result.fail(ErrorCode.SYSTEM_ERROR, e.getMessage());
+        Result<Void> r = new Result<>();
+        r.setCode(ErrorCode.SYSTEM_ERROR.getCode());
+        r.setMsg(e.getMessage());
+        return r;
     }
 }
