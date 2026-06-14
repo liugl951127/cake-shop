@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="sakura">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>企业微信客服 · 甜心蛋糕管理后台</title>
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar"></aside>
+    <div class="main">
+      <div class="topbar"></div>
+      <div class="content">
+        <div class="page-header">
+          <div>
+            <div class="page-title">企业微信客服</div>
+            <div class="page-subtitle">配置后,客户可在小程序一键转人工到企业微信</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn" onclick="loadConfig()">🔄 刷新</button>
+            <button class="btn btn-primary" onclick="saveConfig()">💾 保存</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">基础配置</div>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">CorpID <span class="required">*</span></label>
+                <input class="form-control" id="fCorpId" placeholder="ww1234567890abcdef" />
+                <div class="form-help">企业 ID,在企业微信管理后台 > 我的企业 > 企业信息</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">AgentID</label>
+                <input class="form-control" id="fAgentId" placeholder="1000001" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">CorpSecret <span class="required">*</span></label>
+                <input class="form-control" id="fCorpSecret" type="password" placeholder="应用 secret" />
+                <div class="form-help">已保存: <span id="corpSecretState">未配置</span></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">回调 Token</label>
+                <input class="form-control" id="fToken" type="password" placeholder="回调校验 Token" />
+                <div class="form-help">已保存: <span id="tokenState">未配置</span></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">EncodingAESKey</label>
+                <input class="form-control" id="fAesKey" type="password" placeholder="43 字符" />
+                <div class="form-help">已保存: <span id="aesKeyState">未配置</span></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">回调 URL</label>
+                <input class="form-control" id="fCallbackUrl" value="/wecom/callback" readonly />
+                <div class="form-help">需在企业微信后台配置为可信回调</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">客服账号 <span class="badge" id="kfCount">0</span></div>
+            <button class="btn btn-sm" onclick="syncKf()">🔄 同步客服账号</button>
+          </div>
+          <div class="card-body">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>OpenKfId</th>
+                    <th>名称</th>
+                    <th>头像</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody id="kfList">
+                  <tr><td colspan="4"><div class="empty">点击"同步客服账号"拉取</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">使用说明</div>
+          </div>
+          <div class="card-body" style="font-size:13px;line-height:1.8;color:var(--text-secondary)">
+            <p><strong style="color:var(--text-primary)">1. 创建客服账号</strong>: 企业微信管理后台 > 应用 > 微信客服 > 创建账号</p>
+            <p><strong style="color:var(--text-primary)">2. 配置回调</strong>: 在"接收事件服务器"中填入上方回调 URL + Token + EncodingAESKey</p>
+            <p><strong style="color:var(--text-primary)">3. 关联小程序</strong>: 在客服账号设置中,绑定小程序 AppID</p>
+            <p><strong style="color:var(--text-primary)">4. 同步账号</strong>: 点击"同步客服账号"拉取 open_kfid</p>
+            <p><strong style="color:var(--text-primary)">5. 客户使用</strong>: 在小程序"在线客服"页面,点击"转人工"按钮,跳转到企业微信小程序客服</p>
+            <p style="color:var(--warning)">⚠️ 客服消息需基础库 2.19.0+</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/request.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/router.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    AdminMenu.MENU.push({
+      group: '客服',
+      items: [
+        { id: 'wecom', icon: '🏢', label: '企业微信', url: '/pages/wecom/config.html' },
+        { id: 'transfer-log', icon: '📞', label: '转接记录', url: '/pages/wecom/transfer.html' }
+      ]
+    });
+    AdminMenu.mountLayout({ active: 'wecom', breadcrumb: ['客服', '企业微信'] });
+
+    async function loadConfig() {
+      try {
+        const r = await http.post('/wecom/config/get', {});
+        const d = r.data;
+        if (!d) {
+          App.toast.info('尚未配置');
+          return;
+        }
+        document.getElementById('fCorpId').value = d.corpId || '';
+        document.getElementById('fAgentId').value = d.agentId || '';
+        document.getElementById('fCallbackUrl').value = d.callbackUrl || '/wecom/callback';
+        document.getElementById('corpSecretState').textContent = d.hasCorpSecret ? d.corpSecretMasked : '未配置';
+        document.getElementById('tokenState').textContent = d.hasToken ? d.tokenMasked : '未配置';
+        document.getElementById('aesKeyState').textContent = d.hasAesKey ? d.aesKeyMasked : '未配置';
+        // 客服列表
+        renderKfList(d.kfAccounts || []);
+      } catch (e) {}
+    }
+
+    function renderKfList(list) {
+      document.getElementById('kfCount').textContent = list.length;
+      if (list.length === 0) {
+        document.getElementById('kfList').innerHTML = '<tr><td colspan="4"><div class="empty">暂无</div></td></tr>';
+        return;
+      }
+      document.getElementById('kfList').innerHTML = list.map(k => `
+        <tr>
+          <td><code>${App.escape(k.open_kfid || '')}</code></td>
+          <td>${App.escape(k.name || '')}</td>
+          <td>${k.avatar ? `<img src="${k.avatar}" style="width:40px;height:40px;border-radius:50%"/>` : '-'}</td>
+          <td><span class="badge badge-success">在线</span></td>
+        </tr>
+      `).join('');
+    }
+
+    async function saveConfig() {
+      const body = {
+        corpId: document.getElementById('fCorpId').value.trim(),
+        agentId: document.getElementById('fAgentId').value.trim(),
+        corpSecret: document.getElementById('fCorpSecret').value,
+        token: document.getElementById('fToken').value,
+        encodingAESKey: document.getElementById('fAesKey').value
+      };
+      if (!body.corpId) { App.toast.warning('CorpID 必填'); return; }
+      try {
+        await http.post('/wecom/config/save', body);
+        App.toast.success('已保存');
+        document.getElementById('fCorpSecret').value = '';
+        document.getElementById('fToken').value = '';
+        document.getElementById('fAesKey').value = '';
+        loadConfig();
+      } catch (e) {}
+    }
+
+    async function syncKf() {
+      try {
+        const r = await http.post('/wecom/kf/sync', {});
+        App.toast.success('已同步 ' + r.data.count + ' 个客服');
+        loadConfig();
+      } catch (e) {}
+    }
+
+    loadConfig();
+  </script>
+</body>
+</html>

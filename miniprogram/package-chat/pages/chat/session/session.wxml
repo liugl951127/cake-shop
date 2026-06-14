@@ -32,6 +32,14 @@
     </view>
   </scroll-view>
 
+  <!-- 转人工按钮 (v20+) -->
+  <transfer-human wx:if="{{sessionId && !transferredToWeCom}}"
+    session-id="{{sessionId}}"
+    user-id="{{userId}}"
+    openid="{{openid}}"
+    bind:success="onTransferSuccess"
+    bind:error="onTransferError" />
+
   <!-- 评价弹层 -->
   <view class="mask" wx:if="{{showRate}}" bindtap="closeRate"></view>
   <view class="rate-panel {{showRate ? 'show' : ''}}">

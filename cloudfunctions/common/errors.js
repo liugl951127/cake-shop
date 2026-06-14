@@ -88,6 +88,22 @@ const ErrorCode = {
   OFFLINE_OP_REPLAY_DUPLICATE: 4703,
   OFFLINE_OP_PAYLOAD_TOO_LARGE: 4704,
 
+  // 企业微信 48xx
+  WECOM_CONFIG_MISSING: 4801,
+  WECOM_TOKEN_FETCH_FAIL: 4802,
+  WECOM_SIGN_INVALID: 4803,
+  WECOM_DECRYPT_FAIL: 4804,
+  WECOM_API_ERROR: 4805,
+  WECOM_KF_ACCOUNT_MISSING: 4806,
+  WECOM_MSG_SEND_FAIL: 4807,
+  WECOM_CALLBACK_INVALID: 4808,
+
+  // 转接 49xx
+  TRANSFER_NO_AGENT: 4901,
+  TRANSFER_FAILED: 4902,
+  TRANSFER_NOT_ALLOWED: 4903,
+  TRANSFER_LOG_MISSING: 4904,
+
   // 系统错误 5xxx
   SYSTEM_ERROR: 5000,
   DB_ERROR: 5001,
@@ -166,6 +182,20 @@ const ErrorMessage = {
   [ErrorCode.OFFLINE_OP_INVALID]: '离线操作格式错误',
   [ErrorCode.OFFLINE_OP_REPLAY_DUPLICATE]: '离线操作重复回放',
   [ErrorCode.OFFLINE_OP_PAYLOAD_TOO_LARGE]: '离线操作包过大',
+  // 企业微信
+  [ErrorCode.WECOM_CONFIG_MISSING]: '企业微信配置缺失',
+  [ErrorCode.WECOM_TOKEN_FETCH_FAIL]: 'access_token 获取失败',
+  [ErrorCode.WECOM_SIGN_INVALID]: '签名校验失败',
+  [ErrorCode.WECOM_DECRYPT_FAIL]: '消息解密失败',
+  [ErrorCode.WECOM_API_ERROR]: '企业微信 API 错误',
+  [ErrorCode.WECOM_KF_ACCOUNT_MISSING]: '客服账号未配置',
+  [ErrorCode.WECOM_MSG_SEND_FAIL]: '消息发送失败',
+  [ErrorCode.WECOM_CALLBACK_INVALID]: '回调校验失败',
+  // 转接
+  [ErrorCode.TRANSFER_NO_AGENT]: '无可用客服',
+  [ErrorCode.TRANSFER_FAILED]: '转接失败',
+  [ErrorCode.TRANSFER_NOT_ALLOWED]: '不允许转接',
+  [ErrorCode.TRANSFER_LOG_MISSING]: '转接记录缺失',
   [ErrorCode.SYSTEM_ERROR]: '系统异常',
   [ErrorCode.DB_ERROR]: '数据库异常',
   [ErrorCode.CACHE_ERROR]: '缓存异常',

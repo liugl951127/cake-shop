@@ -89,6 +89,22 @@ public enum ErrorCode {
     OFFLINE_OP_REPLAY_DUPLICATE(4703, "离线操作重复回放"),
     OFFLINE_OP_PAYLOAD_TOO_LARGE(4704, "离线操作包过大"),
 
+    // 企业微信 48xx
+    WECOM_CONFIG_MISSING(4801, "企业微信配置缺失"),
+    WECOM_TOKEN_FETCH_FAIL(4802, "access_token 获取失败"),
+    WECOM_SIGN_INVALID(4803, "签名校验失败"),
+    WECOM_DECRYPT_FAIL(4804, "消息解密失败"),
+    WECOM_API_ERROR(4805, "企业微信 API 错误"),
+    WECOM_KF_ACCOUNT_MISSING(4806, "客服账号未配置"),
+    WECOM_MSG_SEND_FAIL(4807, "消息发送失败"),
+    WECOM_CALLBACK_INVALID(4808, "回调校验失败"),
+
+    // 转接 49xx
+    TRANSFER_NO_AGENT(4901, "无可用客服"),
+    TRANSFER_FAILED(4902, "转接失败"),
+    TRANSFER_NOT_ALLOWED(4903, "不允许转接"),
+    TRANSFER_LOG_MISSING(4904, "转接记录缺失"),
+
     // 系统错误 5xxx
     SYSTEM_ERROR(5000, "系统异常"),
     DB_ERROR(5001, "数据库异常"),

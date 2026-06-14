@@ -1,0 +1,30 @@
+/* 转人工按钮 */
+.th-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 24rpx;
+  background: linear-gradient(135deg, #fff0f3, #fff5e6);
+  border-radius: 16rpx;
+  margin: 16rpx;
+  border: 1rpx solid #ffd6e2;
+}
+.th-text {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 28rpx;
+  color: #555;
+}
+.th-emoji { font-size: 36rpx; }
+.th-btn {
+  background: linear-gradient(135deg, #ff7b9c, #ff9a6e);
+  color: white;
+  font-size: 26rpx;
+  padding: 12rpx 28rpx;
+  border-radius: 999rpx;
+  border: none;
+  box-shadow: 0 4rpx 12rpx rgba(255, 123, 156, 0.3);
+  font-weight: 500;
+}
+.th-btn[disabled] { opacity: 0.6; }

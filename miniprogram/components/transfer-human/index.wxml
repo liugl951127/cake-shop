@@ -1,0 +1,10 @@
+<!--  转人工组件  -->
+<view class="th-bar" wx:if="{{visible}}">
+  <view class="th-text">
+    <text class="th-emoji">💬</text>
+    <text>需要真人客服?</text>
+  </view>
+  <button class="th-btn" bindtap="onTransfer" loading="{{loading}}">
+    {{btnText || '转人工'}}
+  </button>
+</view>
