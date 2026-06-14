@@ -3,6 +3,7 @@ const tracker = require('./utils/tracker.js');
 const monitor = require('./utils/monitor.js');
 const device = require('./utils/device.js');
 const offlineQueue = require('./utils/offlineQueue.js');
+const authz = require('./utils/auth.js');
 
 App({
   globalData: {
@@ -38,6 +39,8 @@ App({
       data: { deviceInfo: dev, clientId: wx.getStorageSync('__offline_client_id__') || '' }
     }).catch(() => {});
     this.globalData.device = dev;
+    // 初始化授权管理 SDK(持久化 grants + 监听 onShow 刷新)
+    authz.init({ app: this });
   },
 
   onShow() {

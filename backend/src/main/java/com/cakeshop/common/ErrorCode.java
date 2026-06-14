@@ -89,6 +89,25 @@ public enum ErrorCode {
     OFFLINE_OP_REPLAY_DUPLICATE(4703, "离线操作重复回放"),
     OFFLINE_OP_PAYLOAD_TOO_LARGE(4704, "离线操作包过大"),
 
+    // 授权 51xx-53xx
+    AUTH_DENIED(5101, "未授权"),
+    AUTH_LOCATION_DENIED(5102, "位置权限被拒绝"),
+    AUTH_CAMERA_DENIED(5103, "相机权限被拒绝"),
+    AUTH_ALBUM_DENIED(5104, "相册权限被拒绝"),
+    AUTH_MIC_DENIED(5105, "麦克风权限被拒绝"),
+    AUTH_FILE_DENIED(5106, "文件访问被拒绝"),
+    AUTH_NEVER_ASK_AGAIN(5107, "权限已被永久拒绝,请到设置开启"),
+    AUTH_NOT_GRANTED_YET(5108, "尚未询问过该权限"),
+    AUTH_TOKEN_INVALID(5201, "授权令牌无效"),
+    AUTH_TOKEN_EXPIRED(5202, "授权令牌已过期"),
+    AUTH_TOKEN_MISMATCH(5203, "授权令牌不匹配"),
+    AUTH_URL_SIGN_INVALID(5204, "临时URL签名无效"),
+    AUTH_URL_EXPIRED(5205, "临时URL已过期"),
+    AUTH_FILE_TOO_LARGE(5301, "文件超过大小限制"),
+    AUTH_FILE_TYPE_DENIED(5302, "文件类型不支持"),
+    AUTH_LOCATION_OUT_OF_RANGE(5303, "位置超出服务范围"),
+    AUTH_LOCATION_PRECISION_LOW(5304, "位置精度不足"),
+
     // 企业微信 48xx
     WECOM_CONFIG_MISSING(4801, "企业微信配置缺失"),
     WECOM_TOKEN_FETCH_FAIL(4802, "access_token 获取失败"),

@@ -1,64 +1,135 @@
-<!--  rich-message  富文本消息渲染组件  -->
-<view class="rich-msg {{className}}" wx:if="{{nodes && nodes.length}}">
-  <block wx:for="{{nodes}}" wx:key="*this" wx:for-item="n">
-    <!-- 文本/格式 -->
-    <text wx:if="{{n.t==='text'}}" class="rk rk-text" decode>{{n.v}}</text>
-    <text wx:elif="{{n.t==='b'}}" class="rk rk-b" decode>{{n.v}}</text>
-    <text wx:elif="{{n.t==='i'}}" class="rk rk-i" decode>{{n.v}}</text>
-    <text wx:elif="{{n.t==='u'}}" class="rk rk-u" decode>{{n.v}}</text>
-    <text wx:elif="{{n.t==='s'}}" class="rk rk-s" decode>{{n.v}}</text>
-    <text wx:elif="{{n.t==='code'}}" class="rk rk-code" decode>{{n.v}}</text>
-    <text wx:elif="{{n.t==='at'}}" class="rk rk-at" decode>@{{n.v}}</text>
-    <text wx:elif="{{n.t==='emoji'}}" class="rk rk-emoji">{{n.v}}</text>
-    <text wx:elif="{{n.t==='br'}}">\n</text>
+<view class="rich-message {{selfSide ? 'self' : 'other'}}" catch:tap="">
+  <block wx:for="{{nodes}}" wx:key="idx" wx:for-index="idx" wx:for-item="n">
+    <!-- 换行 -->
+    <text wx:if="{{n.t === 'br'}}">\n</text>
+
+    <!-- 纯文本 + 格式 + 内联代码 -->
+    <text wx:elif="{{n.t === 'text' || n.t === 'b' || n.t === 'i' || n.t === 'u' || n.t === 's' || n.t === 'code' || n.t === 'blockquote' || n.t === 'at'}}"
+          class="rich-text rich-{{n.t}}"
+          data-text="{{n.v}}"
+          bindtap="onCopy"
+          bindlongpress="onLongText"
+          user-select="true">{{n.v}}</text>
 
     <!-- 链接 -->
-    <text wx:elif="{{n.t==='a'}}"
-      class="rk rk-link"
-      data-href="{{n.a.href}}"
-      bindtap="onTapLink"
-      decode>{{n.v}}</text>
+    <text wx:elif="{{n.t === 'a'}}"
+          class="rich-link"
+          data-href="{{n.a.href}}"
+          data-title="{{n.a.title || ''}}"
+          bindtap="onLink">{{n.v}}</text>
 
     <!-- 图片 -->
-    <image wx:elif="{{n.t==='img'}}"
-      class="rk rk-img"
-      src="{{n.v}}"
-      mode="{{n.a && n.a.mode || 'widthFix'}}"
-      data-url="{{n.v}}"
-      data-list="{{imgList}}"
-      bindtap="onPreviewImage"
-      lazy-load="true" />
-
-    <!-- 引用 -->
-    <view wx:elif="{{n.t==='blockquote'}}" class="rk rk-bq">
-      <text decode>{{n.v}}</text>
+    <view wx:elif="{{n.t === 'img'}}"
+          class="rich-img"
+          data-url="{{n.v}}"
+          data-urls="{{n.a && n.a.urls}}"
+          catchtap="onImage">
+      <image src="{{n.v}}" mode="widthFix"
+             style="width: {{(n.a && n.a.w) || 180}}px;"
+             lazy-load="true" />
+      <view class="rich-img-lock" wx:if="{{n.a && n.a.lock}}">🔒 点击查看(需相册权限)</view>
     </view>
 
-    <!-- 商品卡 -->
-    <view wx:elif="{{n.t==='product_card'}}"
-      class="rk rk-product"
-      data-id="{{n.v}}"
-      bindtap="onTapProduct">
-      <image class="rk-p-thumb" src="{{n.a.image}}" mode="aspectFill" />
-      <view class="rk-p-info">
-        <view class="rk-p-name">{{n.a.name}}</view>
-        <view class="rk-p-price">¥{{n.a.price}}</view>
+    <!-- 视频 -->
+    <view wx:elif="{{n.t === 'video'}}"
+          class="rich-video"
+          data-url="{{n.v}}"
+          data-thumb="{{n.a && n.a.thumb}}"
+          catchtap="onVideo">
+      <image class="rich-video-thumb" src="{{n.a && n.a.thumb || ''}}" mode="aspectFill" />
+      <view class="rich-video-play">▶</view>
+      <view class="rich-video-meta" wx:if="{{n.a && n.a.duration}}">
+        {{n.a.duration}}s
       </view>
+      <view class="rich-img-lock" wx:if="{{n.a && n.a.lock}}">🔒 点击播放(需相册权限)</view>
     </view>
 
-    <!-- 订单卡 -->
-    <view wx:elif="{{n.t==='order_card'}}"
-      class="rk rk-order"
-      data-id="{{n.v}}"
-      bindtap="onTapOrder">
-      <view class="rk-o-title">订单 {{n.a.orderNo}}</view>
-      <view class="rk-o-status">{{n.a.statusText}}</view>
-      <view class="rk-o-amount">¥{{n.a.total}}</view>
+    <!-- 音频 -->
+    <view wx:elif="{{n.t === 'audio' || n.t === 'voice'}}"
+          class="rich-audio"
+          data-url="{{n.v}}"
+          data-duration="{{n.a && n.a.duration}}"
+          data-type="{{n.t}}"
+          catchtap="onAudio">
+      <view class="rich-audio-icon">🎵</view>
+      <view class="rich-audio-name">{{n.a && n.a.name || '语音消息'}}</view>
+      <view class="rich-audio-duration" wx:if="{{n.a && n.a.duration}}">
+        {{n.a.duration}}s
+      </view>
+      <view class="rich-img-lock">🔒 需麦克风/文件权限</view>
     </view>
+
+    <!-- 文件 -->
+    <view wx:elif="{{n.t === 'file'}}"
+          class="rich-file"
+          data-url="{{n.v}}"
+          data-name="{{n.a && n.a.name}}"
+          data-size="{{n.a && n.a.size}}"
+          data-mime="{{n.a && n.a.mime}}"
+          catchtap="onFile">
+      <view class="rich-file-icon">📄</view>
+      <view class="rich-file-info">
+        <view class="rich-file-name">{{n.a && n.a.name || '文件'}}</view>
+        <view class="rich-file-meta">
+          <text wx:if="{{n.a && n.a.size}}">{{(n.a.size / 1024).toFixed(1)}} KB</text>
+          <text wx:if="{{n.a && n.a.mime}}"> · {{n.a.mime}}</text>
+        </view>
+      </view>
+      <view class="rich-img-lock">🔒 需文件权限</view>
+    </view>
+
+    <!-- 位置 -->
+    <view wx:elif="{{n.t === 'location' || n.t === 'map'}}"
+          class="rich-location"
+          data-latitude="{{n.a && n.a.latitude}}"
+          data-longitude="{{n.a && n.a.longitude}}"
+          data-name="{{n.a && n.a.name}}"
+          data-address="{{n.a && n.a.address}}"
+          data-accuracy="{{n.a && n.a.accuracy}}"
+          data-scale="{{n.a && n.a.scale}}"
+          catchtap="onLocation">
+      <view class="rich-location-icon">📍</view>
+      <view class="rich-location-info">
+        <view class="rich-location-name">{{n.a && n.a.name || '位置'}}</view>
+        <view class="rich-location-address" wx:if="{{n.a && n.a.address}}">
+          {{n.a.address}}
+        </view>
+        <view class="rich-location-accuracy" wx:if="{{n.a && n.a.accuracy}}">
+          精度: {{n.a.accuracy}}m
+        </view>
+      </view>
+      <view class="rich-img-lock">🔒 需位置权限</view>
+    </view>
+
+    <!-- 订单卡片 -->
+    <view wx:elif="{{n.t === 'order_card'}}"
+          class="rich-card rich-card-order"
+          data-href="/pages/order/detail?id={{n.v}}"
+          data-title="order"
+          catchtap="onLink">
+      <view class="rich-card-icon">📦</view>
+      <view class="rich-card-info">
+        <view class="rich-card-title">订单 #{{n.v}}</view>
+        <view class="rich-card-meta" wx:if="{{n.a}}">
+          {{n.a.statusLabel || ''}} · ¥{{n.a.total || 0}}
+        </view>
+      </view>
+      <view class="rich-card-arrow">›</view>
+    </view>
+
+    <!-- 商品卡片 -->
+    <view wx:elif="{{n.t === 'product_card'}}"
+          class="rich-card rich-card-product"
+          data-href="/pages/goods/detail?id={{n.v}}"
+          data-title="product"
+          catchtap="onLink">
+      <image class="rich-card-thumb" src="{{n.a && n.a.thumb || ''}}" />
+      <view class="rich-card-info">
+        <view class="rich-card-title">{{n.a && n.a.name || '商品'}}</view>
+        <view class="rich-card-price" wx:if="{{n.a && n.a.price}}">¥{{n.a.price}}</view>
+      </view>
+      <view class="rich-card-arrow">›</view>
+    </view>
+
   </block>
-</view>
-
-<!-- 退化:普通文本 -->
-<view wx:elif="{{content}}" class="rich-msg rich-fallback">
-  <text decode user-select="{{selectable}}">{{content}}</text>
 </view>

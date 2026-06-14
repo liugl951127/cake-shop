@@ -2,11 +2,11 @@
   <view class="status-bar {{stateClass}}">
     <view class="status-dot"></view>
     <text class="status-text">{{stateText}}</text>
-    <text class="status-sub" wx:if="{{stateSub}}">{{stateSub}}</text>
+    <text class="state-sub" wx:if="{{stateSub}}">{{stateSub}}</text>
   </view>
 
   <scroll-view scroll-y scroll-into-view="{{lastMessageId}}" class="messages"
-               style="height: calc(100vh - 240rpx);">
+               style="height: calc(100vh - 320rpx);">
     <view wx:for="{{messages}}" wx:key="messageId" id="msg-{{item.messageId}}"
           class="msg {{item.fromType === 'user' ? 'right' : 'left'}}">
       <view class="m-avatar" wx:if="{{item.fromType !== 'user'}}">
@@ -15,6 +15,11 @@
       <view class="m-bubble {{item.fromType === 'system' ? 'system' : ''}}">
         <view class="m-text" wx:if="{{item.type === 'text' && item.fromType !== 'system'}}">{{item.content}}</view>
         <view class="m-text" wx:elif="{{item.fromType === 'system'}}" style="font-size:24rpx;color:#999;">{{item.content}}</view>
+        <rich-message wx:elif="{{item.type === 'rich'}}"
+          rich="{{item.rich}}"
+          session-id="{{sessionId}}"
+          message-id="{{item.messageId}}"
+          self-side="{{item.fromType === 'user'}}" />
         <image class="m-image" wx:elif="{{item.type === 'image'}}" src="{{item.tempURL || item.content}}" mode="widthFix" bindtap="onPreviewImage" data-url="{{item.tempURL || item.content}}"/>
         <view class="m-file" wx:elif="{{item.type === 'file'}}">
           <text>📎 {{item.payload && item.payload.name || '文件'}}</text>
@@ -32,7 +37,31 @@
     </view>
   </scroll-view>
 
-  <!-- 转人工按钮 (v20+) -->
+  <!-- 工具面板(图/视频/文件/位置/语音) -->
+  <view class="send-panel {{showSendPanel ? 'show' : ''}}">
+    <view class="send-tool" bindtap="onSendImage">
+      <view class="send-tool-icon">📷</view>
+      <text class="send-tool-text">图片</text>
+    </view>
+    <view class="send-tool" bindtap="onSendVideo">
+      <view class="send-tool-icon">🎥</view>
+      <text class="send-tool-text">视频</text>
+    </view>
+    <view class="send-tool" bindtap="onSendFile">
+      <view class="send-tool-icon">📎</view>
+      <text class="send-tool-text">文件</text>
+    </view>
+    <view class="send-tool" bindtap="onSendLocation">
+      <view class="send-tool-icon">📍</view>
+      <text class="send-tool-text">位置</text>
+    </view>
+    <view class="send-tool" bindtouchstart="_recordStart" bindtouchend="_recordStop">
+      <view class="send-tool-icon">🎤</view>
+      <text class="send-tool-text">语音</text>
+    </view>
+  </view>
+
+  <!-- 转人工按钮 -->
   <transfer-human wx:if="{{sessionId && !transferredToWeCom && status !== 'closed'}}"
     session-id="{{sessionId}}"
     user-id="{{userId}}"
@@ -40,7 +69,7 @@
     bind:success="onTransferSuccess"
     bind:error="onTransferError" />
 
-  <!-- 挂断按钮 + 评价 (v21+) -->
+  <!-- 挂断按钮 + 评价 -->
   <hangup-bar wx:if="{{sessionId}}"
     session-id="{{sessionId}}"
     user-id="{{userId}}"
@@ -71,7 +100,7 @@
   </view>
 
   <view class="input-bar">
-    <view class="tool-btn" bindtap="chooseImage">📷</view>
+    <view class="tool-btn" bindtap="toggleSendPanel">+</view>
     <input class="input" placeholder="输入消息" value="{{inputText}}"
            bindinput="onInput" bindconfirm="onSend" bindfocus="onFocus"
            confirm-type="send" hold-keyboard="{{false}}"/>

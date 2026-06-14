@@ -21,12 +21,13 @@
 
 const { cloud, ok, fail, logger, authOptional, BizError, ErrorCode } = require('../common/index.js');
 const {
-  MessageType, MessageTypeSet, isValidRich, richToPlain, richTextLength
+  MessageType, MessageTypeSet, isValidRich, richToPlain, richTextLength, getRequiredScopes
 } = require('../common/messageTypes.js');
 const {
   saveChatMessage, touchSession
 } = require('../common/storage.js');
 const { normalizeDevice } = require('../common/device.js');
+const authz = require('../common/auth.js');
 
 // 内存连接表: sessionId -> Map<userId, meta>
 const connections = new Map();
@@ -223,6 +224,34 @@ exports.main = authOptional(async (event, context) => {
     if (type === 'file' && (!extra || !extra.url)) {
       return fail('文件消息需 extra.url', ErrorCode.CHAT_MESSAGE_INVALID);
     }
+    if (type === 'video' && (!extra || !extra.url)) {
+      return fail('视频消息需 extra.url', ErrorCode.CHAT_MESSAGE_INVALID);
+    }
+    if (type === 'audio' && (!extra || !extra.url)) {
+      return fail('音频消息需 extra.url', ErrorCode.CHAT_MESSAGE_INVALID);
+    }
+    if (type === 'voice' && (!extra || !extra.url)) {
+      return fail('语音消息需 extra.url', ErrorCode.CHAT_MESSAGE_INVALID);
+    }
+    if (type === 'location') {
+      if (!extra || extra.latitude == null || extra.longitude == null) {
+        return fail('位置消息需 extra.latitude/longitude', ErrorCode.CHAT_MESSAGE_INVALID);
+      }
+      // 校验位置范围 + 精度
+      try {
+        authz.validateLocation({
+          latitude: extra.latitude,
+          longitude: extra.longitude,
+          accuracy: extra.accuracy,
+          scope: extra.scope || 'CN'
+        });
+      } catch (e) {
+        if (e.code) return fail(e.message, e.code);
+        return fail(e.message, ErrorCode.AUTH_LOCATION_DENIED);
+      }
+    }
+    // 富文本中含敏感节点(图片/视频/位置等) - 服务端只校验格式
+    // 客户端在 preview/download 时走资源 token 鉴权(见 getAuthToken 云函数)
 
     const sess = await ensureSession(db, sessionId);
     if (!sess) return fail('会话不存在', ErrorCode.CHAT_SESSION_NOT_FOUND);

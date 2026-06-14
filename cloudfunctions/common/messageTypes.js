@@ -1,16 +1,21 @@
 // common/messageTypes.js
 // 统一消息/事件类型定义(云函数 + 客户端 + Spring Boot 后台共用)
 //
-// 聊天消息:  text / image / rich / file / product_card / order_card / system
-// 行为事件:  page_view / click / stay / form / submit / search / share / pay / cart / fav
-// 实时事件:  ws_open / ws_msg / ws_ack / ws_close
+// 聊天消息: text / image / rich / file / video / audio / voice / location / map
+// 行为事件: page_view / click / stay / form / submit / search / share / pay / cart / fav
+// 实时事件: ws_open / ws_msg / ws_ack / ws_close
 
 const MessageType = {
   // ===== 聊天消息 =====
   TEXT: 'text',                     // 纯文本
   IMAGE: 'image',                   // 单张图
   RICH: 'rich',                     // 富文本(包含文字+图片+链接)
-  FILE: 'file',                     // 任意文件
+  FILE: 'file',                     // 任意文件(需文件权限)
+  VIDEO: 'video',                   // 视频(需相册权限)
+  AUDIO: 'audio',                   // 音频
+  VOICE: 'voice',                   // 语音消息(需麦克风)
+  LOCATION: 'location',             // 位置(需位置权限)
+  MAP: 'map',                       // 地图
   PRODUCT_CARD: 'product_card',     // 商品卡片
   ORDER_CARD: 'order_card',         // 订单卡片
   SYSTEM: 'system',                 // 系统消息
@@ -52,11 +57,17 @@ const RichNodeType = {
   UNDERLINE: 'u',                   // 下划线
   STRIKE: 's',                      // 删除线
   LINK: 'a',                        // 链接
-  IMG: 'img',                       // 图片
+  IMG: 'img',                       // 图片(需相册权限)
   EMOJI: 'emoji',                   // 表情
   BR: 'br',                         // 换行
   CODE: 'code',                     // 行内代码
   BLOCKQUOTE: 'blockquote',         // 引用
+  LOCATION: 'location',             // 位置(需位置权限)
+  MAP: 'map',                       // 地图(需位置权限)
+  VIDEO: 'video',                   // 视频(需相册)
+  AUDIO: 'audio',                   // 音频
+  VOICE: 'voice',                   // 语音
+  FILE: 'file',                     // 文件(需文件权限)
   ORDER_CARD: 'order_card',         // 订单卡(嵌套)
   PRODUCT_CARD: 'product_card',     // 商品卡(嵌套)
   AT: 'at'                          // @ 某人
@@ -64,29 +75,45 @@ const RichNodeType = {
 
 // ===== 富文本协议 =====
 /**
- * 富文本是一棵树 / 数组,每个节点:
- *   { t: 'text'|'b'|'i'|..., v: '文字', a: { ... } }   // 文本/格式/链接
- *   { t: 'img', v: 'cloud://....', a: { w, h, thumb } }
- *   { t: 'order_card', v: 'orderId', a: { status, total, ... } }
- *
- * 简化的扁平数组也支持(从外部粘贴时):
- *   [{t:'text',v:'你好'},{t:'img',v:'cloud://xxx'},{t:'br'},{t:'a',v:'点这里',a:{href:'https://...'}}]
+ * 富文本节点(完整):
+ *   { t:'text', v:'文字' }
+ *   { t:'b'|'i'|'u'|'s', v:'文字' }        格式
+ *   { t:'a', v:'链接文字', a:{href, target} }
+ *   { t:'img', v:'cloud://....', a:{w,h,thumb} }     需 scope.readPhotos
+ *   { t:'video', v:'cloud://....', a:{w,h,duration,thumb} }  需 scope.album
+ *   { t:'audio'|'voice', v:'cloud://....', a:{duration} }  需 scope.microphone
+ *   { t:'file', v:'cloud://....', a:{name, size, mime} }  需 scope.file
+ *   { t:'location', v:'lat,lng', a:{name, address, accuracy, scale} }  需 scope.userLocation
+ *   { t:'map', v: JSON.stringify({lat,lng,name}) }    地图缩略
+ *   { t:'emoji', v:'😀' }
+ *   { t:'br' }                                   换行
+ *   { t:'order_card'|'product_card', v:'id', a:{...} }
+ *   { t:'at', v:'userId' }
  */
 function isValidRich(nodes) {
   if (!Array.isArray(nodes)) return false;
   if (nodes.length === 0) return false;
-  if (nodes.length > 200) return false;        // 节点上限
+  if (nodes.length > 200) return false;
   for (const n of nodes) {
     if (!n || typeof n !== 'object') return false;
     if (!RichNodeType[n.t]) return false;
-    if (n.t === RichNodeType.IMG) {
+    if (n.t === RichNodeType.IMG || n.t === RichNodeType.VIDEO
+        || n.t === RichNodeType.AUDIO || n.t === RichNodeType.VOICE
+        || n.t === RichNodeType.FILE) {
       if (typeof n.v !== 'string' || n.v.length < 4) return false;
     } else if (n.t === RichNodeType.LINK) {
       if (typeof n.v !== 'string' || !n.a || typeof n.a.href !== 'string') return false;
       if (n.a.href.length > 2000) return false;
+    } else if (n.t === RichNodeType.LOCATION) {
+      // v: 字符串 "lat,lng" 或对象 {latitude, longitude}
+      if (n.v == null) return false;
+      if (typeof n.v === 'string' && n.v.length > 200) return false;
+      if (typeof n.v === 'object' && n.v.latitude == null) return false;
+    } else if (n.t === RichNodeType.MAP) {
+      if (n.v == null) return false;
     } else if (n.t !== RichNodeType.BR) {
       if (typeof n.v !== 'string') return false;
-      if (n.v.length > 5000) return false;     // 单节点长度上限
+      if (n.v.length > 5000) return false;
     }
   }
   return true;
@@ -99,6 +126,10 @@ function richToPlain(nodes) {
   for (const n of nodes) {
     if (n.t === 'br') { out += '\n'; continue; }
     if (n.t === 'img' || n.t === 'emoji') { out += '[图片]'; continue; }
+    if (n.t === 'video') { out += '[视频]'; continue; }
+    if (n.t === 'audio' || n.t === 'voice') { out += '[语音]'; continue; }
+    if (n.t === 'file') { out += '[文件]'; continue; }
+    if (n.t === 'location' || n.t === 'map') { out += '[位置]'; continue; }
     out += n.v || '';
   }
   return out;
@@ -109,17 +140,33 @@ function richTextLength(nodes) {
   if (!Array.isArray(nodes)) return 0;
   let total = 0;
   for (const n of nodes) {
-    if (n.t === 'img' || n.t === 'emoji') total += 1; // 1 个字符计
+    if (['img','emoji','video','audio','voice','file','location','map']
+        .includes(n.t)) total += 1;
     else if (n.t !== 'br') total += (n.v || '').length;
   }
   return total;
 }
 
+// 提取富文本中所有"需授权"节点(用于前端提前 ask 权限)
+function getRequiredScopes(nodes) {
+  if (!Array.isArray(nodes)) return [];
+  const set = new Set();
+  for (const n of nodes) {
+    if (!n || !n.t) continue;
+    if (n.t === 'img') set.add('readPhotosAlbum');
+    else if (n.t === 'video') set.add('album');
+    else if (n.t === 'location' || n.t === 'map') set.add('userLocation');
+    else if (n.t === 'voice' || n.t === 'audio') set.add('microphone');
+    else if (n.t === 'file') set.add('file');
+  }
+  return Array.from(set);
+}
+
 // ===== 行为日志规范 =====
 const BehaviorScene = {
-  MINIPROGRAM: 'miniprogram',       // 小程序
-  H5: 'h5',                         // H5
-  ADMIN: 'admin'                    // 管理后台
+  MINIPROGRAM: 'miniprogram',
+  H5: 'h5',
+  ADMIN: 'admin'
 };
 
 module.exports = {
@@ -129,5 +176,6 @@ module.exports = {
   BehaviorScene,
   isValidRich,
   richToPlain,
-  richTextLength
+  richTextLength,
+  getRequiredScopes
 };

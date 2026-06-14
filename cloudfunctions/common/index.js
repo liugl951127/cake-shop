@@ -14,6 +14,7 @@ const { logger } = require('./logger.js');
 const { config } = require('./config.js');
 const { cache } = require('./cache.js');
 const { BizError, ErrorCode, ErrorMessage, ok, fail, errorToResponse } = require('./errors.js');
+const authz = require('./auth.js');
 
 // 1. 初始化云开发(单例,云函数复用)
 let _initialized = false;
@@ -110,5 +111,6 @@ module.exports = {
   auth,
   authOptional,
   requireAdmin,
-  revokeToken
+  revokeToken,
+  authz
 };

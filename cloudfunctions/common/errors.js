@@ -88,6 +88,25 @@ const ErrorCode = {
   OFFLINE_OP_REPLAY_DUPLICATE: 4703,
   OFFLINE_OP_PAYLOAD_TOO_LARGE: 4704,
 
+  // 授权 51xx-53xx
+  AUTH_DENIED: 5101,                    // 用户拒绝授权
+  AUTH_LOCATION_DENIED: 5102,            // 拒绝位置
+  AUTH_CAMERA_DENIED: 5103,              // 拒绝相机
+  AUTH_ALBUM_DENIED: 5104,               // 拒绝相册
+  AUTH_MIC_DENIED: 5105,                 // 拒绝麦克风
+  AUTH_FILE_DENIED: 5106,                // 拒绝文件访问
+  AUTH_NEVER_ASK_AGAIN: 5107,            // 永久拒绝(需要 wx.openSetting)
+  AUTH_NOT_GRANTED_YET: 5108,            // 还没询问过
+  AUTH_TOKEN_INVALID: 5201,               // 授权 token 无效
+  AUTH_TOKEN_EXPIRED: 5202,              // 授权 token 过期
+  AUTH_TOKEN_MISMATCH: 5203,             // token 与资源不匹配
+  AUTH_URL_SIGN_INVALID: 5204,            // 临时 URL 签名无效
+  AUTH_URL_EXPIRED: 5205,                // 临时 URL 过期
+  AUTH_FILE_TOO_LARGE: 5301,             // 文件过大
+  AUTH_FILE_TYPE_DENIED: 5302,           // 文件类型拒绝
+  AUTH_LOCATION_OUT_OF_RANGE: 5303,      // 位置超出服务范围
+  AUTH_LOCATION_PRECISION_LOW: 5304,     // 位置精度太低
+
   // 企业微信 48xx
   WECOM_CONFIG_MISSING: 4801,
   WECOM_TOKEN_FETCH_FAIL: 4802,
@@ -164,6 +183,24 @@ const ErrorMessage = {
   [ErrorCode.BEHAVIOR_DEVICE_NOT_FOUND]: '设备指纹未识别',
   [ErrorCode.HISTORY_QUERY_TOO_MANY]: '查询范围过大',
   [ErrorCode.HISTORY_EXPORT_FAILED]: '导出失败',
+  // 授权 51xx-53xx
+  [ErrorCode.AUTH_DENIED]: '未授权',
+  [ErrorCode.AUTH_LOCATION_DENIED]: '位置权限被拒绝',
+  [ErrorCode.AUTH_CAMERA_DENIED]: '相机权限被拒绝',
+  [ErrorCode.AUTH_ALBUM_DENIED]: '相册权限被拒绝',
+  [ErrorCode.AUTH_MIC_DENIED]: '麦克风权限被拒绝',
+  [ErrorCode.AUTH_FILE_DENIED]: '文件访问被拒绝',
+  [ErrorCode.AUTH_NEVER_ASK_AGAIN]: '权限已被永久拒绝,请到设置开启',
+  [ErrorCode.AUTH_NOT_GRANTED_YET]: '尚未询问过该权限',
+  [ErrorCode.AUTH_TOKEN_INVALID]: '授权令牌无效',
+  [ErrorCode.AUTH_TOKEN_EXPIRED]: '授权令牌已过期',
+  [ErrorCode.AUTH_TOKEN_MISMATCH]: '授权令牌不匹配',
+  [ErrorCode.AUTH_URL_SIGN_INVALID]: '临时URL签名无效',
+  [ErrorCode.AUTH_URL_EXPIRED]: '临时URL已过期',
+  [ErrorCode.AUTH_FILE_TOO_LARGE]: '文件超过大小限制',
+  [ErrorCode.AUTH_FILE_TYPE_DENIED]: '文件类型不支持',
+  [ErrorCode.AUTH_LOCATION_OUT_OF_RANGE]: '位置超出服务范围',
+  [ErrorCode.AUTH_LOCATION_PRECISION_LOW]: '位置精度不足',
   // 多租户
   [ErrorCode.TENANT_NOT_FOUND]: '租户不存在',
   [ErrorCode.TENANT_DISABLED]: '租户已禁用',
