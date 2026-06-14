@@ -4,21 +4,10 @@
     "pages/goods/goods",
     "pages/detail/detail",
     "pages/cart/cart",
-    "pages/order/order",
     "pages/my/my",
     "pages/favor/favor",
     "pages/login/login",
-    "pages/search/search",
-    "pages/address/list/list",
-    "pages/address/edit/edit",
-    "pages/admin/edit/edit",
-    "pages/chat/session/session",
-    "pages/coupon/center/center",
-    "pages/group/list/list",
-    "pages/member/member/member",
-    "pages/seckill/seckill/seckill",
-    "pages/store/list/list",
-    "pages/chat/session/session"
+    "pages/search/search"
   ],
   "subpackages": [
     {
