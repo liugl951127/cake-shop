@@ -1,0 +1,36 @@
+.page { padding: 20rpx 20rpx 200rpx; }
+.hint { background: #e3f2fd; color: #1976d2; padding: 16rpx 24rpx; border-radius: 8rpx; font-size: 24rpx; margin-bottom: 20rpx; }
+
+.block { background: #fff; border-radius: 12rpx; padding: 24rpx; margin-bottom: 20rpx; }
+.label { font-size: 28rpx; color: #333; margin-bottom: 16rpx; }
+.req { color: #ff5722; }
+.in { width: 100%; height: 80rpx; font-size: 28rpx; }
+.sub { font-size: 24rpx; margin-top: 8rpx; }
+.sub .ok { color: #4caf50; }
+.sub .err { color: #ff5722; }
+
+.img-row { display: flex; align-items: flex-start; }
+.img-box {
+  width: 240rpx; height: 160rpx; background: #f9f9f9;
+  border: 2rpx dashed #ddd; border-radius: 8rpx;
+  position: relative; overflow: hidden;
+}
+.img-box image { width: 100%; height: 100%; }
+.add { width: 100%; height: 100%; text-align: center; line-height: 156rpx; color: #ccc; font-size: 26rpx; }
+.del {
+  position: absolute; right: -10rpx; top: -10rpx; width: 36rpx; height: 36rpx;
+  background: #333; color: #fff; border-radius: 50%; text-align: center; line-height: 32rpx; font-size: 28rpx;
+}
+.tip { flex: 1; margin-left: 20rpx; color: #999; font-size: 24rpx; line-height: 1.6; padding-top: 30rpx; }
+
+.warning {
+  background: #fff5e0; color: #ff9800; padding: 16rpx 24rpx;
+  border-radius: 8rpx; font-size: 24rpx; text-align: center; margin: 20rpx 0;
+}
+
+.submit {
+  position: fixed; left: 20rpx; right: 20rpx; bottom: 30rpx;
+  background: linear-gradient(135deg, #ff5722, #ff9800); color: #fff;
+  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
+  font-size: 30rpx;
+}

@@ -1,0 +1,56 @@
+.page { padding: 20rpx 20rpx 40rpx; }
+.head { text-align: center; padding: 20rpx 0; }
+.head .big { font-size: 36rpx; font-weight: bold; display: block; }
+.head .sub { font-size: 24rpx; color: #999; margin-top: 8rpx; display: block; }
+
+.steps { display: flex; justify-content: space-between; padding: 30rpx 20rpx; background: #fff; border-radius: 16rpx; margin: 20rpx 0; }
+.step {
+  flex: 1; text-align: center; font-size: 24rpx; color: #ccc;
+  position: relative; padding: 0 10rpx;
+}
+.step::after {
+  content: ''; position: absolute; top: 14rpx; right: -50%; width: 100%; height: 2rpx; background: #eee; z-index: 0;
+}
+.step:last-child::after { display: none; }
+.step.on { color: #4caf50; font-weight: 600; }
+.step.on::after { background: #4caf50; }
+
+.camera-area { text-align: center; padding: 40rpx 0; }
+.face-frame {
+  width: 400rpx; height: 400rpx; border-radius: 50%;
+  background: #1a1a1a; margin: 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.face-frame::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  border: 6rpx solid rgba(76, 175, 80, 0.5);
+  animation: pulse 2s linear infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.1); opacity: 0; }
+}
+.face-circle { color: #fff; }
+.face-circle .emoji { font-size: 120rpx; }
+.face-circle.active { color: #4caf50; }
+.action-tip { color: #4caf50; font-size: 32rpx; font-weight: 600; margin-top: 20rpx; }
+
+.block { background: #fff; border-radius: 12rpx; padding: 24rpx; margin: 20rpx 0; text-align: center; }
+.block .title { font-size: 32rpx; font-weight: 600; color: #333; }
+.block .desc { font-size: 24rpx; color: #999; margin-top: 8rpx; }
+
+.progress { padding: 20rpx; }
+.p-bar { height: 12rpx; background: #f0f0f0; border-radius: 6rpx; overflow: hidden; }
+.p-fill { height: 100%; background: linear-gradient(90deg, #4caf50, #66bb6a); transition: width 0.3s; }
+.p-text { text-align: center; font-size: 24rpx; color: #999; margin-top: 8rpx; }
+
+.btn-row { padding: 0 20rpx; }
+.btn {
+  background: #4caf50; color: #fff; text-align: center;
+  padding: 24rpx 0; border-radius: 999rpx; font-size: 30rpx;
+}
+.btn.primary { background: linear-gradient(135deg, #4caf50, #66bb6a); }
+
+.rules { margin-top: 30rpx; padding: 20rpx; background: #fff5e0; border-radius: 12rpx; font-size: 24rpx; color: #666; }
+.rules view { line-height: 1.8; }

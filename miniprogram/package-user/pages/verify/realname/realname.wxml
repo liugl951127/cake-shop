@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="hint">📷 支持拍照 OCR 识别,也可以手动填写</view>
+
+  <!-- OCR 拍照 -->
+  <view class="block">
+    <view class="label">身份证正面(可选,OCR 识别)</view>
+    <view class="img-row">
+      <view class="img-box" bindtap="onChooseId">
+        <image wx:if="{{idImgUrl}}" src="{{idImgUrl}}" mode="aspectFill"></image>
+        <view class="add" wx:else>+ 拍照 / 上传</view>
+        <view class="del" wx:if="{{idImgUrl}}" catchtap="onDelId">×</view>
+      </view>
+      <view class="tip">点击拍摄身份证人像面</view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="label">姓名 <text class="req">*</text></view>
+    <input class="in" value="{{form.name}}" bindinput="onK" data-k="name" placeholder="请输入真实姓名" maxlength="20"/>
+  </view>
+
+  <view class="block">
+    <view class="label">身份证号 <text class="req">*</text></view>
+    <input class="in" value="{{form.idCard}}" bindinput="onK" data-k="idCard" placeholder="18 位身份证号" maxlength="18"/>
+    <view class="sub" wx:if="{{form.idCard.length === 18}}">
+      <text wx:if="{{idValid}}" class="ok">✓ 格式正确</text>
+      <text wx:else class="err">✗ 格式错误</text>
+    </view>
+  </view>
+
+  <view class="warning">
+    <text>🔒 您的信息将加密存储,仅用于身份核验</text>
+  </view>
+
+  <view class="submit" bindtap="onSubmit">提交认证</view>
+</view>

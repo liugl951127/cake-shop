@@ -102,6 +102,16 @@ Page({
     if (this.client && e.detail.value) this.client.onInputTyping();
   },
 
+  onTransfer() {
+    if (!this.data.sessionId) return wx.showToast({ title: '会话未加载', icon: 'none' });
+    wx.navigateTo({ url: '/package-chat/pages/chat/transfer/transfer?sessionId=' + this.data.sessionId + '&tab=skill' });
+  },
+
+  onInvite() {
+    if (!this.data.sessionId) return wx.showToast({ title: '会话未加载', icon: 'none' });
+    wx.navigateTo({ url: '/package-chat/pages/chat/transfer/transfer?sessionId=' + this.data.sessionId + '&tab=triage' });
+  },
+
   async onSend() {
     const text = this.data.inputText.trim();
     if (!text) return;

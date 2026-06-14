@@ -4,6 +4,8 @@
     <text class="status-text">{{stateText}}</text>
     <text class="status-sub" wx:if="{{userName}}">用户 {{userName}}</text>
     <text class="status-sub" wx:if="{{stateSub}}"> · {{stateSub}}</text>
+    <text class="transfer-btn" bindtap="onTransfer">转接</text>
+    <text class="invite-btn" bindtap="onInvite">协办</text>
   </view>
 
   <scroll-view scroll-y scroll-into-view="{{lastMessageId}}" class="messages">

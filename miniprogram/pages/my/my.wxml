@@ -85,6 +85,10 @@
       <view class="f-icon" style="background:#f9f0ff">🌟</view>
       <text>服务市场</text>
     </view>
+    <view class="f-item" bindtap="goVerify">
+      <view class="f-icon" style="background:#e0fff0">🛡️</view>
+      <text>实名认证</text>
+    </view>
     <view class="f-item" bindtap="goFavor">
       <view class="f-icon" style="background:#e6f7e6">♥</view>
       <text>我的收藏</text>

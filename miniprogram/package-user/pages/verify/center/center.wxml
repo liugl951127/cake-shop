@@ -1,0 +1,64 @@
+<view class="page">
+  <view class="hero {{level}}">
+    <view class="hero-icon">{{levelIcon}}</view>
+    <view class="hero-text">{{levelText}}</view>
+    <view class="hero-sub">完善认证可解锁更多权益</view>
+  </view>
+
+  <view class="card">
+    <view class="cell {{status.realName.verified ? 'done' : ''}}" bindtap="goRealName">
+      <view class="c-icon real">🆔</view>
+      <view class="c-info">
+        <view class="c-name">实名认证</view>
+        <view class="c-desc">姓名 + 身份证号核验</view>
+      </view>
+      <view class="c-status">
+        <text wx:if="{{status.realName.verified}}">✓ {{status.realName.name}}</text>
+        <text wx:else class="to-do">去认证</text>
+      </view>
+    </view>
+
+    <view class="cell {{status.liveness.verified ? 'done' : ''}}" bindtap="goLiveness">
+      <view class="c-icon live">📸</view>
+      <view class="c-info">
+        <view class="c-name">活体检测</view>
+        <view class="c-desc">人脸识别 + 活体动作</view>
+      </view>
+      <view class="c-status">
+        <text wx:if="{{status.liveness.verified}}">✓ 相似度 {{(status.liveness.score * 100).toFixed(0)}}%</text>
+        <text wx:else class="to-do">去认证</text>
+      </view>
+    </view>
+
+    <view class="cell {{status.bankCard.verified ? 'done' : ''}}" bindtap="goBank">
+      <view class="c-icon bank">💳</view>
+      <view class="c-info">
+        <view class="c-name">银行卡四要素</view>
+        <view class="c-desc">姓名 + 身份证 + 卡号 + 预留手机</view>
+      </view>
+      <view class="c-status">
+        <text wx:if="{{status.bankCard.verified}}">✓ {{status.bankCard.masked}}</text>
+        <text wx:else class="to-do">去认证</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{unlocks.length}}">
+    <view class="c-title">🎁 已解锁权益</view>
+    <view class="unlock-list">
+      <view class="u" wx:for="{{unlocks}}" wx:key="name">
+        <text class="emoji">{{item.icon}}</text>
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="rules">
+    <view class="r-title">📋 认证说明</view>
+    <view>• 信息加密存储,不存原始证件</view>
+    <view>• 实名认证后可申请发票、领取会员权益</view>
+    <view>• 活体认证后可操作退款、改绑等敏感操作</view>
+    <view>• 银行卡认证后可进行大额提现</view>
+    <view>• 身份信息不会用于其他用途</view>
+  </view>
+</view>

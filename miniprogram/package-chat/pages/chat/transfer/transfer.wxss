@@ -1,0 +1,48 @@
+.page { padding-bottom: 200rpx; }
+.hint { background: #fff5e0; color: #ff9800; padding: 16rpx 24rpx; font-size: 24rpx; }
+
+.tabs { display: flex; background: #fff; margin-bottom: 20rpx; }
+.t { flex: 1; text-align: center; padding: 24rpx 0; font-size: 28rpx; color: #666; position: relative; }
+.t.on { color: #ff5722; font-weight: 600; }
+.t.on::after { content: ''; position: absolute; left: 30%; right: 30%; bottom: 0; height: 4rpx; background: #ff5722; border-radius: 2rpx; }
+
+.block { background: #fff; border-radius: 12rpx; margin: 0 20rpx 20rpx; padding: 20rpx; }
+
+.g { display: flex; align-items: center; padding: 20rpx 0; border-bottom: 1rpx solid #f5f5f5; }
+.g:last-child { border-bottom: none; }
+.g-icon { width: 80rpx; height: 80rpx; border-radius: 16rpx; text-align: center; line-height: 80rpx; font-size: 40rpx; }
+.g-avatar { width: 72rpx; height: 72rpx; border-radius: 50%; background: #f0f0f0; }
+.g-info { flex: 1; margin-left: 16rpx; }
+.g-name { font-size: 28rpx; color: #333; font-weight: 600; }
+.g-desc { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+.tag { font-size: 20rpx; color: #ff9800; }
+.g-stat { text-align: right; margin-right: 16rpx; }
+.g-stat .num { font-size: 30rpx; color: #4caf50; font-weight: 600; }
+.g-stat .unit { font-size: 20rpx; color: #999; display: block; }
+.check { width: 40rpx; height: 40rpx; border: 1rpx solid #ddd; border-radius: 50%; text-align: center; line-height: 38rpx; color: transparent; font-size: 28rpx; }
+.check.on { background: #ff5722; color: #fff; border-color: #ff5722; }
+
+.search { background: #f5f5f5; border-radius: 8rpx; padding: 16rpx 24rpx; font-size: 26rpx; margin-bottom: 16rpx; }
+
+.info-card { background: #e3f2fd; color: #1976d2; padding: 20rpx; border-radius: 8rpx; font-size: 26rpx; }
+.info-card .sub { display: block; font-size: 22rpx; color: #666; margin-top: 6rpx; }
+
+.role-tabs { display: flex; gap: 12rpx; margin: 16rpx 0; }
+.r { background: #f5f5f5; color: #666; padding: 8rpx 20rpx; border-radius: 999rpx; font-size: 24rpx; }
+.r.on { background: #1976d2; color: #fff; }
+
+.label { font-size: 26rpx; color: #333; margin-bottom: 12rpx; }
+.ta { width: 100%; height: 160rpx; font-size: 26rpx; }
+.urgent { display: flex; align-items: center; margin-top: 16rpx; }
+.urgent .cb { width: 32rpx; height: 32rpx; border: 1rpx solid #ddd; border-radius: 4rpx; text-align: center; line-height: 30rpx; color: transparent; font-size: 22rpx; margin-right: 12rpx; }
+.urgent .cb.on { background: #ff5722; color: #fff; border-color: #ff5722; }
+.urgent .tip { color: #999; font-size: 22rpx; margin-left: 12rpx; }
+
+.empty { text-align: center; color: #ccc; padding: 40rpx 0; }
+
+.submit {
+  position: fixed; left: 20rpx; right: 20rpx; bottom: 30rpx;
+  background: linear-gradient(135deg, #ff5722, #ff9800); color: #fff;
+  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
+  font-size: 30rpx;
+}

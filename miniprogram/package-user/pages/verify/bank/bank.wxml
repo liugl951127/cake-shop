@@ -1,0 +1,39 @@
+<view class="page">
+  <view class="hint">💳 银行卡四要素认证,用于大额提现等</view>
+
+  <view class="block">
+    <view class="label">真实姓名 <text class="req">*</text></view>
+    <view class="readonly" wx:if="{{user.realName}}">{{user.realName}} (已实名)</view>
+    <input class="in" wx:else value="{{form.name}}" bindinput="onK" data-k="name" placeholder="请输入真实姓名" maxlength="20"/>
+  </view>
+
+  <view class="block">
+    <view class="label">身份证号 <text class="req">*</text></view>
+    <view class="readonly" wx:if="{{user.realName}}">已实名绑定,无需再次填写</view>
+    <input class="in" wx:else value="{{form.idCard}}" bindinput="onK" data-k="idCard" placeholder="18 位身份证号" maxlength="18"/>
+  </view>
+
+  <view class="block">
+    <view class="label">银行卡号 <text class="req">*</text></view>
+    <input class="in" type="number" value="{{form.bankCard}}" bindinput="onK" data-k="bankCard" placeholder="请输入银行卡号" maxlength="19"/>
+    <view class="bank-name" wx:if="{{bankInfo.bank}}">🏦 {{bankInfo.bank}} · {{bankInfo.type === 'credit' ? '信用卡' : '储蓄卡'}}</view>
+  </view>
+
+  <view class="block">
+    <view class="label">银行预留手机号 <text class="req">*</text></view>
+    <view class="phone-row">
+      <input class="in" type="number" value="{{form.phone}}" bindinput="onK" data-k="phone" placeholder="11 位手机号" maxlength="11"/>
+      <view class="send {{countdown > 0 ? 'disabled' : ''}}" bindtap="onSendCode">
+        {{countdown > 0 ? countdown + 's' : '获取验证码'}}
+      </view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="label">短信验证码 <text class="req">*</text></view>
+    <input class="in" type="number" value="{{form.smsCode}}" bindinput="onK" data-k="smsCode" placeholder="6 位验证码" maxlength="6"/>
+  </view>
+
+  <view class="warning">🔒 银行卡号只用于校验,不会保存</view>
+  <view class="submit" bindtap="onSubmit">提交认证</view>
+</view>

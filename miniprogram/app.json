@@ -39,7 +39,11 @@
         "pages/webview/webview",
         "pages/settings/lang/lang",
         "pages/luckybag/luckybag",
-        "pages/invite/invite"
+        "pages/invite/invite",
+        "pages/verify/center/center",
+        "pages/verify/realname/realname",
+        "pages/verify/liveness/liveness",
+        "pages/verify/bank/bank"
       ]
     },
     {
@@ -63,7 +67,8 @@
         "pages/chat/session/session",
         "pages/chat/admin/admin",
         "pages/chat/adminChat/adminChat",
-        "pages/chat/dashboard/dashboard"
+        "pages/chat/dashboard/dashboard",
+        "pages/chat/transfer/transfer"
       ]
     },
     {

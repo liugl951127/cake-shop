@@ -1,0 +1,78 @@
+<view class="page">
+  <view class="hint">把会话转给更合适的坐席 / 技能组,带上完整上下文</view>
+
+  <!-- Tab -->
+  <view class="tabs">
+    <text class="t {{tab === 'skill' ? 'on' : ''}}" bindtap="setTab" data-k="skill">转技能组</text>
+    <text class="t {{tab === 'agent' ? 'on' : ''}}" bindtap="setTab" data-k="agent">转指定坐席</text>
+    <text class="t {{tab === 'triage' ? 'on' : ''}}" bindtap="setTab" data-k="triage">三方协同</text>
+  </view>
+
+  <!-- 转技能组 -->
+  <view class="block" wx:if="{{tab === 'skill'}}">
+    <view class="g" wx:for="{{skillGroups}}" wx:key="_id" bindtap="selectGroup" data-id="{{item._id}}">
+      <view class="g-icon" style="background:{{item.color || '#f0f0f0'}}">{{item.icon || '💼'}}</view>
+      <view class="g-info">
+        <view class="g-name">{{item.name}}</view>
+        <view class="g-desc">{{item.description || '—'}}</view>
+      </view>
+      <view class="g-stat">
+        <text class="num">{{item.available || 0}}</text>
+        <text class="unit">/ {{item.online || 0}} 空闲</text>
+      </view>
+      <text class="check {{selectedGroupId === item._id ? 'on' : ''}}">✓</text>
+    </view>
+  </view>
+
+  <!-- 转坐席 -->
+  <view class="block" wx:if="{{tab === 'agent'}}">
+    <input class="search" placeholder="搜姓名 / 工号" value="{{keyword}}" bindinput="onSearch"/>
+    <view class="g" wx:for="{{filteredAgents}}" wx:key="_id" bindtap="selectAgent" data-id="{{item._id}}">
+      <image class="g-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="g-info">
+        <view class="g-name">{{item.name || item.nickName}} <text class="tag" wx:if="{{item.level > 3}}">⭐</text></view>
+        <view class="g-desc">工号 {{item.agentNo}} · 接待 {{item.currentSessions || 0}} 人</view>
+      </view>
+      <text class="check {{selectedAgentId === item._id ? 'on' : ''}}">✓</text>
+    </view>
+    <view class="empty" wx:if="{{!filteredAgents.length}}">暂无坐席</view>
+  </view>
+
+  <!-- 三方协同 -->
+  <view class="block" wx:if="{{tab === 'triage'}}">
+    <view class="info-card">
+      <text>👥 邀请第三方坐席加入当前会话</text>
+      <text class="sub">适合需要财务 / 主管 / 专家协助的场景</text>
+    </view>
+    <view class="role-tabs">
+      <text class="r {{role === 'helper' ? 'on' : ''}}" bindtap="setRole" data-k="helper">协助</text>
+      <text class="r {{role === 'observer' ? 'on' : ''}}" bindtap="setRole" data-k="observer">旁观</text>
+      <text class="r {{role === 'expert' ? 'on' : ''}}" bindtap="setRole" data-k="expert">专家</text>
+    </view>
+    <input class="search" placeholder="搜坐席" value="{{keyword}}" bindinput="onSearch"/>
+    <view class="g" wx:for="{{filteredAgents}}" wx:key="_id" bindtap="selectAgent" data-id="{{item._id}}">
+      <image class="g-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="g-info">
+        <view class="g-name">{{item.name || item.nickName}}</view>
+        <view class="g-desc">技能: {{item.skillNames || '—'}}</view>
+      </view>
+      <text class="check {{selectedAgentId === item._id ? 'on' : ''}}">✓</text>
+    </view>
+  </view>
+
+  <!-- 备注 + 加急 -->
+  <view class="block">
+    <view class="label">转接原因 / 备注</view>
+    <textarea class="ta" placeholder="请说明转接原因(让对方更快了解情况)" maxlength="200"
+              value="{{reason}}" bindinput="onReason"></textarea>
+    <view class="urgent" bindtap="toggleUrgent">
+      <text class="cb {{urgent ? 'on' : ''}}">✓</text>
+      <text>加急</text>
+      <text class="tip">加急将优先派单</text>
+    </view>
+  </view>
+
+  <view class="submit" bindtap="onSubmit">
+    {{tab === 'triage' ? '邀请加入会话' : '确认转接'}}
+  </view>
+</view>

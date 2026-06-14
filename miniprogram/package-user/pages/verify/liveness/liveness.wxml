@@ -1,0 +1,57 @@
+<view class="page">
+  <view class="head">
+    <text class="big">📸 活体检测</text>
+    <text class="sub">请按提示完成动作,确保是您本人在操作</text>
+  </view>
+
+  <view class="steps">
+    <view class="step {{step >= 1 ? 'on' : ''}}">1. 正面</view>
+    <view class="step {{step >= 2 ? 'on' : ''}}">2. 眨眼</view>
+    <view class="step {{step >= 3 ? 'on' : ''}}">3. 点头</view>
+    <view class="step {{step >= 4 ? 'on' : ''}}">4. 张嘴</view>
+  </view>
+
+  <view class="camera-area">
+    <view class="face-frame">
+      <view class="face-circle {{step === 1 ? 'active' : ''}}">
+        <text class="emoji" wx:if="{{step < 4}}">{{stepEmoji}}</text>
+        <text class="emoji" wx:else>✓</text>
+      </view>
+    </view>
+    <view class="action-tip">{{actionText}}</view>
+  </view>
+
+  <view class="block" wx:if="{{step === 1}}">
+    <view class="title">请保持光线充足,正对手机</view>
+    <view class="desc">将面部对准圆框,确保光线均匀、无遮挡</view>
+  </view>
+  <view class="block" wx:if="{{step === 2}}">
+    <view class="title">请眨眼</view>
+    <view class="desc">缓慢眨眼 2-3 次,系统会智能识别</view>
+  </view>
+  <view class="block" wx:if="{{step === 3}}">
+    <view class="title">请点头</view>
+    <view class="desc">缓慢点 1-2 次头</view>
+  </view>
+  <view class="block" wx:if="{{step === 4}}">
+    <view class="title">请张嘴</view>
+    <view class="desc">缓慢张嘴 1-2 次</view>
+  </view>
+
+  <view class="progress">
+    <view class="p-bar">
+      <view class="p-fill" style="width: {{(step / 4) * 100}}%"></view>
+    </view>
+    <view class="p-text">{{step}} / 4</view>
+  </view>
+
+  <view class="btn-row">
+    <view class="btn primary" bindtap="onCapture">{{step < 4 ? '拍照进入下一步' : '完成认证'}}</view>
+  </view>
+
+  <view class="rules">
+    <view>• 请勿戴口罩、墨镜、帽子等遮挡物</view>
+    <view>• 请勿在强光或暗光下操作</view>
+    <view>• 请勿使用照片、视频等伪造人脸</view>
+  </view>
+</view>
