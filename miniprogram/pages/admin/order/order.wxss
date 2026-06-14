@@ -18,6 +18,9 @@
   background: #fff; margin: 20rpx; border-radius: 16rpx; padding: 20rpx;
 }
 .o-head { font-size: 24rpx; }
+.status-tag {
+  font-size: 22rpx; color: #fff; padding: 4rpx 12rpx; border-radius: 6rpx;
+}
 .o-goods { padding: 16rpx 0; display: flex; flex-wrap: wrap; }
 .og { display: flex; align-items: center; width: 50%; margin-bottom: 10rpx; }
 .og image { width: 80rpx; height: 80rpx; border-radius: 8rpx; background: #f0f0f0; margin-right: 12rpx; }
@@ -31,3 +34,21 @@
 }
 .o-btn.primary { color: var(--primary); border-color: var(--primary); }
 .empty { padding: 200rpx 0; text-align: center; color: #999; }
+
+/* 发货弹层 */
+.mask { z-index: 1000; }
+.ship-panel {
+  position: fixed; left: 0; right: 0; bottom: -100%;
+  background: #fff; border-top-left-radius: 24rpx; border-top-right-radius: 24rpx;
+  padding: 30rpx; transition: bottom 0.3s; z-index: 1001;
+}
+.ship-panel.show { bottom: 0; }
+.ship-title { font-size: 32rpx; font-weight: 600; margin-bottom: 20rpx; text-align: center; }
+.ship-panel .form-row {
+  display: flex; align-items: center; padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.ship-panel .form-label { width: 160rpx; font-size: 28rpx; }
+.ship-panel .form-input { flex: 1; font-size: 28rpx; }
+.ship-btns { display: flex; justify-content: space-between; margin-top: 40rpx; }
+.ship-btns .o-btn { flex: 1; margin: 0 12rpx; text-align: center; padding: 20rpx 0; }

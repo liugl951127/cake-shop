@@ -26,16 +26,26 @@ const relativeTime = (date) => {
   return formatTime(date, 'YYYY-MM-DD');
 };
 
+// 完整订单状态机
 const orderStatusMap = {
-  0: { text: '待付款', color: '#ff9800' },
-  1: { text: '已付款', color: '#2196f3' },
-  2: { text: '制作中', color: '#9c27b0' },
-  3: { text: '配送中', color: '#673ab7' },
-  4: { text: '已完成', color: '#4caf50' },
-  '-1': { text: '已取消', color: '#999' },
-  '-2': { text: '已退款', color: '#999' }
+  0:  { text: '待付款', color: '#ff9800', desc: '请在 30 分钟内完成支付' },
+  1:  { text: '已付款', color: '#2196f3', desc: '商家准备中' },
+  2:  { text: '制作中', color: '#9c27b0', desc: '用心烘焙中' },
+  3:  { text: '配送中', color: '#673ab7', desc: '骑手正在派送' },
+  4:  { text: '已完成', color: '#4caf50', desc: '订单已完成' },
+  5:  { text: '退款中', color: '#ff5722', desc: '退款处理中' },
+  '-1': { text: '已取消', color: '#999', desc: '订单已取消' },
+  '-2': { text: '已退款', color: '#999', desc: '退款已到账' }
 };
 
 const formatPrice = (n) => (Number(n) || 0).toFixed(2);
 
-module.exports = { formatTime, relativeTime, orderStatusMap, formatPrice };
+// 倒计时格式化
+const formatCountdown = (ms) => {
+  if (ms <= 0) return '00:00';
+  const m = Math.floor(ms / 60000);
+  const s = Math.floor((ms % 60000) / 1000);
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+};
+
+module.exports = { formatTime, relativeTime, orderStatusMap, formatPrice, formatCountdown };

@@ -5,7 +5,7 @@ const { formatPrice } = require('../../utils/util.js');
 
 Page({
   data: {
-    from: 'cart', // cart | buynow
+    from: 'cart',
     items: [],
     address: null,
     remark: '',
@@ -15,7 +15,11 @@ Page({
     totalPrice: '0.00',
     timeRanges: [],
     timeIndex: [0, 0],
-    timeText: '尽快送达'
+    timeText: '尽快送达',
+    payLoading: false,
+    orderId: '',
+    expireTime: 0,
+    countdownText: ''
   },
 
   onLoad(options) {
@@ -27,6 +31,10 @@ Page({
   onShow() {
     const addr = wx.getStorageSync('selectAddress');
     if (addr) this.setAddress(addr);
+  },
+
+  onUnload() {
+    if (this._timer) clearInterval(this._timer);
   },
 
   buildTimeOptions() {
@@ -74,19 +82,15 @@ Page({
 
   async loadDefaultAddress() {
     try {
-      const list = await request('getAddress', {}, { loading: false });
+      const list = await request('getAddress', {}, { loading: false, silent: true });
       const def = list.find(a => a.isDefault) || list[0];
       if (def) this.setAddress(def);
     } catch (e) {}
   },
 
-  setAddress(addr) {
-    this.setData({ address: addr });
-  },
+  setAddress(addr) { this.setData({ address: addr }); },
 
-  selectAddress() {
-    wx.navigateTo({ url: '/pages/address/list/list?select=1' });
-  },
+  selectAddress() { wx.navigateTo({ url: '/pages/address/list/list?select=1' }); },
 
   onRemarkInput(e) { this.setData({ remark: e.detail.value }); },
 
@@ -95,16 +99,19 @@ Page({
   async submitOrder() {
     if (!this.data.address) return wx.showToast({ title: '请选择地址', icon: 'none' });
     if (!requireLogin()) return;
-    wx.showLoading({ title: '提交中', mask: true });
-    try {
-      const items = this.data.items.map(i => ({
-        _id: i._id, name: i.name, image: i.image, price: i.price,
-        count: i.count, spec: i.spec
-      }));
-      const timeText = this.data.timeRanges[0][this.data.timeIndex[0]] + ' ' +
-                       this.data.timeRanges[1][this.data.timeIndex[1]];
 
-      const order = await request('addOrder', {
+    const items = this.data.items.map(i => ({
+      _id: i._id, name: i.name, image: i.image,
+      price: i.price, count: i.count, spec: i.spec
+    }));
+    const timeText = this.data.timeRanges[0][this.data.timeIndex[0]] + ' ' +
+                     this.data.timeRanges[1][this.data.timeIndex[1]];
+
+    this.setData({ payLoading: true });
+    wx.showLoading({ title: '正在下单', mask: true });
+
+    try {
+      const result = await request('addOrder', {
         items,
         address: this.data.address,
         remark: this.data.remark,
@@ -112,7 +119,9 @@ Page({
         goodsPrice: this.data.goodsPrice,
         freight: this.data.freight,
         totalPrice: this.data.totalPrice
-      });
+      }, { loading: false });
+
+      this.setData({ orderId: result._id, expireTime: result.expireTime });
 
       // 清理临时数据
       if (this.data.from === 'cart') {
@@ -123,28 +132,67 @@ Page({
       }
 
       wx.hideLoading();
-      this.pay(order);
+      // 调起微信支付
+      this.invokePay(result.payment, result._id);
     } catch (e) {
       wx.hideLoading();
+      this.setData({ payLoading: false });
     }
   },
 
-  pay(order) {
-    wx.showLoading({ title: '调起支付', mask: true });
-    // 真实云开发支付示例,需要商户号开通
-    // 此处演示用订阅消息 + 标记已支付来跑通流程
-    request('payCallback', { orderId: order._id, payResult: 'success' })
-      .then(() => {
-        wx.hideLoading();
-        wx.showModal({
-          title: '下单成功',
-          content: '支付已完成(演示模式,真实环境将调起微信支付)',
-          showCancel: false,
-          success: () => {
-            wx.switchTab({ url: '/pages/order/list/list' });
-          }
-        });
-      })
-      .catch(() => wx.hideLoading());
+  // 调起微信支付
+  invokePay(payment, orderId) {
+    if (!payment) {
+      // 演示模式:payment 可能是 null,直接跳转订单页
+      return this.skipPay(orderId);
+    }
+
+    wx.requestPayment({
+      ...payment,
+      success: () => {
+        wx.showToast({ title: '支付成功' });
+        setTimeout(() => {
+          wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
+        }, 1000);
+      },
+      fail: (err) => {
+        if (err.errMsg && err.errMsg.includes('cancel')) {
+          wx.showModal({
+            title: '支付已取消',
+            content: '订单将在 30 分钟后自动关闭,可在订单列表继续支付',
+            confirmText: '去支付',
+            cancelText: '查看订单',
+            success: (r) => {
+              if (r.confirm) {
+                this.retryPay(orderId);
+              } else {
+                wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
+              }
+            }
+          });
+        } else {
+          wx.showToast({ title: '支付失败', icon: 'none' });
+        }
+      },
+      complete: () => this.setData({ payLoading: false })
+    });
+  },
+
+  // 演示模式:直接跳详情
+  skipPay(orderId) {
+    wx.showToast({ title: '下单成功' });
+    setTimeout(() => {
+      wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
+    }, 1000);
+  },
+
+  // 继续支付
+  async retryPay(orderId) {
+    try {
+      const result = await request('getOrderDetail', { id: orderId });
+      // 真实支付模式:再走统一下单
+      // 此处简化,直接到详情页让用户从订单列表支付
+      wx.redirectTo({ url: `/pages/order/detail/detail?id=${orderId}` });
+    } catch (e) {}
   }
 });

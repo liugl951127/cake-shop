@@ -1,13 +1,25 @@
-const { login } = require('../../utils/auth.js');
+const { login: doLogin, logout } = require('../../utils/auth.js');
 
 Page({
+  data: { userInfo: {} },
+
+  onShow() {
+    this.setData({ userInfo: wx.getStorageSync('userInfo') || {} });
+  },
+
+  // 微信一键登录(用户点击按钮时)
   onWxLogin() {
     wx.showLoading({ title: '登录中', mask: true });
-    login(true)
-      .then(() => {
+    doLogin(true)
+      .then((user) => {
+        this.setData({ userInfo: user });
         wx.hideLoading();
         wx.showToast({ title: '登录成功' });
-        setTimeout(() => wx.navigateBack(), 600);
+        setTimeout(() => {
+          const pages = getCurrentPages();
+          if (pages.length > 1) wx.navigateBack();
+          else wx.switchTab({ url: '/pages/index/index' });
+        }, 600);
       })
       .catch(() => {
         wx.hideLoading();
@@ -15,11 +27,28 @@ Page({
       });
   },
 
-  goAgreement() {
+  // 已登录态 - 返回
+  onBack() {
+    const pages = getCurrentPages();
+    if (pages.length > 1) wx.navigateBack();
+    else wx.switchTab({ url: '/pages/index/index' });
+  },
+
+  onLogout() {
     wx.showModal({
-      title: '协议',
-      content: '本小程序由用户授权登录后使用,具体协议请参考上线版本',
-      showCancel: false
+      title: '提示',
+      content: '确认退出登录?',
+      success: (r) => {
+        if (r.confirm) {
+          logout();
+          this.setData({ userInfo: {} });
+          wx.showToast({ title: '已退出' });
+        }
+      }
     });
+  },
+
+  goAgreement() {
+    wx.showModal({ title: '协议', content: '请参考小程序上线版本中的完整协议', showCancel: false });
   }
 });

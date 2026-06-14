@@ -1,8 +1,15 @@
 <view class="page">
   <view class="form">
+    <view class="form-row" bindtap="chooseAvatar">
+      <text class="form-label">头像</text>
+      <view class="avatar-picker">
+        <image wx:if="{{form.avatarUrl}}" src="{{form.avatarUrl}}" mode="aspectFill"></image>
+        <text wx:else class="plus">+</text>
+      </view>
+    </view>
     <view class="form-row">
       <text class="form-label">姓名</text>
-      <input class="form-input" placeholder="收货人姓名" value="{{form.name}}" bindinput="onI" data-k="name"/>
+      <input class="form-input" placeholder="收货人姓名" value="{{form.name}}" bindinput="onI" data-k="name" maxlength="20"/>
     </view>
     <view class="form-row">
       <text class="form-label">手机号</text>
@@ -10,12 +17,18 @@
     </view>
     <view class="form-row" bindtap="chooseRegion">
       <text class="form-label">省市区</text>
-      <text class="form-input region-text">{{form.region || '请选择省/市/区'}}</text>
+      <text class="form-input region-text {{form.region ? '' : 'placeholder'}}">
+        {{form.region || '请选择省/市/区'}}
+      </text>
       <text class="arrow">›</text>
     </view>
     <view class="form-row">
       <text class="form-label">详细地址</text>
-      <input class="form-input" placeholder="街道、楼栋、门牌号" value="{{form.detail}}" bindinput="onI" data-k="detail"/>
+      <input class="form-input" placeholder="街道、楼栋、门牌号 (5-50字)" value="{{form.detail}}" bindinput="onI" data-k="detail" maxlength="50"/>
+    </view>
+    <view class="form-row btn-row">
+      <text class="btn-mini" bindtap="importWx">📋 导入微信地址</text>
+      <text class="btn-mini" bindtap="chooseLocation">📍 地图选点</text>
     </view>
     <view class="form-row default">
       <text class="form-label">设为默认</text>
@@ -24,4 +37,26 @@
   </view>
 
   <view class="save-btn" bindtap="save">保存</view>
+
+  <!-- 省市区选择器弹层 -->
+  <view class="mask" wx:if="{{showRegion}}" bindtap="closeRegion"></view>
+  <view class="region-panel {{showRegion ? 'show' : ''}}">
+    <view class="region-tabs">
+      <text class="rt {{regionStep >= 1 ? 'done' : ''}} {{regionStep === 1 ? 'active' : ''}}"
+            bindtap="backToStep" data-s="1">{{provinceName || '省份'}}</text>
+      <text class="rt {{regionStep >= 2 ? 'done' : ''}} {{regionStep === 2 ? 'active' : ''}}"
+            bindtap="backToStep" data-s="2" wx:if="{{provinceName}}">{{cityName || '城市'}}</text>
+      <text class="rt {{regionStep >= 3 ? 'done' : ''}} {{regionStep === 3 ? 'active' : ''}}"
+            bindtap="backToStep" data-s="3" wx:if="{{cityName}}">{{districtName || '区县'}}</text>
+    </view>
+    <scroll-view scroll-y class="region-list">
+      <view class="region-item {{item.id === selectedId ? 'active' : ''}}"
+            wx:for="{{regionList}}" wx:key="id"
+            bindtap="selectRegion" data-item="{{item}}">
+        {{item.name}}
+        <text wx:if="{{item.id === selectedId}}" class="check">✓</text>
+      </view>
+      <view class="empty" wx:if="{{regionList.length === 0}}">加载中...</view>
+    </scroll-view>
+  </view>
 </view>

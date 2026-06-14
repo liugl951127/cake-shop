@@ -2,34 +2,42 @@
 App({
   globalData: {
     userInfo: null,
+    token: '',
     openid: null,
+    isAdmin: false,
     cartCount: 0,
     version: '1.0.0',
-    // ===== 后期只需要改这里的 appid =====
-    // 实际 appid 写在 project.config.json 的 appid 字段
-    // 这里只存云开发环境 id，云开发开通后填入
-    cloudEnvId: 'your-cloud-env-id',
-    isAdmin: false
+    cloudEnvId: 'your-cloud-env-id'  // ★ 改这里 ★
   },
 
   onLaunch() {
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力');
-    } else {
-      wx.cloud.init({
-        // ★★★ 替换成你自己的云开发环境 ID（云开发控制台查看）★★★
-        env: this.globalData.cloudEnvId,
-        traceUser: true
-      });
+      return;
     }
+    wx.cloud.init({
+      env: this.globalData.cloudEnvId,
+      traceUser: true
+    });
     this.checkUpdate();
+    // 静默登录
+    this.silentLogin();
   },
 
   onShow() {
     this.refreshCartBadge();
   },
 
-  // 检测小程序版本更新
+  // 静默登录(不阻塞 UI,有需要再调用 requireLogin 拦截)
+  async silentLogin() {
+    try {
+      const { login } = require('./utils/auth.js');
+      await login(false);
+    } catch (e) {
+      console.warn('静默登录失败:', e);
+    }
+  },
+
   checkUpdate() {
     if (wx.getUpdateManager) {
       const updateManager = wx.getUpdateManager();
@@ -43,7 +51,6 @@ App({
     }
   },
 
-  // 刷新购物车角标
   refreshCartBadge() {
     const cart = wx.getStorageSync('cart') || [];
     const count = cart.reduce((s, i) => s + (i.count || 0), 0);

@@ -1,16 +1,26 @@
 .page {
-  min-height: 100vh; padding-top: 200rpx;
+  min-height: 100vh; padding-top: 160rpx;
   display: flex; flex-direction: column; align-items: center;
   background: linear-gradient(180deg, #fff5f8 0%, #f7f7f7 50%);
 }
 .logo { font-size: 140rpx; }
-.brand { font-size: 44rpx; font-weight: bold; margin-top: 20rpx; color: #333; }
+.brand { font-size: 44rpx; font-weight: bold; margin-top: 20rpx; }
 .slogan { font-size: 26rpx; color: #999; margin-top: 10rpx; }
 
+.logged { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 40rpx; }
+.avatar { width: 160rpx; height: 160rpx; border-radius: 50%; background: #f0f0f0; border: 4rpx solid #fff; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1); }
+.l-name { font-size: 36rpx; font-weight: 600; margin-top: 24rpx; }
+.l-phone { font-size: 26rpx; color: #666; margin-top: 8rpx; }
+
 .wechat-login {
-  margin: 100rpx 60rpx 0; background: #07c160; color: #fff;
+  margin: 80rpx 60rpx 0; background: #07c160; color: #fff;
   text-align: center; padding: 24rpx 0; border-radius: 999rpx;
   font-size: 30rpx; width: calc(100% - 120rpx);
+}
+.logout {
+  margin: 30rpx 60rpx 0; color: #999;
+  text-align: center; padding: 16rpx 0; font-size: 26rpx;
+  width: calc(100% - 120rpx);
 }
 .agreement {
   position: fixed; bottom: 60rpx; left: 0; right: 0;

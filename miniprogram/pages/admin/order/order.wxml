@@ -6,12 +6,13 @@
     <view class="tab {{status === 2 ? 'active' : ''}}" bindtap="switchTab" data-v="2">制作中</view>
     <view class="tab {{status === 3 ? 'active' : ''}}" bindtap="switchTab" data-v="3">配送中</view>
     <view class="tab {{status === 4 ? 'active' : ''}}" bindtap="switchTab" data-v="4">已完成</view>
+    <view class="tab {{status === 5 ? 'active' : ''}}" bindtap="switchTab" data-v="5">退款中</view>
   </view>
 
   <view class="o-item" wx:for="{{list}}" wx:key="_id">
     <view class="o-head flex-between">
       <text class="text-sub">{{item.orderNo}}</text>
-      <text>{{item.createTime}}</text>
+      <text class="status-tag" style="background:{{statusMap[item.status].color}}">{{statusMap[item.status].text}}</text>
     </view>
     <view class="o-goods">
       <view wx:for="{{item.items}}" wx:key="name" wx:for-item="g" class="og">
@@ -20,17 +21,47 @@
       </view>
     </view>
     <view class="o-info text-sub">
-      {{item.address.name}} {{item.address.phone}} | {{item.address.region}} {{item.address.detail}}
+      <text class="text-primary">{{item.address.name}}</text> {{item.address.phone}} | {{item.address.region}} {{item.address.detail}}
     </view>
     <view class="o-info text-sub" wx:if="{{item.remark}}">备注: {{item.remark}}</view>
+    <view class="o-info text-sub" wx:if="{{item.deliveryInfo}}">
+      配送员: {{item.deliveryInfo.name}} {{item.deliveryInfo.phone}} {{item.deliveryInfo.company ? '/ ' + item.deliveryInfo.company : ''}}
+    </view>
     <view class="o-foot flex-between">
       <text>实付: <text class="price">¥{{item.totalPrice}}</text></text>
       <view class="o-actions">
-        <view class="o-btn" wx:if="{{item.status === 1}}" bindtap="updateStatus" data-id="{{item._id}}" data-v="2">开始制作</view>
-        <view class="o-btn" wx:if="{{item.status === 2}}" bindtap="updateStatus" data-id="{{item._id}}" data-v="3">开始配送</view>
-        <view class="o-btn primary" wx:if="{{item.status === 3}}" bindtap="updateStatus" data-id="{{item._id}}" data-v="4">完成</view>
+        <view class="o-btn" wx:if="{{item.status === 1}}" catchtap="updateStatus" data-id="{{item._id}}" data-v="2">开始制作</view>
+        <view class="o-btn primary" wx:if="{{item.status === 2}}" catchtap="openShip" data-id="{{item._id}}">发货</view>
+        <view class="o-btn" wx:if="{{item.status === 3}}" catchtap="updateStatus" data-id="{{item._id}}" data-v="4">完成</view>
+        <view class="o-btn" wx:if="{{item.status === 5}}" catchtap="updateStatus" data-id="{{item._id}}" data-v="-2">确认退款</view>
       </view>
     </view>
   </view>
   <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无订单</view>
+
+  <!-- 发货弹层 -->
+  <view class="mask" wx:if="{{shipOrderId}}" bindtap="closeShip"></view>
+  <view class="ship-panel {{shipOrderId ? 'show' : ''}}">
+    <view class="ship-title">填写配送信息</view>
+    <view class="form-row">
+      <text class="form-label">配送员</text>
+      <input class="form-input" placeholder="姓名" value="{{shipForm.name}}" bindinput="onShipI" data-k="name"/>
+    </view>
+    <view class="form-row">
+      <text class="form-label">电话</text>
+      <input class="form-input" type="number" maxlength="11" placeholder="11位手机号" value="{{shipForm.phone}}" bindinput="onShipI" data-k="phone"/>
+    </view>
+    <view class="form-row">
+      <text class="form-label">物流公司</text>
+      <input class="form-input" placeholder="如:顺丰/达达" value="{{shipForm.company}}" bindinput="onShipI" data-k="company"/>
+    </view>
+    <view class="form-row">
+      <text class="form-label">运单号</text>
+      <input class="form-input" placeholder="选填" value="{{shipForm.deliveryNo}}" bindinput="onShipI" data-k="deliveryNo"/>
+    </view>
+    <view class="ship-btns">
+      <view class="o-btn" bindtap="closeShip">取消</view>
+      <view class="o-btn primary" bindtap="confirmShip">确认发货</view>
+    </view>
+  </view>
 </view>
