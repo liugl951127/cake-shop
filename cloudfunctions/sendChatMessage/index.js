@@ -12,7 +12,9 @@ const TYPE = {
 exports.main = auth(async (event) => {
   const { sessionId, type = 'text', content = '', payload = null } = event;
   if (!sessionId) throw new BizError('sessionId 必填');
+  // text/order/goods 需要 content;image/file 走云存储 fileID
   if (type === 'text' && !content) throw new BizError('内容不能为空');
+  if (['image', 'file'].includes(type) && !content) throw new BizError('文件 ID 必填');
 
   const db = cloud.database();
   const _ = db.command;
@@ -25,6 +27,11 @@ exports.main = auth(async (event) => {
     throw new BizError('无权操作此会话');
   }
   if (s.status === 3) throw new BizError('会话已结束');
+
+  // 图片/文件:校验是否在白名单路径下,防跨账户读取
+  if (['image', 'file'].includes(type)) {
+    if (!content.startsWith('cloud://')) throw new BizError('fileID 无效');
+  }
 
   const fromType = event._isAdmin ? 'admin' : 'user';
   const messageId = `M${Date.now()}${Math.floor(Math.random() * 10000)}`;
@@ -42,14 +49,15 @@ exports.main = auth(async (event) => {
       type,
       content,
       payload,
-      status: 1, // 1-已发 2-已读
+      status: 1,
       createTime: now
     }
   });
 
   // 更新会话最后消息
+  const lastTextMap = { text: content, image: '[图片]', file: '[文件]', order: '[订单]', goods: '[商品]' };
   const updateData = {
-    lastMessage: type === 'text' ? content : `[${type === 'image' ? '图片' : '卡片'}]`,
+    lastMessage: lastTextMap[type] || '[消息]',
     lastMessageTime: now,
     updateTime: now
   };

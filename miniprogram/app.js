@@ -7,12 +7,16 @@ App({
     isAdmin: false,
     cartCount: 0,
     version: '1.0.0',
+    lang: 'zh-CN',
     cloudEnvId: 'your-cloud-env-id'  // ★ 改这里 ★
   },
 
   onLaunch() {
     if (!wx.cloud) return;
     wx.cloud.init({ env: this.globalData.cloudEnvId, traceUser: true });
+    // 加载语言设置
+    const lang = wx.getStorageSync('app_language') || 'zh-CN';
+    this.globalData.lang = lang;
     this.checkUpdate();
     this.silentLogin();
   },

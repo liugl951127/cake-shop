@@ -1,0 +1,72 @@
+<view class="page" wx:if="{{data}}">
+  <!-- 概览 -->
+  <view class="cards">
+    <view class="c-card">
+      <view class="c-label">总会话</view>
+      <view class="c-val">{{data.overview.totalSessions}}</view>
+    </view>
+    <view class="c-card">
+      <view class="c-label">评分</view>
+      <view class="c-val">{{data.overview.avgScore || '-'}}</view>
+    </view>
+    <view class="c-card">
+      <view class="c-label">平均响应</view>
+      <view class="c-val">{{responseText}}</view>
+    </view>
+    <view class="c-card">
+      <view class="c-label">评分率</view>
+      <view class="c-val">{{data.overview.rateRate}}%</view>
+    </view>
+  </view>
+
+  <!-- 评分分布 -->
+  <view class="card">
+    <view class="card-title">评分分布</view>
+    <view class="score-row" wx:for="{{[5,4,3,2,1]}}" wx:key="*this">
+      <text class="score-label">{{item}} ⭐</text>
+      <view class="score-bar">
+        <view class="score-fill" style="width:{{scorePercent(item)}}%"></view>
+      </view>
+      <text class="score-count">{{data.scoreDist[item] || 0}}</text>
+    </view>
+  </view>
+
+  <!-- 高频标签 -->
+  <view class="card" wx:if="{{data.topTags.length}}">
+    <view class="card-title">用户评价标签</view>
+    <view class="tags">
+      <text class="tag" wx:for="{{data.topTags}}" wx:key="tag">{{item.tag}} ({{item.count}})</text>
+    </view>
+  </view>
+
+  <!-- 每日趋势 -->
+  <view class="card">
+    <view class="card-title">近 {{data.dailyTrend.length}} 天会话量</view>
+    <view class="chart">
+      <view class="bar-col" wx:for="{{data.dailyTrend}}" wx:key="date">
+        <view class="bar-val">{{item.count}}</view>
+        <view class="bar" style="height:{{barHeight(item.count, maxCount)}}%"></view>
+        <view class="bar-date">{{item.date}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 客服工作量 -->
+  <view class="card">
+    <view class="card-title">客服工作量</view>
+    <view class="work-item" wx:for="{{data.workload}}" wx:key="_id">
+      <image class="w-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"/>
+      <view class="w-info">
+        <view class="w-name">
+          {{item.nickName}}
+          <text class="w-online {{item.isOnline ? 'on' : 'off'}}">{{item.isOnline ? '🟢' : '⚪'}}</text>
+        </view>
+        <view class="w-stats">
+          <text>会话 {{item.sessionCount}}</text>
+          <text>完成 {{item.closedCount}}</text>
+          <text>评分 {{item.rating || '-'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

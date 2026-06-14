@@ -64,5 +64,7 @@ Page({
   goPrivacy() { wx.navigateTo({ url: '/pages/cms/page/page?slug=privacy' }); },
   goFaq() { wx.navigateTo({ url: '/pages/cms/page/page?slug=faq' }); },
   goAbout() { wx.navigateTo({ url: '/pages/cms/page/page?slug=about' }); },
-  goAdminDashboard() { wx.navigateTo({ url: '/pages/admin/dashboard/dashboard' }); }
+  goAdminDashboard() { wx.navigateTo({ url: '/pages/admin/dashboard/dashboard' }); },
+  goLang() { wx.navigateTo({ url: '/pages/settings/lang/lang' }); },
+  goChatDashboard() { wx.navigateTo({ url: '/pages/chat/dashboard/dashboard' }); }
 });

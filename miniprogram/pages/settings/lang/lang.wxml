@@ -1,0 +1,13 @@
+<view class="page">
+  <view class="lang-list">
+    <view class="lang-item {{current === item.code ? 'active' : ''}}"
+          wx:for="{{langs}}" wx:key="code"
+          bindtap="selectLang" data-code="{{item.code}}">
+      <text class="lang-name">{{item.name}}</text>
+      <text class="check" wx:if="{{current === item.code}}">✓</text>
+    </view>
+  </view>
+  <view class="footer">
+    <text>当前: {{currentName}}</text>
+  </view>
+</view>

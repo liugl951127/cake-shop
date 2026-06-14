@@ -1,0 +1,44 @@
+.page { padding-bottom: 40rpx; }
+.cards { display: flex; flex-wrap: wrap; padding: 20rpx 10rpx 0; }
+.c-card {
+  width: calc(50% - 20rpx); margin: 10rpx;
+  background: linear-gradient(135deg, #5b8cff, #3a6dff);
+  color: #fff; border-radius: 16rpx; padding: 30rpx;
+}
+.c-card:nth-child(2) { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.c-card:nth-child(3) { background: linear-gradient(135deg, #ffa726, #ff9800); }
+.c-card:nth-child(4) { background: linear-gradient(135deg, #ec407a, #d81b60); }
+.c-label { font-size: 24rpx; opacity: 0.9; }
+.c-val { font-size: 44rpx; font-weight: bold; margin-top: 10rpx; }
+
+.card { background: #fff; margin: 20rpx; border-radius: 16rpx; padding: 24rpx; }
+.card-title { font-size: 28rpx; font-weight: 600; margin-bottom: 20rpx; }
+
+.score-row { display: flex; align-items: center; padding: 8rpx 0; }
+.score-label { width: 120rpx; font-size: 26rpx; }
+.score-bar { flex: 1; height: 16rpx; background: #f5f5f5; border-radius: 999rpx; overflow: hidden; }
+.score-fill { height: 100%; background: linear-gradient(90deg, #ffa726, #ff9800); border-radius: 999rpx; }
+.score-count { width: 60rpx; text-align: right; color: #999; font-size: 24rpx; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.tag { background: var(--primary-light); color: var(--primary); padding: 8rpx 20rpx; border-radius: 999rpx; font-size: 24rpx; }
+
+.chart { display: flex; height: 300rpx; align-items: flex-end; padding: 30rpx 0; }
+.bar-col { flex: 1; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.bar-val { font-size: 20rpx; color: #999; }
+.bar {
+  width: 50rpx; background: linear-gradient(180deg, #5b8cff, #3a6dff);
+  border-radius: 8rpx 8rpx 0 0; min-height: 30rpx; margin-top: 6rpx;
+}
+.bar-date { font-size: 20rpx; color: #999; margin-top: 8rpx; }
+
+.work-item {
+  display: flex; align-items: center; padding: 16rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.work-item:last-child { border-bottom: none; }
+.w-avatar { width: 80rpx; height: 80rpx; border-radius: 50%; background: #f0f0f0; }
+.w-info { flex: 1; margin-left: 16rpx; }
+.w-name { font-size: 28rpx; font-weight: 500; }
+.w-online { margin-left: 10rpx; }
+.w-stats { display: flex; gap: 20rpx; margin-top: 6rpx; font-size: 24rpx; color: #999; }

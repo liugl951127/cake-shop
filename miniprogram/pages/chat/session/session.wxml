@@ -1,5 +1,4 @@
 <view class="page">
-  <!-- 顶部状态栏 -->
   <view class="status-bar {{stateClass}}">
     <view class="status-dot"></view>
     <text class="status-text">{{stateText}}</text>
@@ -7,30 +6,56 @@
   </view>
 
   <scroll-view scroll-y scroll-into-view="{{lastMessageId}}" class="messages"
-               style="height: calc(100vh - 220rpx);">
+               style="height: calc(100vh - 240rpx);">
     <view wx:for="{{messages}}" wx:key="messageId" id="msg-{{item.messageId}}"
           class="msg {{item.fromType === 'user' ? 'right' : 'left'}}">
       <view class="m-avatar" wx:if="{{item.fromType !== 'user'}}">
         {{item.fromName || '客服'}}
       </view>
       <view class="m-bubble {{item.fromType === 'system' ? 'system' : ''}}">
-        <view class="m-text" wx:if="{{item.type === 'text'}}">{{item.content}}</view>
+        <view class="m-text" wx:if="{{item.type === 'text' && item.fromType !== 'system'}}">{{item.content}}</view>
         <view class="m-text" wx:elif="{{item.fromType === 'system'}}" style="font-size:24rpx;color:#999;">{{item.content}}</view>
-        <view class="m-time">{{item.timeText}}</view>
+        <image class="m-image" wx:elif="{{item.type === 'image'}}" src="{{item.tempURL || item.content}}" mode="widthFix" bindtap="onPreviewImage" data-url="{{item.tempURL || item.content}}"/>
+        <view class="m-file" wx:elif="{{item.type === 'file'}}">
+          <text>📎 {{item.payload && item.payload.name || '文件'}}</text>
+        </view>
+        <view class="m-time" wx:if="{{item.fromType !== 'system'}}">{{item.timeText}}</view>
       </view>
       <view class="m-avatar me" wx:if="{{item.fromType === 'user'}}">
         <image src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"/>
       </view>
     </view>
 
-    <!-- 对方正在输入 -->
     <view class="typing" wx:if="{{peerTyping}}">
       <view class="t-dot"></view><view class="t-dot"></view><view class="t-dot"></view>
       <text>{{peerTypingName || '客服'}}正在输入...</text>
     </view>
   </scroll-view>
 
+  <!-- 评价弹层 -->
+  <view class="mask" wx:if="{{showRate}}" bindtap="closeRate"></view>
+  <view class="rate-panel {{showRate ? 'show' : ''}}">
+    <view class="rate-title">为本次服务评分</view>
+    <view class="rate-stars">
+      <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+            class="star {{rateScore >= item ? 'on' : ''}}"
+            bindtap="setRate" data-s="{{item}}">★</text>
+    </view>
+    <view class="rate-tags">
+      <text wx:for="{{rateTagsOptions}}" wx:key="*this"
+            class="rt {{rateTags.includes(item) ? 'on' : ''}}"
+            bindtap="toggleTag" data-t="{{item}}">{{item}}</text>
+    </view>
+    <textarea class="rate-comment" placeholder="说点什么吧..." maxlength="200"
+              value="{{rateComment}}" bindinput="onRateComment"/>
+    <view class="rate-btns">
+      <view class="o-btn" bindtap="closeRate">跳过</view>
+      <view class="o-btn primary" bindtap="submitRate">提交</view>
+    </view>
+  </view>
+
   <view class="input-bar">
+    <view class="tool-btn" bindtap="chooseImage">📷</view>
     <input class="input" placeholder="输入消息" value="{{inputText}}"
            bindinput="onInput" bindconfirm="onSend" bindfocus="onFocus"
            confirm-type="send" hold-keyboard="{{false}}"/>
