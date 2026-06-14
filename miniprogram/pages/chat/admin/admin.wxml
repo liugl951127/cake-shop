@@ -1,7 +1,7 @@
 <view class="page">
   <view class="header">
     <view class="online-btn {{isOnline ? 'on' : 'off'}}" bindtap="toggleOnline">
-      {{isOnline ? '🟢 客服在线' : '⚪ 客服离线'}}
+      {{isOnline ? '🟢 客服在线 - 接收新会话' : '⚪ 客服离线 - 不接单'}}
     </view>
     <view class="filter">
       <text class="f {{filter === 'all' ? 'on' : ''}}" bindtap="setFilter" data-f="all">全部</text>
@@ -12,7 +12,10 @@
 
   <view class="session-list">
     <view class="s-item" wx:for="{{list}}" wx:key="sessionId" bindtap="goSession" data-item="{{item}}">
-      <image class="s-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill"/>
+      <view class="s-avatar-wrap">
+        <image class="s-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill"/>
+        <view class="s-online {{item.userConnected ? 'on' : 'off'}}"></view>
+      </view>
       <view class="s-info">
         <view class="s-row">
           <text class="s-name">{{item.userNickName || '用户'}}</text>
@@ -26,6 +29,8 @@
           <text class="s-tag {{item.status === 1 ? 'green' : (item.status === 2 ? 'orange' : 'gray')}}">
             {{item.status === 1 ? '进行中' : (item.status === 2 ? '排队中' : '已结束')}}
           </text>
+          <text class="s-tag" wx:if="{{item.userConnected === false}}">用户离线</text>
+          <text class="s-tag" wx:elif="{{item.userConnected}}">用户在线</text>
         </view>
       </view>
     </view>

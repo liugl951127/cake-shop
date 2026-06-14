@@ -1,72 +1,122 @@
 const { request } = require('../../../utils/request.js');
 const { getUser } = require('../../../utils/auth.js');
 const { formatTime } = require('../../../utils/util.js');
+const { ChatClient } = require('../../../utils/chatClient.js');
+
+const STATE_MAP = {
+  idle: { text: '未连接', sub: '', cls: 'closed' },
+  connecting: { text: '连接中...', sub: '', cls: 'queue' },
+  connected: { text: '已连接', sub: '', cls: 'connected' },
+  reconnecting: { text: '正在重连...', sub: '', cls: 'reconnecting' },
+  closed: { text: '会话已结束', sub: '', cls: 'closed' }
+};
 
 Page({
-  data: { sessionId: '', messages: [], inputText: '', userInfo: {}, userName: '', lastMessageId: '' },
+  data: {
+    session: null,
+    messages: [],
+    inputText: '',
+    userInfo: {},
+    userName: '',
+    lastMessageId: '',
+    state: 'idle',
+    stateText: '未连接',
+    stateSub: '',
+    stateClass: 'closed',
+    peerTyping: false
+  },
 
-  watcher: null,
+  client: null,
 
   onLoad(options) {
-    this.setData({ sessionId: options.sessionId, userInfo: getUser() });
-    this.loadHistory();
-    this.watcher = this.startWatch();
+    this.setData({ userInfo: getUser() });
+    this._initClient(options.sessionId);
   },
 
-  onUnload() { if (this.watcher) this.watcher.close(); },
+  onShow() {
+    if (this.client && this.client.getState() === 'reconnecting') this.client.onAppShow();
+  },
 
-  async loadHistory() {
-    try {
+  onUnload() {
+    if (this.client) this.client.onUnload('unload');
+  },
+
+  onAppHide() {
+    if (this.client) this.client.onAppHide();
+  },
+
+  onAppShow() {
+    if (this.client) this.client.onAppShow();
+  },
+
+  _initClient(sessionId) {
+    this.client = new ChatClient({
+      role: 'admin',
+      onState: (state) => {
+        const info = STATE_MAP[state] || STATE_MAP.idle;
+        this.setData({ state, stateText: info.text, stateSub: info.sub, stateClass: info.cls });
+      },
+      onMessage: (msg) => {
+        this.setData({
+          messages: [...this.data.messages, { ...msg, timeText: formatTime(new Date(msg.createTime), 'HH:mm') }],
+          lastMessageId: `msg-${msg.messageId}`
+        });
+        request('getChatMessages', {
+          sessionId: this.data.session.sessionId, markRead: true
+        }, { loading: false, silent: true }).catch(() => {});
+      },
+      onPeerStateChange: () => {},
+      onSessionUpdate: (s) => {
+        this.setData({ session: s });
+        if (s.status === 3) {
+          wx.showModal({
+            title: '会话已结束',
+            content: s.closeReason || '',
+            showCancel: false,
+            success: () => wx.navigateBack()
+          });
+        }
+      },
+      onTyping: (typing) => this.setData({ peerTyping: typing })
+    });
+
+    this.client.start(sessionId).then(async (session) => {
+      if (!session) {
+        wx.showToast({ title: '会话不存在', icon: 'none' });
+        setTimeout(() => wx.navigateBack(), 1000);
+        return;
+      }
+      this.setData({ session, userName: session.userNickName || '用户' });
       const list = await request('getChatMessages', {
-        sessionId: this.data.sessionId,
-        markRead: true
-      }, { loading: false });
-      const messages = list.map(m => ({
-        ...m,
-        timeText: formatTime(new Date(m.createTime), 'HH:mm')
-      }));
-      // 查会话信息
-      const sessions = await request('adminGetSessions', { onlyMine: true });
-      const session = sessions.find(s => s.sessionId === this.data.sessionId);
+        sessionId: session.sessionId, markRead: true
+      }, { loading: false, silent: true });
       this.setData({
-        messages,
-        userName: session ? (session.userNickName || '用户') : '用户',
-        lastMessageId: messages.length ? `msg-${messages[messages.length - 1].messageId}` : ''
+        messages: list.map(m => ({ ...m, timeText: formatTime(new Date(m.createTime), 'HH:mm') })),
+        lastMessageId: list.length ? `msg-${list[list.length-1].messageId}` : ''
       });
-    } catch (e) {}
+    });
   },
 
-  startWatch() {
-    return wx.cloud.database().collection('chatMessages')
-      .where({ sessionId: this.data.sessionId })
-      .watch({
-        onChange: () => this.loadHistory(),
-        onError: () => {}
-      });
+  onInput(e) {
+    this.setData({ inputText: e.detail.value });
+    if (this.client && e.detail.value) this.client.onInputTyping();
   },
-
-  onInput(e) { this.setData({ inputText: e.detail.value }); },
 
   async onSend() {
     const text = this.data.inputText.trim();
     if (!text) return;
     this.setData({ inputText: '' });
     try {
-      await request('sendChatMessage', {
-        sessionId: this.data.sessionId,
-        type: 'text',
-        content: text
+      const msg = await this.client.sendMessage(text);
+      this.setData({
+        messages: [...this.data.messages, {
+          ...msg, fromType: 'admin', type: 'text', content: text,
+          timeText: formatTime(new Date(msg.createTime), 'HH:mm')
+        }],
+        lastMessageId: `msg-${msg.messageId}`
       });
-      this.loadHistory();
-    } catch (e) {}
-  },
-
-  async onClose() {
-    const r = await wx.showModal({ title: '提示', content: '结束此会话?' });
-    if (!r.confirm) return;
-    try {
-      await request('closeChatSession', { sessionId: this.data.sessionId, reason: '客服结束' });
-      wx.navigateBack();
-    } catch (e) {}
+    } catch (e) {
+      wx.showToast({ title: '发送失败', icon: 'none' });
+    }
   }
 });

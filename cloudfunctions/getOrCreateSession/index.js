@@ -47,13 +47,22 @@ exports.main = auth(async (event) => {
       _adminOpenid: bestAdmin ? bestAdmin._openid : '',
       _adminId: bestAdmin ? bestAdmin._id : '',
       adminName: bestAdmin ? bestAdmin.nickName : '系统分配',
-      status: bestAdmin ? 1 : 2,  // 1-接入 2-排队
+      status: bestAdmin ? 1 : 2,
       lastMessage: '',
       lastMessageTime: Date.now(),
       unreadByUser: 0,
       unreadByAdmin: 0,
-      userNickName: '',  // 前端填
+      userNickName: '',
       userAvatar: '',
+      // 连接状态字段
+      userConnected: true,
+      userClientState: 'online',
+      userLastHeartbeat: Date.now(),
+      userLeaveTime: 0,
+      adminConnected: !!bestAdmin,
+      adminClientState: bestAdmin ? 'online' : 'leaving',
+      adminLastHeartbeat: bestAdmin ? Date.now() : 0,
+      adminLeaveTime: bestAdmin ? 0 : Date.now(),
       createTime: Date.now(),
       updateTime: Date.now()
     }

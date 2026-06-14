@@ -1,12 +1,37 @@
 const { request } = require('../../../utils/request.js');
 const { getUser } = require('../../../utils/auth.js');
+const { ChatClient } = require('../../../utils/chatClient.js');
 
 Page({
   data: { list: [], loading: false, isOnline: true, filter: 'all' },
 
-  onShow() { this.load(); this.watcher = this.startWatch(); },
+  client: null,
+
+  onShow() {
+    this.load();
+    this._initPresence();
+  },
+
   onPullDownRefresh() { this.load().then(() => wx.stopPullDownRefresh()); },
-  onUnload() { if (this.watcher) this.watcher.close(); },
+  onUnload() {
+    if (this.client) this.client.onUnload('hide');
+  },
+  onAppHide() { if (this.client) this.client.onAppHide(); },
+  onAppShow() { if (this.client) this.client.onAppShow(); },
+
+  // 客服端 presence(不绑定具体 session,只保活)
+  _initPresence() {
+    this.client = new ChatClient({
+      role: 'admin',
+      onState: () => {},
+      onMessage: () => {},
+      onPeerStateChange: () => {},
+      onSessionUpdate: () => {},
+      onTyping: () => {}
+    });
+    // 客服列表页不需要绑定具体 session,只保持心跳
+    this.client.start().catch(() => {});
+  },
 
   setFilter(e) {
     this.setData({ filter: e.currentTarget.dataset.f });
@@ -19,6 +44,7 @@ Page({
       await request('setOnlineStatus', { isOnline: next });
       this.setData({ isOnline: next });
       wx.showToast({ title: next ? '已上线' : '已离线' });
+      if (!next && this.client) this.client.onUnload('hide');
     } catch (e) {}
   },
 
@@ -32,16 +58,6 @@ Page({
       this.setData({ list });
     } catch (e) {}
     this.setData({ loading: false });
-  },
-
-  // 实时订阅新会话
-  startWatch() {
-    return wx.cloud.database().collection('chatSessions')
-      .where({ status: 1 })
-      .watch({
-        onChange: () => this.load(),
-        onError: () => {}
-      });
   },
 
   goSession(e) {

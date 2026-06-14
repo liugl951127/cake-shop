@@ -1,7 +1,9 @@
 <view class="page">
-  <view class="info-bar">
-    <text>用户: {{userName}}</text>
-    <text class="close" bindtap="onClose">结束会话</text>
+  <view class="status-bar {{stateClass}}">
+    <view class="status-dot"></view>
+    <text class="status-text">{{stateText}}</text>
+    <text class="status-sub" wx:if="{{userName}}">用户 {{userName}}</text>
+    <text class="status-sub" wx:if="{{stateSub}}"> · {{stateSub}}</text>
   </view>
 
   <scroll-view scroll-y scroll-into-view="{{lastMessageId}}" class="messages">
@@ -10,14 +12,19 @@
       <view class="m-avatar" wx:if="{{item.fromType !== 'admin'}}">
         {{item.fromName || '用户'}}
       </view>
-      <view class="m-bubble">
-        <view class="m-text" wx:if="{{item.type === 'text'}}">{{item.content}}</view>
-        <view class="m-text" wx:elif="{{item.fromType === 'system'}}" style="color:#999;font-size:24rpx;text-align:center;">{{item.content}}</view>
+      <view class="m-bubble {{item.fromType === 'system' ? 'system' : ''}}">
+        <view class="m-text" wx:if="{{item.type === 'text' && item.fromType !== 'system' }}">{{item.content}}</view>
+        <view class="m-text" wx:elif="{{item.fromType === 'system'}}" style="font-size:24rpx;color:#999;">{{item.content}}</view>
         <view class="m-time">{{item.timeText}}</view>
       </view>
       <view class="m-avatar me" wx:if="{{item.fromType === 'admin'}}">
         <image src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"/>
       </view>
+    </view>
+
+    <view class="typing" wx:if="{{peerTyping}}">
+      <view class="t-dot"></view><view class="t-dot"></view><view class="t-dot"></view>
+      <text>用户正在输入...</text>
     </view>
   </scroll-view>
 

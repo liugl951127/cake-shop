@@ -1,45 +1,39 @@
 <view class="page">
-  <view class="status-bar" wx:if="{{session.status === 2}}">
-    <text>🕒 正在为您接入客服,排队第 {{session.waitingPosition || 1}} 位...</text>
-  </view>
-  <view class="status-bar connected" wx:elif="{{session.status === 1}}">
-    <text>✓ 已接入客服 {{session.adminName || '客服'}}</text>
+  <!-- 顶部状态栏 -->
+  <view class="status-bar {{stateClass}}">
+    <view class="status-dot"></view>
+    <text class="status-text">{{stateText}}</text>
+    <text class="status-sub" wx:if="{{stateSub}}">{{stateSub}}</text>
   </view>
 
   <scroll-view scroll-y scroll-into-view="{{lastMessageId}}" class="messages"
-               style="height: calc(100vh - {{keyboardHeight}}rpx - 220rpx);">
+               style="height: calc(100vh - 220rpx);">
     <view wx:for="{{messages}}" wx:key="messageId" id="msg-{{item.messageId}}"
           class="msg {{item.fromType === 'user' ? 'right' : 'left'}}">
       <view class="m-avatar" wx:if="{{item.fromType !== 'user'}}">
         {{item.fromName || '客服'}}
       </view>
-      <view class="m-bubble">
+      <view class="m-bubble {{item.fromType === 'system' ? 'system' : ''}}">
         <view class="m-text" wx:if="{{item.type === 'text'}}">{{item.content}}</view>
-        <image class="m-image" wx:elif="{{item.type === 'image'}}" src="{{item.content}}" mode="widthFix" />
-        <view class="m-card" wx:elif="{{item.type === 'order' && item.payload}}">
-          <view class="mc-title">订单 {{item.payload.orderNo}}</view>
-          <view class="mc-text">实付 ¥{{item.payload.totalPrice}}</view>
-        </view>
-        <view class="m-card" wx:elif="{{item.type === 'goods' && item.payload}}">
-          <image class="mc-img" src="{{item.payload.image}}" mode="aspectFill"/>
-          <view class="mc-info">
-            <view class="mc-title">{{item.payload.name}}</view>
-            <view class="mc-text">¥{{item.payload.price}}</view>
-          </view>
-        </view>
-        <view class="m-text" wx:elif="{{item.fromType === 'system'}}">{{item.content}}</view>
+        <view class="m-text" wx:elif="{{item.fromType === 'system'}}" style="font-size:24rpx;color:#999;">{{item.content}}</view>
         <view class="m-time">{{item.timeText}}</view>
       </view>
       <view class="m-avatar me" wx:if="{{item.fromType === 'user'}}">
         <image src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"/>
       </view>
     </view>
+
+    <!-- 对方正在输入 -->
+    <view class="typing" wx:if="{{peerTyping}}">
+      <view class="t-dot"></view><view class="t-dot"></view><view class="t-dot"></view>
+      <text>{{peerTypingName || '客服'}}正在输入...</text>
+    </view>
   </scroll-view>
 
   <view class="input-bar">
     <input class="input" placeholder="输入消息" value="{{inputText}}"
-           bindinput="onInput" bindconfirm="onSend" hold-keyboard="{{false}}"
-           confirm-type="send" adjust-position="{{false}}"/>
-    <view class="send-btn" bindtap="onSend">发送</view>
+           bindinput="onInput" bindconfirm="onSend" bindfocus="onFocus"
+           confirm-type="send" hold-keyboard="{{false}}"/>
+    <view class="send-btn {{inputText ? '' : 'disabled'}}" bindtap="onSend">发送</view>
   </view>
 </view>

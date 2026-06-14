@@ -11,44 +11,42 @@ App({
   },
 
   onLaunch() {
-    if (!wx.cloud) {
-      console.error('请使用 2.2.3 或以上的基础库以使用云能力');
-      return;
-    }
-    wx.cloud.init({
-      env: this.globalData.cloudEnvId,
-      traceUser: true
-    });
+    if (!wx.cloud) return;
+    wx.cloud.init({ env: this.globalData.cloudEnvId, traceUser: true });
     this.checkUpdate();
-    // 静默登录
     this.silentLogin();
   },
 
   onShow() {
     this.refreshCartBadge();
+    // 广播 onAppShow 给所有页面
+    const pages = getCurrentPages();
+    pages.forEach(p => { if (p.onAppShow) p.onAppShow(); });
   },
 
-  // 静默登录(不阻塞 UI,有需要再调用 requireLogin 拦截)
+  onHide() {
+    // 广播 onAppHide(杀进程 / 切后台)
+    const pages = getCurrentPages();
+    pages.forEach(p => { if (p.onAppHide) p.onAppHide(); });
+  },
+
   async silentLogin() {
     try {
       const { login } = require('./utils/auth.js');
       await login(false);
-    } catch (e) {
-      console.warn('静默登录失败:', e);
-    }
+    } catch (e) {}
   },
 
   checkUpdate() {
-    if (wx.getUpdateManager) {
-      const updateManager = wx.getUpdateManager();
-      updateManager.onUpdateReady(() => {
-        wx.showModal({
-          title: '更新提示',
-          content: '新版本已经准备好,是否重启应用?',
-          success: (res) => { if (res.confirm) updateManager.applyUpdate(); }
-        });
+    if (!wx.getUpdateManager) return;
+    const updateManager = wx.getUpdateManager();
+    updateManager.onUpdateReady(() => {
+      wx.showModal({
+        title: '更新提示',
+        content: '新版本已经准备好,是否重启应用?',
+        success: (res) => { if (res.confirm) updateManager.applyUpdate(); }
       });
-    }
+    });
   },
 
   refreshCartBadge() {

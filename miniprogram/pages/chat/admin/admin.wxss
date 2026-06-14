@@ -1,8 +1,8 @@
 .page { padding-bottom: 40rpx; }
 .header { background: #fff; padding: 20rpx; }
 .online-btn {
-  display: inline-block; padding: 12rpx 24rpx; border-radius: 999rpx;
-  font-size: 26rpx; margin-bottom: 16rpx;
+  display: block; text-align: center; padding: 18rpx 0;
+  border-radius: 999rpx; font-size: 28rpx; margin-bottom: 16rpx;
 }
 .online-btn.on { background: #e8f5e9; color: #4caf50; }
 .online-btn.off { background: #f5f5f5; color: #999; }
@@ -15,7 +15,15 @@
   background: #fff; border-radius: 16rpx; padding: 24rpx;
   margin-bottom: 20rpx; display: flex; align-items: center;
 }
+.s-avatar-wrap { position: relative; }
 .s-avatar { width: 90rpx; height: 90rpx; border-radius: 50%; background: #f0f0f0; }
+.s-online {
+  position: absolute; right: 0; bottom: 0;
+  width: 24rpx; height: 24rpx; border-radius: 50%;
+  border: 4rpx solid #fff;
+}
+.s-online.on { background: #4caf50; }
+.s-online.off { background: #ccc; }
 .s-info { flex: 1; margin-left: 20rpx; min-width: 0; }
 .s-row { display: flex; align-items: center; justify-content: space-between; }
 .s-name { font-size: 28rpx; font-weight: 600; }
@@ -25,7 +33,7 @@
   background: #f5222d; color: #fff; font-size: 20rpx;
   padding: 2rpx 10rpx; border-radius: 999rpx; min-width: 30rpx; text-align: center;
 }
-.s-tags { margin-top: 6rpx; }
+.s-tags { margin-top: 6rpx; display: flex; gap: 8rpx; }
 .s-tag {
   font-size: 20rpx; padding: 2rpx 10rpx; border-radius: 4rpx;
   background: #f5f5f5; color: #999;
