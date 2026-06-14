@@ -55,6 +55,23 @@ public enum ErrorCode {
     HISTORY_QUERY_TOO_MANY(4101, "查询范围过大"),
     HISTORY_EXPORT_FAILED(4102, "导出失败"),
 
+    // 多租户 42xx
+    TENANT_NOT_FOUND(4201, "租户不存在"),
+    TENANT_DISABLED(4202, "租户已禁用"),
+    TENANT_EXPIRED(4203, "租户已到期"),
+    TENANT_QUOTA_EXCEEDED(4204, "租户额度已用完"),
+    TENANT_ISOLATION_DENIED(4205, "不允许跨租户访问"),
+
+    // 审计/回放 43xx
+    AUDIT_LOG_FAILED(4301, "审计日志记录失败"),
+    REPLAY_SNAPSHOT_MISSING(4302, "回放快照缺失"),
+    REPLAY_EXPIRED(4303, "回放记录已过期"),
+
+    // 性能/监控 44xx
+    METRIC_INVALID(4401, "指标格式错误"),
+    METRIC_AGGREGATE_FAILED(4402, "指标聚合失败"),
+    ALREADY_REPORTED(4403, "已上报过同一错误"),
+
     // 系统错误 5xxx
     SYSTEM_ERROR(5000, "系统异常"),
     DB_ERROR(5001, "数据库异常"),

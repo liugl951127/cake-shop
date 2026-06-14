@@ -54,6 +54,23 @@ const ErrorCode = {
   HISTORY_QUERY_TOO_MANY: 4101,
   HISTORY_EXPORT_FAILED: 4102,
 
+  // 多租户 42xx
+  TENANT_NOT_FOUND: 4201,
+  TENANT_DISABLED: 4202,
+  TENANT_EXPIRED: 4203,
+  TENANT_QUOTA_EXCEEDED: 4204,
+  TENANT_ISOLATION_DENIED: 4205,
+
+  // 审计/回溯 43xx
+  AUDIT_LOG_FAILED: 4301,
+  REPLAY_SNAPSHOT_MISSING: 4302,
+  REPLAY_EXPIRED: 4303,
+
+  // 性能/监控 44xx
+  METRIC_INVALID: 4401,
+  METRIC_AGGREGATE_FAILED: 4402,
+  ALREADY_REPORTED: 4403,
+
   // 系统错误 5xxx
   SYSTEM_ERROR: 5000,
   DB_ERROR: 5001,
@@ -104,6 +121,20 @@ const ErrorMessage = {
   [ErrorCode.BEHAVIOR_DEVICE_NOT_FOUND]: '设备指纹未识别',
   [ErrorCode.HISTORY_QUERY_TOO_MANY]: '查询范围过大',
   [ErrorCode.HISTORY_EXPORT_FAILED]: '导出失败',
+  // 多租户
+  [ErrorCode.TENANT_NOT_FOUND]: '租户不存在',
+  [ErrorCode.TENANT_DISABLED]: '租户已禁用',
+  [ErrorCode.TENANT_EXPIRED]: '租户已到期',
+  [ErrorCode.TENANT_QUOTA_EXCEEDED]: '租户额度已用完',
+  [ErrorCode.TENANT_ISOLATION_DENIED]: '不允许跨租户访问',
+  // 审计/回放
+  [ErrorCode.AUDIT_LOG_FAILED]: '审计日志记录失败',
+  [ErrorCode.REPLAY_SNAPSHOT_MISSING]: '回放快照缺失',
+  [ErrorCode.REPLAY_EXPIRED]: '回放记录已过期',
+  // 监控
+  [ErrorCode.METRIC_INVALID]: '指标格式错误',
+  [ErrorCode.METRIC_AGGREGATE_FAILED]: '指标聚合失败',
+  [ErrorCode.ALREADY_REPORTED]: '已上报过同一错误',
   [ErrorCode.SYSTEM_ERROR]: '系统异常',
   [ErrorCode.DB_ERROR]: '数据库异常',
   [ErrorCode.CACHE_ERROR]: '缓存异常',

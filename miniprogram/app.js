@@ -1,5 +1,6 @@
 // app.js
 const tracker = require('./utils/tracker.js');
+const monitor = require('./utils/monitor.js');
 
 App({
   globalData: {
@@ -24,6 +25,8 @@ App({
     // 初始化行为埋点 SDK
     tracker.init({ app: this });
     tracker.login('wechat-silent');
+    // 初始化性能监控 + 异常上报
+    monitor.init({ app: this });
   },
 
   onShow() {
