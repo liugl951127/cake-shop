@@ -1,12 +1,25 @@
+// 我的 - 樱花主题
 const { request } = require('../../utils/request.js');
 const { login } = require('../../utils/auth.js');
+
+const ORDER_TYPES = [
+  { id: 'unpaid', name: '待付款', icon: '💳' },
+  { id: 'unsent', name: '待发货', icon: '📦' },
+  { id: 'unreceived', name: '待收货', icon: '🚚' },
+  { id: 'unreviewed', name: '待评价', icon: '✏️' },
+  { id: 'aftersale', name: '退款', icon: '↩️' }
+];
 
 Page({
   data: {
     userInfo: {},
     memberInfo: {},
     couponCount: 0,
-    favorCount: 0
+    favorCount: 0,
+    orderCount: 0,
+    balance: 0,
+    version: '2.0',
+    orderTypes: ORDER_TYPES
   },
 
   onShow() {
@@ -17,59 +30,68 @@ Page({
 
   async refreshAll() {
     try {
-      const [member, coupons, favs] = await Promise.all([
+      const [member, coupons, favs, orders] = await Promise.all([
         request('getMemberInfo', {}, { loading: false, silent: true }),
-        request('getCoupons', { status: 0 }, { loading: false, silent: true }),
-        request('getFavorites', {}, { loading: false, silent: true })
+        request('getCoupons', { status: 0 }, { loading: false, silent: true }).catch(() => []),
+        request('getFavorites', {}, { loading: false, silent: true }).catch(() => []),
+        request('getOrders', { page: 1, pageSize: 5 }, { loading: false, silent: true }).catch(() => ({ list: [] }))
       ]);
+
+      // 计算订单状态数(简化)
+      const orderCount = (orders.list || orders || []).length;
+      const typeMap = { unpaid: 0, unsent: 0, unreceived: 0, unreviewed: 0, aftersale: 0 };
+      for (const o of (orders.list || orders || [])) {
+        if (o.status === 0) typeMap.unpaid++;
+        else if (o.status === 1) typeMap.unsent++;
+        else if (o.status === 2 || o.status === 3) typeMap.unreceived++;
+        else if (o.status === 3 && !o.reviewed) typeMap.unreviewed++;
+        else if (o.status === -2) typeMap.aftersale++;
+      }
+      const orderTypes = ORDER_TYPES.map(t => ({ ...t, badge: typeMap[t.id] || '' }));
+
       this.setData({
         memberInfo: member,
-        couponCount: coupons.length,
-        favorCount: favs.length
+        couponCount: (coupons || []).length,
+        favorCount: (favs || []).length,
+        orderCount,
+        balance: (userInfo.totalSpend || 0).toFixed(2),
+        orderTypes
       });
     } catch (e) {}
   },
 
+  // ===== 跳转 =====
   goLogin() {
     if (this.data.userInfo.openid) return;
     wx.navigateTo({ url: '/pages/login/login' });
   },
-
-  goMember() { wx.navigateTo({ url: '/pages/member/member' }); },
+  goWallet() { wx.navigateTo({ url: '/package-user/pages/finance/center/center' }); },
   goCoupon() { wx.navigateTo({ url: '/package-user/pages/coupon/center/center' }); },
-  goSeckill() { wx.navigateTo({ url: '/package-user/pages/seckill/seckill' }); },
-  goGroup() { wx.navigateTo({ url: '/package-promo/pages/group/list/list' }); },
+  goBalance() { wx.navigateTo({ url: '/package-user/pages/finance/center/center' }); },
+  goOrder() { wx.navigateTo({ url: '/package-order/pages/order/list/list' }); },
+  goOrderList() { wx.navigateTo({ url: '/package-order/pages/order/list/list' }); },
+  goOrderType(e) {
+    const i = e.currentTarget.dataset.i;
+    wx.navigateTo({ url: `/package-order/pages/order/list/list?status=${i}` });
+  },
+  goFavor() { wx.navigateTo({ url: '/pages/favor/favor' }).catch(() => {}); },
+  goMember() { wx.navigateTo({ url: '/package-user/pages/member/member' }); },
   goStore() { wx.navigateTo({ url: '/package-user/pages/store/list/list' }); },
-  goLuckyBag() { wx.navigateTo({ url: '/package-user/pages/luckybag/luckybag' }); },
   goInvite() { wx.navigateTo({ url: '/package-user/pages/invite/invite' }); },
   goService() { wx.navigateTo({ url: '/package-promo/pages/service/market/market' }); },
   goVerify() { wx.navigateTo({ url: '/package-user/pages/verify/center/center' }); },
   goFinance() { wx.navigateTo({ url: '/package-user/pages/finance/center/center' }); },
-
-  goOrderList() { wx.switchTab({ url: '/pages/order/list/list' }); },
+  goChat() {
+    wx.navigateTo({ url: '/package-chat/pages/chat/session/session' }).catch(() => {
+      wx.switchTab({ url: '/pages/my/my' });
+    });
+  },
   goAddress() { wx.navigateTo({ url: '/package-address/pages/address/list/list' }); },
-  goFavor() { wx.navigateTo({ url: '/pages/favor/favor' }); },
-  goAdminGoods() { wx.navigateTo({ url: '/package-admin/pages/admin/goods/goods' }); },
-  goAdminOrders() { wx.navigateTo({ url: '/package-admin/pages/admin/order/order' }); },
-  goChat() { wx.navigateTo({ url: '/pages/chat/session/session' }); },
-  goChatAdmin() { wx.navigateTo({ url: '/pages/chat/admin/admin' }); },
-
-  contact() {
-    wx.showModal({ title: '客服', content: '工作时间 9:00-21:00\n电话: 400-888-8888\n微信: cake_service', showCancel: false });
-  },
-
-  about() {
-    wx.showModal({ title: '甜心蛋糕 v2.0', content: '用心做好每一块蛋糕 🍰', showCancel: false });
-  },
-
-  goChat() { wx.navigateTo({ url: '/package-chat/pages/chat/session/session' }); },
-  goChatAdmin() { wx.navigateTo({ url: '/package-chat/pages/chat/admin/admin' }); },
-  goNotice() { wx.navigateTo({ url: '/package-cms/pages/cms/notice/notice' }); },
   goAgreement() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=agreement' }); },
   goPrivacy() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=privacy' }); },
-  goFaq() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=faq' }); },
   goAbout() { wx.navigateTo({ url: '/package-cms/pages/cms/page/page?slug=about' }); },
-  goAdminDashboard() { wx.navigateTo({ url: '/package-admin/pages/admin/dashboard/dashboard' }); },
-  goLang() { wx.navigateTo({ url: '/package-user/pages/settings/lang/lang' }); },
-  goChatDashboard() { wx.navigateTo({ url: '/package-chat/pages/chat/dashboard/dashboard' }); }
+  goSeckill() { wx.navigateTo({ url: '/package-user/pages/seckill/seckill' }); },
+  goGroup() { wx.navigateTo({ url: '/package-promo/pages/group/list/list' }); },
+  goLuckyBag() { wx.navigateTo({ url: '/package-user/pages/luckybag/luckybag' }); },
+  goCustom() { wx.navigateTo({ url: '/package-promo/pages/service/custom/custom' }); }
 });

@@ -1,20 +1,37 @@
-<view class="page">
-  <!-- 搜索栏 -->
-  <view class="search-bar" bindtap="goSearch">
-    <view class="search-input">
-      <text class="iconfont">🔍</text>
-      <text>搜索蛋糕、面包、甜点</text>
+<view class="container">
+  <!-- 顶部品牌区 -->
+  <view class="hero">
+    <view class="hero-row">
+      <view class="brand">
+        <text class="logo">🎂</text>
+        <view class="b-info">
+          <view class="b-name">甜心蛋糕</view>
+          <view class="b-sub">每日新鲜 · 满 99 包邮</view>
+        </view>
+      </view>
+      <view class="search-bar" bindtap="goSearch">
+        <text class="s-icon">🔍</text>
+        <text class="s-placeholder">搜索蛋糕 · 面包 · 甜点</text>
+      </view>
     </view>
   </view>
 
-  <!-- 轮播 -->
-  <swiper class="banner" indicator-dots autoplay circular interval="4000">
-    <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="onBannerTap" data-item="{{item}}">
-      <image src="{{item.image}}" mode="aspectFill" class="banner-img"></image>
-    </swiper-item>
-  </swiper>
+  <!-- 轮播(缩小 0.7 高度) -->
+  <view class="banner-wrap">
+    <swiper class="banner" indicator-dots autoplay circular interval="4000" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
+      <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="onBannerTap" data-item="{{item}}">
+        <view class="banner-card">
+          <image src="{{item.image}}" mode="aspectFill" class="banner-img"></image>
+          <view class="banner-mask" wx:if="{{item.title}}">
+            <text class="banner-title">{{item.title}}</text>
+            <text class="banner-sub" wx:if="{{item.sub}}">{{item.sub}}</text>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
 
-  <!-- 金刚区 -->
+  <!-- 金刚区:圆形 + 阴影 -->
   <view class="icons">
     <view class="icon-item" wx:for="{{icons}}" wx:key="id" bindtap="onIconTap" data-id="{{item.id}}">
       <view class="icon-circle" style="background:{{item.color}}">
@@ -24,71 +41,101 @@
     </view>
   </view>
 
-  <!-- 公告 -->
+  <!-- 公告条:渐变背景 -->
   <view class="notice" wx:if="{{notice}}">
     <text class="notice-icon">📣</text>
-    <text class="ellipsis">{{notice}}</text>
+    <text class="notice-text line-1">{{notice}}</text>
   </view>
 
-  <!-- 功能宫格 -->
+  <!-- 功能宫格(4 个) -->
   <view class="feature-bar">
     <view class="f-item" bindtap="goSeckill">
-      <view class="f-icon" style="background:#fff5f0">⚡</view>
-      <text>限时秒杀</text>
+      <text class="f-emoji">⚡</text>
+      <text class="f-name">限时秒杀</text>
     </view>
     <view class="f-item" bindtap="goGroup">
-      <view class="f-icon" style="background:#fff0f3">👥</view>
-      <text>拼团</text>
+      <text class="f-emoji">👥</text>
+      <text class="f-name">附近拼团</text>
     </view>
-    <view class="f-item" bindtap="goCoupon">
-      <view class="f-icon" style="background:#fff4d6">🎟️</view>
-      <text>领券</text>
+    <view class="f-item" bindtap="goLuckyBag">
+      <text class="f-emoji">🎁</text>
+      <text class="f-name">每日福袋</text>
     </view>
-    <view class="f-item" bindtap="goMember">
-      <view class="f-icon" style="background:#f0e6ff">👑</view>
-      <text>会员</text>
-    </view>
-    <view class="f-item" bindtap="goStore">
-      <view class="f-icon" style="background:#e0f4ff">📍</view>
-      <text>门店</text>
+    <view class="f-item" bindtap="goCustom">
+      <text class="f-emoji">✨</text>
+      <text class="f-name">蛋糕定制</text>
     </view>
   </view>
 
-  <!-- 限时活动 -->
-  <view class="seckill" wx:if="{{seckillList.length}}">
-    <view class="seckill-title flex-between">
-      <text>⚡ 限时秒杀</text>
-      <text class="text-sub" bindtap="goSeckill">查看全部 ›</text>
+  <!-- 限时秒杀 -->
+  <view class="section" wx:if="{{seckillList.length}}">
+    <view class="section-head">
+      <view class="h-left">
+        <text class="h-title">⚡ 限时秒杀</text>
+        <view class="h-tip">
+          <text class="h-time" wx:if="{{seckillEndText}}">{{seckillEndText}}</text>
+        </view>
+      </view>
+      <text class="h-more" bindtap="goSeckill">查看全部 ›</text>
     </view>
-    <scroll-view scroll-x class="seckill-list">
-      <view class="seckill-item" wx:for="{{seckillList}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
-        <image src="{{item.image}}" mode="aspectFill"></image>
-        <view class="seckill-name ellipsis">{{item.name}}</view>
-        <view class="flex">
-          <text class="seckill-price">¥{{item.price}}</text>
-          <text class="seckill-old">¥{{item.originPrice}}</text>
+    <scroll-view scroll-x class="seckill-scroll">
+      <view class="seckill-item" wx:for="{{seckillList}}" wx:key="_id" data-id="{{item._id}}" bindtap="onSeckillTap">
+        <image class="seckill-img" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="seckill-info">
+          <view class="seckill-name line-1">{{item.name}}</view>
+          <view class="seckill-price-row">
+            <text class="seckill-price">¥{{item.seckillPrice}}</text>
+            <text class="seckill-origin">¥{{item.price}}</text>
+          </view>
+          <view class="seckill-progress">
+            <view class="sp-bar">
+              <view class="sp-fill" style="width: {{item.soldPercent || 60}}%"></view>
+            </view>
+            <text class="sp-text">已抢 {{item.sold || 0}} 件</text>
+          </view>
         </view>
       </view>
     </scroll-view>
   </view>
 
-  <!-- 推荐 -->
+  <!-- 推荐商品(2 列网格) -->
   <view class="section">
-    <view class="section-title">
-      <text>— 为你推荐 —</text>
+    <view class="section-head">
+      <view class="h-left">
+        <text class="h-title">🌟 为你推荐</text>
+        <text class="h-sub">猜你喜欢</text>
+      </view>
+      <text class="h-more" bindtap="goList">更多 ›</text>
     </view>
+
     <view class="goods-grid">
-      <view class="grid-item" wx:for="{{recommend}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
-        <image src="{{item.image}}" mode="aspectFill" class="grid-img"></image>
-        <view class="grid-info">
-          <view class="grid-name ellipsis-2">{{item.name}}</view>
-          <view class="flex-between">
-            <text class="price">{{item.price}}</text>
-            <text class="grid-sales text-sub">已售 {{item.sales || 0}}</text>
+      <view class="g-card" wx:for="{{recommend}}" wx:key="_id" data-id="{{item._id}}" bindtap="onGoodsTap">
+        <view class="g-img-wrap">
+          <image class="g-img" src="{{item.image}}" mode="aspectFill" lazy-load></image>
+          <view class="g-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+          <view class="g-fav" catchtap="onFav" data-id="{{item._id}}">
+            <text class="{{item.favored ? 'faved' : ''}}">♥</text>
+          </view>
+        </view>
+        <view class="g-body">
+          <view class="g-name line-2">{{item.name}}</view>
+          <view class="g-meta" wx:if="{{item.sales || item.sales === 0}}">已售 {{item.sales || 0}} 件</view>
+          <view class="g-foot">
+            <view class="g-price">
+              <text class="gp-cur">¥</text>
+              <text class="gp-num font-num">{{item.price}}</text>
+            </view>
+            <view class="g-cart" catchtap="onAddCart" data-id="{{item._id}}">+</view>
           </view>
         </view>
       </view>
     </view>
-    <view class="no-more text-sub">— 没有更多了 —</view>
+
+    <view class="loading" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+    <view class="end" wx:elif="{{finished}}">
+      <text>~ 已经到底了 ~</text>
+    </view>
   </view>
 </view>

@@ -1,45 +1,57 @@
-<view class="page">
+<view class="container">
+  <!-- 搜索条 -->
   <view class="search-row">
     <view class="search-input">
-      <text>🔍</text>
-      <input placeholder="搜索商品" value="{{keyword}}" bindinput="onKeywordInput" confirm-type="search" bindconfirm="onSearch"/>
+      <text class="si-icon">🔍</text>
+      <input placeholder="搜索蛋糕 · 面包 · 甜点" value="{{keyword}}" bindinput="onKeywordInput" confirm-type="search" bindconfirm="onSearch"/>
+      <text class="si-clear" wx:if="{{keyword}}" bindtap="onClear">×</text>
     </view>
   </view>
 
   <view class="body">
+    <!-- 左侧分类 -->
     <scroll-view scroll-y class="cat-side">
       <view class="cat-item {{currentCat === item._id ? 'active' : ''}}"
             wx:for="{{categories}}" wx:key="_id"
             bindtap="selectCat" data-id="{{item._id}}">
-        {{item.name}}
+        <text class="cat-text">{{item.name}}</text>
+        <text class="cat-bar"></text>
       </view>
     </scroll-view>
 
+    <!-- 右侧商品 -->
     <scroll-view scroll-y class="goods-side" bindscrolltolower="onReachBottom">
-      <view class="goods-list">
-        <view class="g-item" wx:for="{{list}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
-          <image src="{{item.image}}" mode="aspectFill" class="g-img"></image>
-          <view class="g-info">
-            <view class="g-name ellipsis-2">{{item.name}}</view>
-            <view class="g-desc text-sub ellipsis">{{item.desc || ''}}</view>
-            <view class="flex-between">
-              <view>
-                <text class="price">{{item.price}}</text>
-                <text class="price-old" wx:if="{{item.originPrice}}">{{item.originPrice}}</text>
-              </view>
-              <text class="text-sub">已售 {{item.sales || 0}}</text>
+      <view class="cat-banner" wx:if="{{currentCatName}}">
+        <text class="cb-emoji">🍰</text>
+        <view class="cb-info">
+          <text class="cb-name">{{currentCatName}}</text>
+          <text class="cb-sub">共 {{list.length}} 件好物</text>
+        </view>
+      </view>
+
+      <view class="g-card" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onTap">
+        <image class="g-img" src="{{item.image}}" mode="aspectFill" lazy-load></image>
+        <view class="g-info">
+          <view class="g-name line-2">{{item.name}}</view>
+          <view class="g-desc line-1" wx:if="{{item.description}}">{{item.description}}</view>
+          <view class="g-meta">已售 {{item.sales || 0}}</view>
+          <view class="g-foot">
+            <view class="g-price">
+              <text class="gp-cur">¥</text>
+              <text class="gp-num font-num">{{item.price}}</text>
+              <text class="gp-old" wx:if="{{item.originPrice && item.originPrice > item.price}}">¥{{item.originPrice}}</text>
             </view>
+            <view class="g-cart" catchtap="onAddCart" data-id="{{item._id}}">+</view>
           </view>
         </view>
-
-        <view class="empty" wx:if="{{!loading && list.length === 0}}">
-          <view>🍰</view>
-          <view>暂无商品</view>
-        </view>
-
-        <view class="loading-more" wx:if="{{loading}}">加载中...</view>
-        <view class="loading-more" wx:elif="{{finished && list.length > 0}}">— 没有更多了 —</view>
       </view>
+
+      <view class="empty" wx:if="{{!list.length}}">
+        <text class="empty-emoji">🛍️</text>
+        <text>暂无商品</text>
+      </view>
+      <view class="loading" wx:if="{{loading}}">加载中...</view>
+      <view class="end" wx:elif="{{finished}}">~ 没有更多了 ~</view>
     </scroll-view>
   </view>
 </view>

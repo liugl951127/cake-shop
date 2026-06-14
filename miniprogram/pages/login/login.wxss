@@ -1,73 +1,186 @@
-.page {
-  min-height: 100vh; padding-top: 160rpx;
+/* 登录 - 樱花主题 */
+
+.container {
+  min-height: 100vh;
+  background: var(--bg-secondary);
+}
+
+.hero {
+  position: relative;
+  background: var(--grad-primary);
+  padding: 80rpx 30rpx 100rpx;
+  text-align: center;
+  border-radius: 0 0 50rpx 50rpx;
+  overflow: hidden;
+}
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+}
+.c1 { top: -80rpx; right: -60rpx; width: 300rpx; height: 300rpx; }
+.c2 { bottom: -100rpx; left: -50rpx; width: 240rpx; height: 240rpx; }
+.c3 { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500rpx; height: 500rpx; background: rgba(255,255,255,0.05); }
+
+.logo-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 20rpx;
+}
+.logo {
+  font-size: 140rpx;
+  filter: drop-shadow(0 8rpx 16rpx rgba(0,0,0,0.15));
+}
+.brand {
+  position: relative;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12rpx;
+  letter-spacing: 4rpx;
+}
+.slogan {
+  position: relative;
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.95);
+}
+
+.features {
+  position: relative;
+  display: flex; justify-content: center;
+  margin-top: 50rpx;
+  gap: 40rpx;
+}
+.f {
   display: flex; flex-direction: column; align-items: center;
-  background: linear-gradient(180deg, #fff5f8 0%, #f7f7f7 50%);
+  color: #fff;
 }
-.logo { font-size: 140rpx; }
-.brand { font-size: 44rpx; font-weight: bold; margin-top: 20rpx; }
-.slogan { font-size: 26rpx; color: #999; margin-top: 10rpx; }
+.f-emoji { font-size: 36rpx; }
+.f-text { font-size: 22rpx; margin-top: 6rpx; opacity: 0.95; }
 
-.logged { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 40rpx; }
-.avatar { width: 160rpx; height: 160rpx; border-radius: 50%; background: #f0f0f0; border: 4rpx solid #fff; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1); }
-.l-name { font-size: 36rpx; font-weight: 600; margin-top: 24rpx; }
-.l-phone { font-size: 26rpx; color: #666; margin-top: 8rpx; }
-.l-tip { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+/* 登录卡 */
+.login-card {
+  background: #fff;
+  margin: -50rpx 30rpx 30rpx;
+  border-radius: var(--radius-md);
+  padding: 50rpx 40rpx;
+  position: relative;
+  z-index: 1;
+  box-shadow: var(--shadow-md);
+}
 
-.wechat-login {
-  margin: 30rpx 60rpx 0; background: #07c160; color: #fff;
-  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
-  font-size: 30rpx; width: calc(100% - 120rpx);
+.logged { text-align: center; }
+.avatar {
+  width: 160rpx; height: 160rpx;
+  border-radius: 50%;
+  background: var(--primary-50);
+  border: 4rpx solid var(--primary-light);
+  box-shadow: var(--shadow);
 }
-.phone-login {
-  margin: 20rpx 60rpx 0; background: #fff; color: #333;
-  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
-  font-size: 30rpx; border: 1rpx solid #ddd; width: calc(100% - 120rpx);
+.l-name { font-size: 36rpx; color: var(--text-primary); font-weight: 700; margin-top: 20rpx; }
+.l-tag {
+  display: inline-block;
+  background: var(--grad-primary);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 4rpx 20rpx;
+  border-radius: var(--radius-full);
+  margin-top: 12rpx;
+  font-weight: 500;
 }
-.apple-login {
-  margin: 20rpx 60rpx 0; background: #000; color: #fff;
-  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
-  font-size: 30rpx; width: calc(100% - 120rpx);
+.l-phone { color: var(--text-secondary); font-size: 26rpx; margin-top: 12rpx; }
+.l-tip { color: var(--text-tertiary); font-size: 22rpx; margin-top: 8rpx; }
+
+.btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%;
+  padding: 28rpx 0;
+  border-radius: var(--radius-full);
+  font-size: 30rpx;
+  font-weight: 500;
+  margin-top: 24rpx;
+  transition: transform 0.2s;
 }
-.logout {
-  margin: 30rpx 60rpx 0; color: #999;
-  text-align: center; padding: 16rpx 0; font-size: 26rpx;
-  width: calc(100% - 120rpx);
+.btn:active { transform: scale(0.98); }
+.btn-primary {
+  background: var(--grad-primary);
+  color: #fff;
+  box-shadow: var(--shadow-primary);
 }
+.btn-ghost {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.actions { padding: 0 0 20rpx; }
+.action-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%;
+  padding: 28rpx 0;
+  border-radius: var(--radius-full);
+  font-size: 30rpx;
+  font-weight: 500;
+  margin-bottom: 20rpx;
+  transition: transform 0.2s;
+  gap: 12rpx;
+}
+.action-btn:active { transform: scale(0.98); }
+.action-btn.primary {
+  background: var(--grad-primary);
+  color: #fff;
+  box-shadow: var(--shadow-primary);
+}
+.action-btn.ghost {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2rpx solid var(--border-light);
+}
+.action-btn.apple {
+  background: #000;
+  color: #fff;
+}
+
 .agreement {
-  position: fixed; bottom: 60rpx; left: 0; right: 0;
-  text-align: center; font-size: 24rpx; color: #999;
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  margin-top: 20rpx;
+  line-height: 1.5;
 }
+.link { color: var(--primary); }
 
-/* 手机号登录弹层 */
-.mask { z-index: 1000; }
+/* 弹层 */
+.mask { position: fixed; inset: 0; background: var(--bg-mask); z-index: 1000; }
 .phone-panel {
-  position: fixed; left: 60rpx; right: 60rpx; top: 30%;
-  background: #fff; border-radius: 16rpx; padding: 60rpx 40rpx 40rpx;
-  z-index: 1001;
+  position: fixed; left: 60rpx; right: 60rpx; top: 25%;
+  background: #fff; border-radius: var(--radius-md);
+  padding: 60rpx 40rpx 40rpx; z-index: 1001;
   transform: scale(0.9); opacity: 0; transition: all 0.2s;
 }
 .phone-panel.show { transform: scale(1); opacity: 1; }
-.p-title { text-align: center; font-size: 32rpx; font-weight: bold; margin-bottom: 40rpx; }
+.p-title { text-align: center; font-size: 34rpx; font-weight: 700; margin-bottom: 40rpx; color: var(--text-primary); }
 .p-row {
   display: flex; align-items: center;
-  border-bottom: 1rpx solid #f0f0f0; padding: 24rpx 0;
+  border-bottom: 1rpx solid var(--border-light);
+  padding: 24rpx 0;
 }
-.p-label { color: #333; font-size: 28rpx; margin-right: 16rpx; }
-.p-input { flex: 1; font-size: 28rpx; }
+.p-lab { color: var(--text-primary); font-size: 30rpx; margin-right: 16rpx; font-weight: 500; }
+.p-input { flex: 1; font-size: 30rpx; color: var(--text-primary); }
 .p-input.code { margin-right: 20rpx; }
 .p-send {
-  color: var(--primary); font-size: 26rpx; padding: 8rpx 20rpx;
-  border: 1rpx solid var(--primary); border-radius: 999rpx;
-  white-space: nowrap;
+  color: var(--primary); font-size: 26rpx; padding: 8rpx 24rpx;
+  border: 2rpx solid var(--primary); border-radius: var(--radius-full);
+  white-space: nowrap; font-weight: 500;
 }
 .p-send.disabled { color: #ccc; border-color: #ccc; }
 .p-btn {
-  background: linear-gradient(135deg, #ff7b9c, #e85a82); color: #fff;
-  text-align: center; padding: 24rpx 0; border-radius: 999rpx;
-  font-size: 30rpx; margin-top: 40rpx;
+  background: var(--grad-primary); color: #fff;
+  text-align: center; padding: 26rpx 0; border-radius: var(--radius-full);
+  font-size: 30rpx; font-weight: 500; margin-top: 50rpx;
+  box-shadow: var(--shadow-primary);
 }
 .p-close {
-  position: absolute; right: 30rpx; top: 16rpx;
-  width: 60rpx; height: 60rpx; text-align: center; line-height: 60rpx;
-  font-size: 40rpx; color: #999;
+  position: absolute; right: 24rpx; top: 16rpx;
+  width: 60rpx; height: 60rpx; line-height: 56rpx; text-align: center;
+  font-size: 40rpx; color: var(--text-tertiary);
 }

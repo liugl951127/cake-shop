@@ -1,154 +1,54 @@
 /* app.wxss - 全局样式 */
+@import "/styles/theme.wxss";
+
 page {
-  background: #f7f7f7;
+  background: var(--bg-secondary);
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
   font-size: 28rpx;
-  color: #333;
-  --primary: #ff7b9c;
-  --primary-light: #ffe4ec;
-  --primary-dark: #e85a82;
-  --text-main: #333;
-  --text-sub: #999;
-  --border: #eee;
-  --bg: #f7f7f7;
-  --price: #ff4d4f;
-  --white: #fff;
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-view, text, image, button, input, scroll-view, swiper, swiper-item {
+view, text, image, button, input, scroll-view, swiper, swiper-item, navigator {
   box-sizing: border-box;
 }
 
-.flex { display: flex; }
-.flex-col { display: flex; flex-direction: column; }
-.flex-center { display: flex; align-items: center; justify-content: center; }
-.flex-between { display: flex; align-items: center; justify-content: space-between; }
-.flex-1 { flex: 1; }
-
-.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ellipsis-2 {
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-  overflow: hidden; word-break: break-all;
+button {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  line-height: 1.4;
 }
-
-/* 通用按钮 */
-.btn-primary {
-  background: var(--primary);
-  color: #fff;
-  border-radius: 999rpx;
-  font-size: 30rpx;
-  padding: 20rpx 0;
-  text-align: center;
-}
-.btn-primary[disabled] { background: #ccc; color: #fff; }
-
-.btn-outline {
-  background: #fff;
-  color: var(--primary);
-  border: 1rpx solid var(--primary);
-  border-radius: 999rpx;
-  font-size: 28rpx;
-  padding: 16rpx 32rpx;
-}
-
-.btn-block { width: 100%; display: block; }
 button::after { border: none; }
 
-/* 卡片 */
-.card {
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin: 20rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.04);
+/* 全局文字行数限制 */
+.line-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.line-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* 文字 */
-.price { color: var(--price); font-weight: bold; }
-.price::before { content: '¥'; font-size: 80%; margin-right: 2rpx; }
-.price-old { color: #bbb; text-decoration: line-through; font-size: 24rpx; margin-left: 12rpx; }
-.text-sub { color: var(--text-sub); font-size: 24rpx; }
-.text-primary { color: var(--primary); }
+/* 渐变背景(常用) */
+.bg-gradient-primary { background: var(--grad-primary); }
+.bg-gradient-warm { background: var(--grad-warm); }
+.bg-gradient-night { background: var(--grad-night); }
+.bg-gradient-sky { background: var(--grad-sky); }
 
-/* 占位 */
-.empty {
-  padding: 120rpx 0;
-  text-align: center;
-  color: var(--text-sub);
+/* 通用容器 */
+.container {
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom);
 }
-.empty image { width: 220rpx; height: 220rpx; }
-
-/* 分割 */
-.divider { height: 20rpx; }
-
-/* 通用弹层 */
-.mask {
-  position: fixed; left: 0; right: 0; top: 0; bottom: 0;
-  background: rgba(0,0,0,0.5); z-index: 1000;
-  animation: fadeIn 0.2s ease;
-}
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-@keyframes fadeInScale {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-/* 页面转场动画 */
-.page-enter {
-  animation: slideInRight 0.3s ease;
-}
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-/* 按钮点击反馈 */
-button, .btn-primary, .btn-outline {
-  transition: transform 0.1s ease, opacity 0.1s ease;
-}
-button:active, .btn-primary:active, .btn-outline:active {
-  transform: scale(0.96); opacity: 0.85;
-}
-
-/* 卡片 hover 效果 */
-.card, .g-item, .s-item {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.card:active, .g-item:active, .s-item:active {
-  transform: scale(0.98);
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.08);
-}
-
-/* 数字滚动动画 */
-.count-num {
-  display: inline-block;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.count-num.bump {
-  animation: bump 0.3s ease;
-}
-@keyframes bump {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-/* 骨架闪光 */
-.skeleton-shimmer {
-  background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-

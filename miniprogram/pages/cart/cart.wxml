@@ -1,37 +1,76 @@
-<view class="page">
-  <view wx:if="{{list.length === 0}}" class="empty">
-    <view>🛒</view>
-    <view>购物车空空如也</view>
-    <view class="go-shop" bindtap="goShopping">去逛逛</view>
+<view class="container">
+  <view class="head">
+    <text class="title">🛒 购物车</text>
+    <text class="edit" bindtap="onToggleEdit">{{editing ? '完成' : '管理'}}</text>
   </view>
 
-  <view wx:else>
-    <view class="cart-list">
-      <view class="c-item" wx:for="{{list}}" wx:key="_id">
-        <view class="checkbox {{item.selected ? 'on' : ''}}" bindtap="toggleSelect" data-id="{{item._id}}"></view>
-        <image src="{{item.image}}" mode="aspectFill" class="c-img"></image>
-        <view class="c-info">
-          <view class="c-name ellipsis-2">{{item.name}}</view>
-          <view class="c-spec text-sub ellipsis" wx:if="{{item.spec}}">规格: {{item.spec}}</view>
-          <view class="flex-between" style="margin-top:auto">
-            <text class="price">{{item.price}}</text>
-            <view class="qty">
-              <text class="qty-btn" bindtap="changeCount" data-id="{{item._id}}" data-delta="-1">-</text>
-              <text class="qty-n">{{item.count}}</text>
-              <text class="qty-btn" bindtap="changeCount" data-id="{{item._id}}" data-delta="1">+</text>
+  <view wx:if="{{items.length}}">
+    <view class="shop-card" wx:for="{{shops}}" wx:key="id" wx:for-item="shop">
+      <view class="shop-head">
+        <text class="s-name">🏪 {{shop.name}}</text>
+      </view>
+      <view class="g-item" wx:for="{{shop.items}}" wx:key="id" wx:for-item="g">
+        <view class="select" bindtap="onSelect" data-i="{{g.globalIndex}}">
+          <text class="check {{g.selected ? 'on' : ''}}">{{g.selected ? '✓' : ''}}</text>
+        </view>
+        <image class="g-img" src="{{g.image}}" mode="aspectFill"></image>
+        <view class="g-info">
+          <view class="g-name line-2">{{g.name}}</view>
+          <view class="g-spec" wx:if="{{g.spec}}">{{g.spec}}</view>
+          <view class="g-foot">
+            <view class="g-price">
+              <text class="gp-cur">¥</text>
+              <text class="gp-num font-num">{{g.price}}</text>
+            </view>
+            <view class="counter">
+              <text class="c-btn" catchtap="onMinus" data-i="{{g.globalIndex}}">−</text>
+              <text class="c-num font-num">{{g.count}}</text>
+              <text class="c-btn" catchtap="onPlus" data-i="{{g.globalIndex}}">+</text>
             </view>
           </view>
         </view>
       </view>
     </view>
 
-    <view class="footer">
-      <view class="checkbox {{allSelected ? 'on' : ''}}" bindtap="toggleAll"></view>
-      <text style="margin-left:10rpx">全选</text>
-      <view class="total">
-        合计: <text class="price total-price">{{totalPrice}}</text>
-      </view>
-      <view class="checkout" bindtap="checkout">结算({{selectedCount}})</view>
+    <!-- 猜你喜欢 -->
+    <view class="recommend" wx:if="{{recommend.length}}">
+      <view class="r-title">— 你可能还喜欢 —</view>
+      <scroll-view scroll-x class="r-scroll">
+        <view class="r-item" wx:for="{{recommend}}" wx:key="_id" data-id="{{item._id}}" bindtap="onTapRecommend">
+          <image class="r-img" src="{{item.image}}" mode="aspectFill"></image>
+          <view class="r-name line-1">{{item.name}}</view>
+          <view class="r-price">¥<text class="font-num">{{item.price}}</text></view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view wx:else class="empty">
+    <text class="empty-emoji">🛒</text>
+    <view class="empty-title">购物车空空如也</view>
+    <view class="empty-sub">去看看有什么好物吧</view>
+    <view class="empty-btn" bindtap="goIndex">去逛逛</view>
+  </view>
+
+  <!-- 底部结算栏 -->
+  <view class="checkout" wx:if="{{items.length}}">
+    <view class="c-left" bindtap="onSelectAll">
+      <text class="check {{allSelected ? 'on' : ''}}">{{allSelected ? '✓' : ''}}</text>
+      <text class="all-text">全选</text>
+    </view>
+    <view class="c-mid" wx:if="{{!editing}}">
+      <text class="total-label">合计</text>
+      <text class="total-price">
+        <text class="tp-cur">¥</text>
+        <text class="tp-num font-num">{{totalPrice}}</text>
+      </text>
+    </view>
+    <view class="c-mid c-edit" wx:else>
+      <text class="c-edit-text">已选 <text class="font-num">{{selectedCount}}</text> 件</text>
+    </view>
+    <view class="c-btn {{selectedCount ? 'on' : 'off'}}" bindtap="onCheckout">
+      {{editing ? '删除' : '去结算'}}
+      <text class="c-num" wx:if="{{!editing && selectedCount}}">({{selectedCount}})</text>
     </view>
   </view>
 </view>

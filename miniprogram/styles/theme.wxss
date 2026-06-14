@@ -1,0 +1,237 @@
+/* ============================================
+   甜心蛋糕 - 全局设计系统
+   ============================================ */
+
+/* 主题色: 樱花色系(粉/蜜桃/杏) */
+page {
+  /* 主色 - 樱花粉 */
+  --primary: #ff7b9c;
+  --primary-light: #ffb3c6;
+  --primary-dark: #e85a82;
+  --primary-50: #fff0f3;
+  --primary-100: #ffd6e2;
+
+  /* 辅助色 - 蜜桃橙 */
+  --accent: #ff9a6e;
+  --accent-light: #ffd4b8;
+
+  /* 中性色 */
+  --success: #4caf50;
+  --success-light: #e8f5e9;
+  --warning: #ff9800;
+  --warning-light: #fff3e0;
+  --danger: #ff5252;
+  --danger-light: #ffebee;
+  --info: #2196f3;
+  --info-light: #e3f2fd;
+
+  /* 文本 */
+  --text-primary: #1a1a1a;
+  --text-secondary: #666;
+  --text-tertiary: #999;
+  --text-disabled: #bbb;
+  --text-inverse: #fff;
+
+  /* 背景 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f7;
+  --bg-tertiary: #fafafa;
+  --bg-elevated: #ffffff;
+  --bg-mask: rgba(0, 0, 0, 0.5);
+
+  /* 边框 */
+  --border-light: #f0f0f0;
+  --border: #e5e5e5;
+  --border-dark: #d0d0d0;
+
+  /* 阴影 */
+  --shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  --shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12rpx 32rpx rgba(0, 0, 0, 0.12);
+  --shadow-primary: 0 8rpx 24rpx rgba(255, 123, 156, 0.3);
+
+  /* 圆角 */
+  --radius-sm: 8rpx;
+  --radius: 12rpx;
+  --radius-md: 16rpx;
+  --radius-lg: 24rpx;
+  --radius-full: 999rpx;
+
+  /* 间距 */
+  --space-1: 8rpx;
+  --space-2: 16rpx;
+  --space-3: 24rpx;
+  --space-4: 32rpx;
+  --space-5: 40rpx;
+  --space-6: 48rpx;
+
+  /* 字号 */
+  --text-xs: 20rpx;
+  --text-sm: 24rpx;
+  --text-base: 28rpx;
+  --text-md: 32rpx;
+  --text-lg: 36rpx;
+  --text-xl: 44rpx;
+  --text-2xl: 56rpx;
+  --text-3xl: 72rpx;
+
+  /* 渐变 */
+  --grad-primary: linear-gradient(135deg, #ff7b9c 0%, #ff9a6e 100%);
+  --grad-primary-soft: linear-gradient(135deg, #fff0f3 0%, #fff5e0 100%);
+  --grad-warm: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+  --grad-cool: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --grad-mint: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --grad-pink: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%);
+  --grad-night: linear-gradient(135deg, #232526 0%, #414345 100%);
+  --grad-sky: linear-gradient(135deg, #56ccf2 0%, #2f80ed 100%);
+  --grad-gold: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+
+  /* 字体 */
+  --font-num: 'DIN Alternate', 'Helvetica Neue', monospace;
+}
+
+/* ============== 通用工具类 ============== */
+.flex { display: flex; }
+.flex-1 { flex: 1; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-primary-color { color: var(--primary); }
+.text-danger { color: var(--danger); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-md { font-size: var(--text-md); }
+.text-lg { font-size: var(--text-lg); }
+.text-xl { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+.font-bold { font-weight: 600; }
+.font-num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ellipsis-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ellipsis-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============== 卡片 ============== */
+.card {
+  background: var(--bg-primary);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-3);
+}
+.card-flat {
+  background: var(--bg-primary);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+}
+
+/* ============== 按钮 ============== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 40rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: 1;
+  transition: all 0.2s;
+  border: none;
+}
+.btn-primary {
+  background: var(--grad-primary);
+  color: #fff;
+  box-shadow: var(--shadow-primary);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 0 4rpx 12rpx rgba(255, 123, 156, 0.2);
+}
+.btn-ghost {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 2rpx solid var(--primary);
+}
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-block {
+  display: flex;
+  width: 100%;
+  padding: 28rpx 0;
+  font-size: var(--text-md);
+}
+.btn-sm { padding: 12rpx 24rpx; font-size: var(--text-sm); }
+.btn-lg { padding: 32rpx 0; font-size: var(--text-lg); }
+
+/* ============== 标签 / Badge ============== */
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  font-size: var(--text-xs);
+  border-radius: var(--radius-full);
+  background: var(--primary-50);
+  color: var(--primary);
+  line-height: 1.4;
+}
+.tag-warning { background: var(--warning-light); color: var(--warning); }
+.tag-success { background: var(--success-light); color: var(--success); }
+.tag-danger { background: var(--danger-light); color: var(--danger); }
+.tag-info { background: var(--info-light); color: var(--info); }
+
+/* ============== 渐变文字 ============== */
+.gradient-text {
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ============== 分割线 ============== */
+.divider {
+  height: 1rpx;
+  background: var(--border-light);
+  margin: var(--space-2) 0;
+}
+.divider-thick { height: 16rpx; background: var(--bg-secondary); margin: 0; }
+
+/* ============== 加载 / 空 ============== */
+.empty {
+  text-align: center;
+  padding: 100rpx 0;
+  color: var(--text-tertiary);
+}
+.empty-emoji { font-size: 120rpx; display: block; margin-bottom: var(--space-2); }
+
+/* ============== 安全区 ============== */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }

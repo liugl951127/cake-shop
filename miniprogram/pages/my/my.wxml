@@ -1,143 +1,158 @@
-<view class="page">
-  <view class="header">
-    <view class="avatar" bindtap="goLogin">
-      <image src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
-    </view>
-    <view class="user">
-      <view class="u-name">{{userInfo.nickName || '点击登录'}}</view>
-      <view class="u-level" wx:if="{{memberInfo.level}}">
-        {{memberInfo.level.icon}} {{memberInfo.level.name}} · {{memberInfo.exp || 0}} 成长值
+<view class="container">
+  <!-- 头部用户卡 -->
+  <view class="profile">
+    <view class="bg-shape"></view>
+    <view class="p-row" bindtap="goLogin">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="info">
+        <view class="name">{{userInfo.nickName || '点击登录'}}</view>
+        <view class="level" wx:if="{{userInfo.level}}">Lv.{{userInfo.level}} 会员</view>
+        <view class="phone" wx:if="{{userInfo.phone}}">📱 {{userInfo.phone}}</view>
       </view>
+      <text class="arrow">›</text>
     </view>
-    <view class="member-btn" bindtap="goMember" wx:if="{{userInfo.openid}}">会员中心 ›</view>
-  </view>
 
-  <view class="quick-row">
-    <view class="q-item" bindtap="goMember">
-      <text class="q-num">{{memberInfo.points || 0}}</text>
-      <text class="q-text">积分</text>
-    </view>
-    <view class="q-item" bindtap="goCoupon">
-      <text class="q-num">{{couponCount}}</text>
-      <text class="q-text">优惠券</text>
-    </view>
-    <view class="q-item" bindtap="goFavor">
-      <text class="q-num">{{favorCount || 0}}</text>
-      <text class="q-text">收藏</text>
-    </view>
-    <view class="q-item" bindtap="goStore">
-      <text class="q-num">📍</text>
-      <text class="q-text">门店</text>
-    </view>
-  </view>
-
-  <view class="order-entry">
-    <view class="oe-head flex-between">
-      <text>我的订单</text>
-      <text class="text-sub" bindtap="goOrderList">全部订单 ›</text>
-    </view>
-    <view class="oe-grid">
-      <view class="oe-item" bindtap="goOrderList" data-v="0">
-        <text>💰</text><text>待付款</text>
+    <!-- 资产区 -->
+    <view class="assets">
+      <view class="a-item" bindtap="goWallet">
+        <text class="a-n font-num">{{userInfo.points || 0}}</text>
+        <text class="a-l">积分</text>
       </view>
-      <view class="oe-item" bindtap="goOrderList" data-v="2">
-        <text>🎂</text><text>制作中</text>
+      <view class="a-item" bindtap="goCoupon">
+        <text class="a-n font-num">{{couponCount || 0}}</text>
+        <text class="a-l">优惠券</text>
       </view>
-      <view class="oe-item" bindtap="goOrderList" data-v="3">
-        <text>🚚</text><text>配送中</text>
+      <view class="a-item" bindtap="goBalance">
+        <text class="a-n font-num">¥{{balance || 0}}</text>
+        <text class="a-l">余额</text>
       </view>
-      <view class="oe-item" bindtap="goOrderList" data-v="4">
-        <text>✓</text><text>已完成</text>
+      <view class="a-item" bindtap="goOrder">
+        <text class="a-n font-num">{{orderCount || 0}}</text>
+        <text class="a-l">全部订单</text>
       </view>
     </view>
   </view>
 
-  <view class="feature-grid">
-    <view class="f-item" bindtap="goSeckill">
-      <view class="f-icon" style="background:#fff5f0">⚡</view>
-      <text>限时秒杀</text>
+  <!-- 订单状态 -->
+  <view class="card orders">
+    <view class="card-head">
+      <text class="ch-title">我的订单</text>
+      <text class="ch-more" bindtap="goOrderList">全部订单 ›</text>
     </view>
-    <view class="f-item" bindtap="goGroup">
-      <view class="f-icon" style="background:#fff0f3">👥</view>
-      <text>拼团</text>
-    </view>
-    <view class="f-item" bindtap="goLuckyBag">
-      <view class="f-icon" style="background:#fff5e0">🎁</view>
-      <text>拼手气</text>
-    </view>
-    <view class="f-item" bindtap="goCoupon">
-      <view class="f-icon" style="background:#fff4d6">🎟️</view>
-      <text>领券中心</text>
-    </view>
-    <view class="f-item" bindtap="goStore">
-      <view class="f-icon" style="background:#e0f4ff">📍</view>
-      <text>附近门店</text>
-    </view>
-    <view class="f-item" bindtap="goMember">
-      <view class="f-icon" style="background:#f0e6ff">👑</view>
-      <text>会员中心</text>
-    </view>
-    <view class="f-item" bindtap="goInvite">
-      <view class="f-icon" style="background:#f0fff0">💌</view>
-      <text>邀请有礼</text>
-    </view>
-    <view class="f-item" bindtap="goService">
-      <view class="f-icon" style="background:#f9f0ff">🌟</view>
-      <text>服务市场</text>
-    </view>
-    <view class="f-item" bindtap="goVerify">
-      <view class="f-icon" style="background:#e0fff0">🛡️</view>
-      <text>实名认证</text>
-    </view>
-    <view class="f-item" bindtap="goFinance">
-      <view class="f-icon" style="background:#e6fff5">💰</view>
-      <text>财务中心</text>
-    </view>
-    <view class="f-item" bindtap="goFavor">
-      <view class="f-icon" style="background:#e6f7e6">♥</view>
-      <text>我的收藏</text>
+    <view class="order-types">
+      <view class="ot" wx:for="{{orderTypes}}" wx:key="id" data-i="{{item.id}}" bindtap="goOrderType">
+        <view class="ot-icon-wrap">
+          <text class="ot-icon">{{item.icon}}</text>
+          <text class="ot-badge" wx:if="{{item.badge}}">{{item.badge}}</text>
+        </view>
+        <text class="ot-name">{{item.name}}</text>
+      </view>
     </view>
   </view>
 
-  <view class="menu card">
-    <view class="menu-item" bindtap="goAddress">
-      <text>📍 收货地址</text><text class="arrow">›</text>
+  <!-- 营销入口(2 大块) -->
+  <view class="card promo">
+    <view class="p-item" bindtap="goSeckill">
+      <text class="p-icon">⚡</text>
+      <text class="p-info">
+        <text class="p-name">限时秒杀</text>
+        <text class="p-sub">每日 10 点开抢</text>
+      </text>
+      <text class="p-arrow">›</text>
     </view>
-    <view class="menu-item" bindtap="goChat">
-      <text>💬 在线客服</text><text class="arrow">›</text>
+    <view class="p-item" bindtap="goGroup">
+      <text class="p-icon">👥</text>
+      <text class="p-info">
+        <text class="p-name">附近拼团</text>
+        <text class="p-sub">2 人成团享低价</text>
+      </text>
+      <text class="p-arrow">›</text>
     </view>
-    <view class="menu-item" bindtap="goNotice">
-      <text>📢 公告中心</text><text class="arrow">›</text>
+    <view class="p-item" bindtap="goLuckyBag">
+      <text class="p-icon">🎁</text>
+      <text class="p-info">
+        <text class="p-name">拼手气福袋</text>
+        <text class="p-sub">100% 中奖</text>
+      </text>
+      <text class="p-arrow">›</text>
     </view>
-    <view class="menu-item" bindtap="goAgreement">
-      <text>📄 用户协议</text><text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goPrivacy">
-      <text>🔒 隐私政策</text><text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goFaq">
-      <text>❓ 常见问题</text><text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goLang">
-      <text>🌐 语言设置 / Language</text><text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goAbout">
-      <text>ℹ 关于我们</text><text class="arrow">›</text>
-    </view>
-    <view class="menu-item" wx:if="{{userInfo.isAdmin}}" bindtap="goAdminGoods">
-      <text>🛠 商品管理</text><text class="arrow">›</text>
-    </view>
-    <view class="menu-item" wx:if="{{userInfo.isAdmin}}" bindtap="goAdminOrders">
-      <text>📋 订单管理</text><text class="arrow">›</text>
-    </view>
-    <view class="menu-item" wx:if="{{userInfo.isAdmin}}" bindtap="goAdminDashboard">
-      <text>📊 数据看板</text><text class="arrow">›</text>
-    </view>
-    <view class="menu-item" wx:if="{{userInfo.isAdmin}}" bindtap="goChatAdmin">
-      <text>🎧 客服工作台</text><text class="arrow">›</text>
-    </view>
-    <view class="menu-item" wx:if="{{userInfo.isAdmin}}" bindtap="goChatDashboard">
-      <text>📊 客服数据看板</text><text class="arrow">›</text>
+    <view class="p-item" bindtap="goCustom">
+      <text class="p-icon">✨</text>
+      <text class="p-info">
+        <text class="p-name">蛋糕定制</text>
+        <text class="p-sub">1 对 1 服务</text>
+      </text>
+      <text class="p-arrow">›</text>
     </view>
   </view>
+
+  <!-- 功能宫格(2 行 4 列) -->
+  <view class="card">
+    <view class="grid">
+      <view class="g-cell" bindtap="goFavor">
+        <text class="g-emoji">♥</text>
+        <text class="g-name">我的收藏</text>
+      </view>
+      <view class="g-cell" bindtap="goCoupon">
+        <text class="g-emoji">🎟️</text>
+        <text class="g-name">领券中心</text>
+      </view>
+      <view class="g-cell" bindtap="goMember">
+        <text class="g-emoji">👑</text>
+        <text class="g-name">会员中心</text>
+      </view>
+      <view class="g-cell" bindtap="goStore">
+        <text class="g-emoji">📍</text>
+        <text class="g-name">附近门店</text>
+      </view>
+      <view class="g-cell" bindtap="goInvite">
+        <text class="g-emoji">💌</text>
+        <text class="g-name">邀请有礼</text>
+      </view>
+      <view class="g-cell" bindtap="goService">
+        <text class="g-emoji">🌟</text>
+        <text class="g-name">服务市场</text>
+      </view>
+      <view class="g-cell" bindtap="goVerify">
+        <text class="g-emoji">🛡️</text>
+        <text class="g-name">实名认证</text>
+      </view>
+      <view class="g-cell" bindtap="goFinance">
+        <text class="g-emoji">💰</text>
+        <text class="g-name">财务中心</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 工具列表 -->
+  <view class="card list">
+    <view class="l-row" bindtap="goChat">
+      <text class="l-emoji">💬</text>
+      <text class="l-name">在线客服</text>
+      <text class="l-arrow">›</text>
+    </view>
+    <view class="l-row" bindtap="goAddress">
+      <text class="l-emoji">📍</text>
+      <text class="l-name">收货地址</text>
+      <text class="l-arrow">›</text>
+    </view>
+    <view class="l-row" bindtap="goAgreement">
+      <text class="l-emoji">📋</text>
+      <text class="l-name">用户协议</text>
+      <text class="l-arrow">›</text>
+    </view>
+    <view class="l-row" bindtap="goPrivacy">
+      <text class="l-emoji">🔒</text>
+      <text class="l-name">隐私政策</text>
+      <text class="l-arrow">›</text>
+    </view>
+    <view class="l-row" bindtap="goAbout">
+      <text class="l-emoji">ℹ️</text>
+      <text class="l-name">关于我们</text>
+      <text class="l-version">v{{version}}</text>
+      <text class="l-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="footer-space"></view>
 </view>

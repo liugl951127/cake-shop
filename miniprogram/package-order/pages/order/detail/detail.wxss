@@ -1,7 +1,19 @@
-.page { padding-bottom: 140rpx; }
-.status-bar { color: #fff; padding: 40rpx 30rpx 50rpx; }
-.status-text { font-size: 40rpx; font-weight: bold; }
-.status-sub { font-size: 26rpx; margin-top: 8rpx; opacity: 0.9; }
+.page { padding-bottom: 140rpx; background: var(--bg-secondary); }
+.status-bar {
+  color: #fff;
+  padding: 50rpx 30rpx 70rpx;
+  position: relative;
+  overflow: hidden;
+}
+.status-bar::before {
+  content: '';
+  position: absolute; top: -100rpx; right: -80rpx;
+  width: 300rpx; height: 300rpx;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+.status-text { font-size: 44rpx; font-weight: 700; position: relative; }
+.status-sub { font-size: 26rpx; margin-top: 12rpx; opacity: 0.9; position: relative; }
 
 .progress {
   background: #fff; margin: -30rpx 20rpx 20rpx; border-radius: 16rpx;
