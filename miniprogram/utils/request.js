@@ -19,8 +19,13 @@ const { getToken, clearAuth, getOpenid } = require('./auth.js');
 const { isMp } = require('./env.js');
 
 const USE_DIRECT = true;  // true=直连后端, false=走云函数
-const BACKEND_URL = 'https://api.cakeshop.com';  // 生产后端
-// const BACKEND_URL = 'http://127.0.0.1:8080';   // 本地调试(开发者工具关闭域名校验)
+
+// 优先级: globalThis.__BACKEND_URL > DEFAULT_BACKEND_URL
+//   - 本地: 改 DEFAULT_BACKEND_URL 或在 app.js onLaunch 设 globalThis.__BACKEND_URL
+//   - 线上: 编译前 define 全局变量(开发者工具"详情 → 自定义预处理" 注入)
+//   - 默认 127.0.0.1: 避免 "域名不合法" 警告
+const DEFAULT_BACKEND_URL = 'http://127.0.0.1:8080';
+const BACKEND_URL = (typeof globalThis !== 'undefined' && globalThis.__BACKEND_URL) || DEFAULT_BACKEND_URL;
 
 const INTERNAL_RPC_TOKEN = '';  // 内部 RPC token, 需在小程序里设(管理后台用)
 

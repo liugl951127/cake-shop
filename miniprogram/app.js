@@ -19,6 +19,11 @@ App({
   },
 
   onLaunch() {
+    // ★ 后端地址(本地开发)
+    //   调试时改这里,或用开发者工具"详情 → 自定义预处理"注入 globalThis.__BACKEND_URL
+    //   线上: 'https://api.cakeshop.com'
+    //   本地: 'http://127.0.0.1:8080'
+    // globalThis.__BACKEND_URL = 'http://127.0.0.1:8080';
     if (!wx.cloud) return;
     wx.cloud.init({ env: this.globalData.cloudEnvId, traceUser: true });
     // 加载语言设置
