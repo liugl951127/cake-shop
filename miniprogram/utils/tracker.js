@@ -101,7 +101,7 @@ function flush() {
 
   // 用直连后端(用 require 而非顶层 require,避免循环)
   try {
-    const request = require('./request.js');
+    const { request } = require('./request.js');
     request({
       url: '/client-errors/behavior',
       method: 'POST',
