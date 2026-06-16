@@ -1,82 +1,78 @@
-const { request } = require('../../utils/request.js');
-const { orderStatusMap } = require('../../utils/util.js');
+// 订单列表
+const { request } = require('../../../../utils/request.js');
+const nav = require('../../../../utils/nav.js');
+const { formatTime } = require('../../../../utils/util.js');
+
+const STATUS = {
+  '0': '待付款', '1': '待发货', '2': '配送中', '3': '待收货', '4': '已完成',
+  '-1': '已取消', '-2': '已退款', '-3': '已拦截'
+};
 
 Page({
   data: {
-    tabs: [
-      { label: '全部', value: '' },
-      { label: '待付款', value: 0 },
-      { label: '制作中', value: 2 },
-      { label: '配送中', value: 3 },
-      { label: '已完成', value: 4 }
-    ],
-    status: '',
-    list: [],
-    loading: false,
-    statusMap: orderStatusMap
+    tab: -1, page: 1, pageSize: 20, list: [], finished: false, loading: false
   },
 
-  onShow() {
-    this.load();
+  onLoad(q) {
+    if (q.status) this.setData({ tab: Number(q.status) });
   },
 
-  onPullDownRefresh() {
-    this.load().then(() => wx.stopPullDownRefresh());
+  onShow() { this.setData({ list: [], page: 1, finished: false }); this.load(true); },
+
+  statusText(s) { return STATUS[s] || '处理中'; },
+
+  setTab(e) {
+    this.setData({ tab: Number(e.currentTarget.dataset.k), list: [], page: 1, finished: false });
+    this.load(true);
   },
 
-  switchTab(e) {
-    const v = e.currentTarget.dataset.v;
-    this.setData({ status: v });
-    this.load();
-  },
-
-  async load() {
+  async load(reset = false) {
+    if (this.data.loading || (this.data.finished && !reset)) return;
     this.setData({ loading: true });
-    try {
-      const list = await request('getOrders', { status: this.data.status }, { loading: false });
-      this.setData({ list: list.map(o => ({ ...o, totalCount: o.items.reduce((s, i) => s + i.count, 0) })) });
-    } catch (e) {}
-    this.setData({ loading: false });
+    const page = reset ? 1 : this.data.page;
+    const r = await request('getOrders', {
+      page, pageSize: this.data.pageSize,
+      status: this.data.tab === -1 ? undefined : this.data.tab
+    }, { loading: false, silent: true });
+    const list = (r.list || []).map(o => ({ ...o, createTimeText: formatTime(o.createTime) }));
+    this.setData({
+      list: reset ? list : this.data.list.concat(list),
+      page: page + 1,
+      finished: !r.hasMore,
+      loading: false
+    });
   },
 
-  goDetail(e) {
-    wx.navigateTo({ url: `/pages/order/detail/detail?id=${e.currentTarget.dataset.id}` });
+  onReachBottom() { this.load(); },
+
+  onDetail(e) {
+    const id = e.currentTarget.dataset.id || e.currentTarget.dataset._id;
+    nav.to('/package-order/pages/order/detail/detail?id=' + id);
   },
 
-  async cancelOrder(e) {
+  onPay(e) {
     const id = e.currentTarget.dataset.id;
-    const res = await wx.showModal({ title: '提示', content: '确认取消订单?' });
-    if (!res.confirm) return;
-    try {
-      await request('cancelOrder', { id });
-      this.load();
-    } catch (e) {}
+    nav.to('/pages/order/order?orderId=' + id);
   },
 
-  async payOrder(e) {
+  async onCancel(e) {
     const id = e.currentTarget.dataset.id;
-    wx.showLoading({ title: '支付中' });
-    try {
-      await request('payCallback', { orderId: id, payResult: 'success' });
-      wx.hideLoading();
-      wx.showToast({ title: '支付成功' });
-      this.load();
-    } catch (e) { wx.hideLoading(); }
+    wx.showModal({
+      title: '取消订单', content: '确认取消?', success: async (r) => {
+        if (r.confirm) {
+          await request('cancelOrder', { id }).catch(() => {});
+          this.onShow();
+        }
+      }
+    });
   },
 
-  async confirmOrder(e) {
-    const id = e.currentTarget.dataset.id;
-    try {
-      await request('confirmReceive', { id });
-      this.load();
-    } catch (e) {}
-  },
-
-  async deleteOrder(e) {
+  async onConfirm(e) {
     const id = e.currentTarget.dataset.id;
     try {
-      await request('cancelOrder', { id, remove: true });
-      this.load();
-    } catch (e) {}
+      await request('confirmReceive', { id }, { loading: false });
+      wx.showToast({ title: '已确认收货' });
+      this.onShow();
+    } catch (err) {}
   }
 });

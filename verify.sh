@@ -54,7 +54,7 @@ echo -e "${BLUE}[3/8] 微信小程序配置${NC}"
 
 if [ -f "miniprogram/app.json" ]; then
     node -e "JSON.parse(require('fs').readFileSync('miniprogram/app.json','utf8'))" 2>/dev/null && check_pass "app.json JSON 有效" || check_fail "app.json JSON 无效"
-    
+
     # tabBar 路径
     TAB_OK=$(node -e "
         const a = JSON.parse(require('fs').readFileSync('miniprogram/app.json','utf8'));
@@ -72,6 +72,18 @@ if [ -f "miniprogram/app.json" ]; then
         check_pass "tabBar 路径全部有效"
     else
         check_fail "tabBar 路径缺失: $TAB_OK"
+    fi
+
+    # 调 Python 深度检查
+    if command -v python3 >/dev/null && [ -f "scripts/check-miniprogram.py" ]; then
+        PY_OUT=$(python3 scripts/check-miniprogram.py 2>&1)
+        PY_CODE=$?
+        if [ $PY_CODE -eq 0 ]; then
+            PY_PASS=$(echo "$PY_OUT" | grep -c '✅')
+            check_pass "小程序自测 (Python): $PY_PASS 项通过"
+        else
+            check_fail "小程序自测失败: $(echo "$PY_OUT" | tail -3)"
+        fi
     fi
 fi
 

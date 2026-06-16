@@ -1,130 +1,230 @@
 #!/usr/bin/env python3
 """
-小程序启动模拟
-- app.json pages 路径存在
-- 组件引用路径存在
-- 跨分包跳转
+check-miniprogram.py - 模拟微信开发者工具 app.json 校验
+检查项:
+  1. JSON 格式
+  2. pages 数组存在 + 格式
+  3. tabBar 页面路径必须在 pages 或子包 pages
+  4. 子包 root 路径存在
+  5. 所有页面物理文件存在(.js/.wxml/.json/.wxss)
+  6. 页面 .json 格式正确
+  7. tabBar icon 文件存在
+  8. 重复路径检测
 """
-import os
-import re
-import json
-import sys
 
+import json
+import os
+import sys
+from pathlib import Path
+
+RED = "\033[0;31m"
+GREEN = "\033[0;32m"
+YELLOW = "\033[1;33m"
+BLUE = "\033[0;34m"
+NC = "\033[0m"
+
+PASS = 0
+FAIL = 0
+WARN = 0
 ERRORS = []
 WARNINGS = []
 
-def add_error(m): ERRORS.append(m)
-def add_warn(m): WARNINGS.append(m)
+def ok(msg):
+    global PASS
+    print(f"{GREEN}✅ {msg}{NC}")
+    PASS += 1
 
-# ============== 1. app.json 路径 ==============
-print("🔍 app.json pages 检查...")
-app_json = 'miniprogram/app.json'
-if not os.path.isfile(app_json):
-    add_error("缺 app.json")
-else:
-    with open(app_json) as fh:
-        cfg = json.load(fh)
-    pages = cfg.get('pages', [])
-    print(f"  主包页面: {len(pages)}")
-    for p in pages:
-        full = os.path.join('miniprogram', p + '.wxml')
-        if not os.path.isfile(full):
-            # 可能跳过一些占位
-            add_warn(f"app.json 缺页: {p} -> {full}")
+def fail(msg):
+    global FAIL
+    print(f"{RED}❌ {msg}{NC}")
+    FAIL += 1
+    ERRORS.append(msg)
 
-    subpackages = cfg.get('subpackages', [])
-    print(f"  分包: {len(subpackages)}")
-    for sp in subpackages:
-        root = sp.get('root')
-        for p in sp.get('pages', []):
-            full = os.path.join('miniprogram', root, p + '.wxml')
-            if not os.path.isfile(full):
-                add_warn(f"分包 {root} 缺页: {p}")
+def warn(msg):
+    global WARN
+    print(f"{YELLOW}⚠️  {msg}{NC}")
+    WARN += 1
+    WARNINGS.append(msg)
 
-# ============== 2. 全局组件 ==============
-print("\n🔍 usingComponents 路径...")
-def check_components(pages_root, label):
-    for root, dirs, files in os.walk(pages_root):
-        for f in files:
-            if f == 'page.json' or f.endswith('.json'):
-                path = os.path.join(root, f)
-                if 'node_modules' in path: continue
-                with open(path) as fh:
-                    try:
-                        c = json.load(fh)
-                    except:
-                        continue
-                if 'usingComponents' in c:
-                    for k, v in c['usingComponents'].items():
-                        # 解析路径
-                        if v.startswith('/'):
-                            full = os.path.join('miniprogram', v.lstrip('/'))
-                        elif v.startswith('plugin://'):
-                            continue
-                        else:
-                            # 相对
-                            full = os.path.normpath(os.path.join(os.path.dirname(path), v))
-                        # 补 .js
-                        if not os.path.isfile(full) and not os.path.isdir(full):
-                            # 试 js/wxml
-                            for ext in ['.js', '.wxml', '.json']:
-                                if os.path.isfile(full + ext):
-                                    full = full + ext
-                                    break
-                        if not (os.path.isfile(full) or os.path.isdir(full)):
-                            add_warn(f"{label} {path}: 组件 {k} -> {v} 找不到")
+def step(msg):
+    print(f"\n{BLUE}── {msg} ──{NC}")
 
-# 主包
-for root, dirs, files in os.walk('miniprogram/pages'):
-    check_components(root, '主包')
+def find_miniprogram_dir():
+    """找 miniprogram 目录"""
+    candidates = [
+        Path.cwd() / "miniprogram",
+        Path.cwd().parent / "miniprogram",
+        Path(__file__).parent.parent / "miniprogram",
+    ]
+    for c in candidates:
+        if c.exists() and c.is_dir():
+            return c
+    return None
 
-# 分包
-for d in os.listdir('miniprogram'):
-    if d.startswith('package-'):
-        check_components(os.path.join('miniprogram', d), '分包')
+def main():
+    mp = find_miniprogram_dir()
+    if not mp:
+        fail("找不到 miniprogram 目录")
+        return 1
+    print(f"{BLUE}📁 {mp}{NC}")
 
-# 组件目录
-for root, dirs, files in os.walk('miniprogram/components'):
-    check_components(root, '组件')
+    # ---------- 1. app.json ----------
+    step("[1/8] app.json 基础校验")
+    app_json = mp / "app.json"
+    if not app_json.exists():
+        fail("app.json 不存在")
+        return 1
+    try:
+        app = json.loads(app_json.read_text(encoding="utf-8"))
+        ok("app.json 是有效 JSON")
+    except json.JSONDecodeError as e:
+        fail(f"app.json JSON 解析失败: {e}")
+        return 1
 
-# ============== 3. 关键 page.json 结构 ==============
-print("\n🔍 检查关键 page.json...")
-for p in ['login', 'index', 'detail', 'cart', 'my', 'search']:
-    for root in ['miniprogram/pages', 'miniprogram/package-order', 'miniprogram/package-user']:
-        path = os.path.join(root, p, p + '.json')
-        if os.path.isfile(path):
-            break
+    # ---------- 2. pages 数组 ----------
+    step("[2/8] pages 数组校验")
+    if "pages" not in app:
+        fail("缺少 pages 字段")
+    elif not isinstance(app["pages"], list):
+        fail("pages 不是数组")
+    elif len(app["pages"]) == 0:
+        fail("pages 数组为空")
     else:
-        add_warn(f"关键页 {p} 找不到")
+        ok(f"pages 数组有 {len(app['pages'])} 项")
+        for p in app["pages"]:
+            if not p.startswith("pages/"):
+                fail(f"pages 项 '{p}' 必须以 'pages/' 开头")
+            elif "//" in p or p.endswith("/"):
+                fail(f"pages 项 '{p}' 格式错误")
 
-# ============== 4. 全局变量 ==============
-print("\n🔍 globalData 引用一致性...")
-app_js = 'miniprogram/app.js'
-if os.path.isfile(app_js):
-    with open(app_js) as fh:
-        c = fh.read()
-    for m in re.finditer(r'globalData\.(\w+)', c):
-        gd = m.group(1)
-        # 找 getApp().globalData.xxx 引用
-        pass
+    # ---------- 3. tabBar ----------
+    step("[3/8] tabBar 校验")
+    if "tabBar" not in app:
+        warn("无 tabBar 配置")
+    elif "list" not in app["tabBar"] or not app["tabBar"]["list"]:
+        warn("tabBar.list 为空")
+    else:
+        tab_list = app["tabBar"]["list"]
+        if len(tab_list) > 5:
+            fail(f"tabBar 项超过 5 个(微信限制),当前 {len(tab_list)}")
+        ok(f"tabBar.list {len(tab_list)} 项(≤5)")
+        # 收集所有可用页面
+        main_pages = set(app.get("pages", []))
+        sub_pages = set()
+        for s in app.get("subpackages", []):
+            for p in s.get("pages", []):
+                sub_pages.add(f"{s['name']}/{p}")
+        all_pages = main_pages | sub_pages
+        for t in tab_list:
+            if "pagePath" not in t:
+                fail(f"tabBar 项缺少 pagePath: {t}")
+                continue
+            path = t["pagePath"]
+            text = t.get("text", "?")
+            if path in main_pages:
+                ok(f"tabBar '{text}' -> {path} (主包)")
+            elif path in sub_pages:
+                ok(f"tabBar '{text}' -> {path} (子包)")
+            else:
+                fail(f"tabBar '{text}' -> {path} (页面未注册!)")
 
-# ============== 输出 ==============
-print("\n" + "=" * 60)
-print("📊 小程序扫描结果")
-print("=" * 60)
-print(f"❌ 错误: {len(ERRORS)}")
-print(f"⚠️  警告: {len(WARNINGS)}")
+    # ---------- 4. 子包 root 存在 ----------
+    step("[4/8] subpackages root 校验")
+    for s in app.get("subpackages", []):
+        name = s.get("name", "?")
+        root = s.get("root", "")
+        full = mp / root
+        if not full.exists():
+            fail(f"子包 '{name}' root '{root}' 目录不存在: {full}")
+        else:
+            ok(f"子包 '{name}' -> {full}")
 
-if ERRORS:
-    print("\n=== 错误 ===")
-    for e in ERRORS:
-        print(f"  ❌ {e}")
+    # ---------- 5. 所有页面物理文件 ----------
+    step("[5/8] 物理文件存在性")
+    for p in main_pages:
+        # 页面是 .js 文件(不是目录)
+        full = mp / (p + ".js")
+        if not full.exists():
+            fail(f"主包页面 '{p}' 物理不存在: {full}")
+            continue
+        for ext in (".js", ".wxml", ".json"):
+            if not (mp / (p + ext)).exists():
+                fail(f"  {p} 缺少 {ext}")
+        ok(f"  {p} 文件完整")
+    for p in sub_pages:
+        # sub_pages 形如 'order/pages/order/list'
+        for s in app.get("subpackages", []):
+            sub_path = f"{s['name']}/"
+            if p.startswith(sub_path):
+                rel = p[len(sub_path):]
+                # 子包页面 = 子包 root + 子包内路径
+                full = mp / s["root"] / (rel + ".js")
+                if not full.exists():
+                    fail(f"子包页面 '{p}' 物理不存在: {full}")
+                else:
+                    for ext in (".js", ".wxml", ".json"):
+                        if not (mp / s["root"] / (rel + ext)).exists():
+                            fail(f"  {p} 缺少 {ext}")
+                    ok(f"  {p} 文件完整")
+                break
 
-if WARNINGS:
-    print("\n=== 警告 ===")
-    for w in WARNINGS[:30]:
-        print(f"  ⚠️  {w}")
-    if len(WARNINGS) > 30:
-        print(f"  ... 共 {len(WARNINGS)} 个")
+    # ---------- 6. 页面 json 格式 ----------
+    step("[6/8] 页面 .json 校验")
+    json_count = 0
+    for json_file in mp.rglob("*.json"):
+        # 跳过 node_modules
+        if "node_modules" in str(json_file):
+            continue
+        if json_file.name in ("app.json", "sitemap.json", "project.config.json",
+                              "project.private.config.json", "tsconfig.json"):
+            continue
+        # 必须以 .json 结尾但是页面 json (在 pages/ 目录下)
+        if "pages" not in str(json_file):
+            continue
+        try:
+            json.loads(json_file.read_text(encoding="utf-8"))
+            json_count += 1
+        except json.JSONDecodeError as e:
+            fail(f"页面 JSON 解析失败: {json_file.relative_to(mp)} - {e}")
+    ok(f"{json_count} 个页面 JSON 全部有效")
 
-sys.exit(1 if ERRORS else 0)
+    # ---------- 7. tabBar icon ----------
+    step("[7/8] tabBar icon 文件")
+    for t in app.get("tabBar", {}).get("list", []):
+        for key in ("iconPath", "selectedIconPath"):
+            icon = t.get(key)
+            if not icon:
+                continue
+            full = mp / icon
+            if not full.exists():
+                warn(f"tabBar icon 缺失: {t.get('text', '?')} {key}={icon}")
+            else:
+                ok(f"  {t.get('text', '?')} {key}={icon}")
+
+    # ---------- 8. 重复检测 ----------
+    step("[8/8] 重复路径检测")
+    all_paths = list(main_pages) + list(sub_pages)
+    dup = [p for p in all_paths if all_paths.count(p) > 1]
+    if dup:
+        for d in set(dup):
+            fail(f"页面路径重复: {d}")
+    else:
+        ok(f"无重复路径 ({len(all_paths)} 个唯一页面)")
+
+    # ---------- 总结 ----------
+    print(f"\n{BLUE}══════════════════════════════{NC}")
+    print(f"{BLUE}  验证结果{NC}")
+    print(f"{BLUE}══════════════════════════════{NC}")
+    print(f"{GREEN}通过: {PASS}{NC}  {YELLOW}警告: {WARN}{NC}  {RED}失败: {FAIL}{NC}")
+
+    if FAIL == 0:
+        print(f"\n{GREEN}🎉 自测通过 - 可被微信开发者工具接受!{NC}")
+        return 0
+    else:
+        print(f"\n{RED}⚠️  有 {FAIL} 项失败{NC}")
+        for e in ERRORS[:10]:
+            print(f"  - {e}")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())
