@@ -85,6 +85,18 @@ if [ -f "miniprogram/app.json" ]; then
             check_fail "小程序自测失败: $(echo "$PY_OUT" | tail -3)"
         fi
     fi
+
+    # 调 WXML 校验
+    if command -v python3 >/dev/null && [ -f "scripts/check-wxml.py" ]; then
+        WXML_OUT=$(python3 scripts/check-wxml.py 2>&1)
+        WXML_CODE=$?
+        if [ $WXML_CODE -eq 0 ]; then
+            WXML_PASS=$(echo "$WXML_OUT" | grep -c '✅')
+            check_pass "WXML 校验: $WXML_PASS 项通过"
+        else
+            check_fail "WXML 校验失败"
+        fi
+    fi
 fi
 
 # 检查所有 .wxml

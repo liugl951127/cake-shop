@@ -96,15 +96,11 @@ def check_wxml(path: Path):
         if closing:
             if not stack:
                 continue
-                # fail(f"{rel}:{pos2line(m.start())} 多余 </{tag}>")
-                # return
-            last_tag, last_line = stack.pop()
-            if last_tag != tag:
-                # 在微信里,<view>...<image>...</view> 这种情况 - image 应该不 pop
-                # 但我们只 push container,理论上 stack 不会 pop image
-                # 真正的问题可能是 image 双标签(我们没 push)与 view 标签不匹配
-                pass
-        elif not self_close and tag in CONTAINER:
+            if stack[-1][0] == tag:
+                stack.pop()
+            # 不匹配时跳过(可能中间有 void 元素或 wx:if 等)
+            continue
+        if not self_close and tag in CONTAINER:
             stack.append((tag, pos2line(m.start())))
 
     # 因为我们 push 了所有 CONTAINER 但没处理 image 的关闭(被容错)
