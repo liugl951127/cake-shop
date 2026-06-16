@@ -107,6 +107,42 @@ const ErrorCode = {
   AUTH_LOCATION_OUT_OF_RANGE: 5303,      // 位置超出服务范围
   AUTH_LOCATION_PRECISION_LOW: 5304,     // 位置精度太低
 
+  // 加密机/敏感数据 54xx-55xx
+  KMS_UNAVAILABLE: 5401,                 // 加密机不可用
+  KMS_KEY_NOT_FOUND: 5402,               // 加密机中无此 key
+  KMS_ACCESS_DENIED: 5403,               // 加密机拒绝访问
+  KMS_THROTTLED: 5404,                   // 加密机限流
+  KMS_RESPONSE_INVALID: 5405,            // 加密机响应无效
+  ENCRYPT_FAILED: 5410,                  // 加密失败
+  DECRYPT_FAILED: 5411,                  // 解密失败
+  HASH_FAILED: 5412,                     // hash 失败
+  KDF_FAILED: 5413,                      // 密钥派生失败
+  SECURE_FIELD_TAMPERED: 5420,           // 安全输入被修改(过明文)
+  SECURE_FIELD_REPLAY: 5421,             // 安全输入重放
+  SECURE_FIELD_EXPIRED: 5422,            // 安全输入过期
+  SECURE_FIELD_INVALID: 5423,            // 安全输入格式错
+  PAYMENT_PASSWORD_FORMAT_ERROR: 5430,   // 付款密码格式错(必须 6 位数字)
+  PAYMENT_PASSWORD_TOO_SHORT: 5431,      // 付款密码太短
+  PAYMENT_PASSWORD_TOO_WEAK: 5432,       // 付款密码太弱
+  PAYMENT_PASSWORD_LOCKED: 5433,         // 付款密码锁定
+  PAYMENT_PASSWORD_INCORRECT: 5434,      // 付款密码错误
+  SMS_CODE_FORMAT_ERROR: 5440,           // 验证码格式错(6 位数字)
+  SMS_CODE_EXPIRED: 5441,                // 验证码过期
+  SMS_CODE_INCORRECT: 5442,              // 验证码错误
+  SMS_CODE_TOO_MANY: 5443,               // 验证次数过多
+  SMS_CODE_NOT_FOUND: 5444,              // 验证码不存在
+  SMS_SEND_TOO_FREQUENT: 5445,           // 发送太频繁
+  SMS_SEND_FAILED: 5446,                 // 发送失败
+  SMS_DAILY_LIMIT: 5447,                 // 每日上限
+  SECURE_CHANNEL_INVALID: 5500,          // 安全通道无效
+  SECURE_CHANNEL_HANDSHAKE_FAILED: 5501, // 握手失败
+  SECURE_CHANNEL_KEY_EXPIRED: 5502,      // 通道 key 过期
+  SECURE_CHANNEL_SIGN_INVALID: 5503,     // 通道签名无效
+  SECURE_RISK_HIGH: 5510,                // 高风险拒绝
+  SECURE_DEVICE_MISMATCH: 5511,          // 设备不匹配
+  SECURE_FINGERPRINT_INVALID: 5512,      // 指纹无效
+  SECURE_GEO_VIOLATION: 5513,            // 地理越界
+
   // 企业微信 48xx
   WECOM_CONFIG_MISSING: 4801,
   WECOM_TOKEN_FETCH_FAIL: 4802,
@@ -201,6 +237,41 @@ const ErrorMessage = {
   [ErrorCode.AUTH_FILE_TYPE_DENIED]: '文件类型不支持',
   [ErrorCode.AUTH_LOCATION_OUT_OF_RANGE]: '位置超出服务范围',
   [ErrorCode.AUTH_LOCATION_PRECISION_LOW]: '位置精度不足',
+  // 加密/支付 54xx-55xx
+  [ErrorCode.KMS_UNAVAILABLE]: '加密机不可用',
+  [ErrorCode.KMS_KEY_NOT_FOUND]: '加密机中无此密钥',
+  [ErrorCode.KMS_ACCESS_DENIED]: '加密机拒绝访问',
+  [ErrorCode.KMS_THROTTLED]: '加密机限流',
+  [ErrorCode.KMS_RESPONSE_INVALID]: '加密机响应无效',
+  [ErrorCode.ENCRYPT_FAILED]: '加密失败',
+  [ErrorCode.DECRYPT_FAILED]: '解密失败',
+  [ErrorCode.HASH_FAILED]: 'hash 失败',
+  [ErrorCode.KDF_FAILED]: '密钥派生失败',
+  [ErrorCode.SECURE_FIELD_TAMPERED]: '安全输入被篡改',
+  [ErrorCode.SECURE_FIELD_REPLAY]: '安全输入重放',
+  [ErrorCode.SECURE_FIELD_EXPIRED]: '安全输入已过期',
+  [ErrorCode.SECURE_FIELD_INVALID]: '安全输入格式错误',
+  [ErrorCode.PAYMENT_PASSWORD_FORMAT_ERROR]: '付款密码格式错(必须 6 位数字)',
+  [ErrorCode.PAYMENT_PASSWORD_TOO_SHORT]: '付款密码太短',
+  [ErrorCode.PAYMENT_PASSWORD_TOO_WEAK]: '付款密码太弱',
+  [ErrorCode.PAYMENT_PASSWORD_LOCKED]: '付款密码已锁定,请稍后再试',
+  [ErrorCode.PAYMENT_PASSWORD_INCORRECT]: '付款密码错误',
+  [ErrorCode.SMS_CODE_FORMAT_ERROR]: '验证码格式错(必须 6 位数字)',
+  [ErrorCode.SMS_CODE_EXPIRED]: '验证码已过期',
+  [ErrorCode.SMS_CODE_INCORRECT]: '验证码错误',
+  [ErrorCode.SMS_CODE_TOO_MANY]: '验证次数过多',
+  [ErrorCode.SMS_CODE_NOT_FOUND]: '验证码不存在',
+  [ErrorCode.SMS_SEND_TOO_FREQUENT]: '发送太频繁,请稍后再试',
+  [ErrorCode.SMS_SEND_FAILED]: '发送失败',
+  [ErrorCode.SMS_DAILY_LIMIT]: '已达今日上限',
+  [ErrorCode.SECURE_CHANNEL_INVALID]: '安全通道无效',
+  [ErrorCode.SECURE_CHANNEL_HANDSHAKE_FAILED]: '通道握手失败',
+  [ErrorCode.SECURE_CHANNEL_KEY_EXPIRED]: '通道密钥过期',
+  [ErrorCode.SECURE_CHANNEL_SIGN_INVALID]: '通道签名无效',
+  [ErrorCode.SECURE_RISK_HIGH]: '高风险操作被拒绝',
+  [ErrorCode.SECURE_DEVICE_MISMATCH]: '设备不匹配',
+  [ErrorCode.SECURE_FINGERPRINT_INVALID]: '设备指纹无效',
+  [ErrorCode.SECURE_GEO_VIOLATION]: '地理位置越界',
   // 多租户
   [ErrorCode.TENANT_NOT_FOUND]: '租户不存在',
   [ErrorCode.TENANT_DISABLED]: '租户已禁用',

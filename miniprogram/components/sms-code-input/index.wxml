@@ -1,0 +1,40 @@
+<view class="sms-code-input {{sent ? 'sent' : ''}}">
+  <!-- 提示行 -->
+  <view class="hint" wx:if="{{phone}}">
+    <text>已发送至 {{phone}}</text>
+  </view>
+
+  <!-- 6 位输入框 -->
+  <view class="boxes">
+    <view wx:for="{{boxes}}" wx:key="idx" wx:for-index="idx"
+          class="box {{current === idx ? 'focused' : ''}} {{item ? 'filled' : ''}} {{error ? 'error' : ''}}"
+          data-i="{{idx}}"
+          bindtap="onTapBox">
+      {{item || ''}}
+    </view>
+  </view>
+
+  <!-- 隐藏 input 接收输入 -->
+  <input class="hidden-input"
+         type="number"
+         password="false"
+         maxlength="{{length}}"
+         focus="{{true}}"
+         value="{{boxes[0] + boxes[1] + boxes[2] + boxes[3] + boxes[4] + boxes[5]}}"
+         bindinput="onInput"
+         bindfocus="onFocus"
+         bindblur="onBlur" />
+
+  <!-- 错误提示 -->
+  <view class="error" wx:if="{{error}}">{{error}}</view>
+
+  <!-- 重新发送 -->
+  <view class="resend" wx:if="{{sent}}">
+    <text wx:if="{{count > 0}}">{{count}}s 后重发</text>
+    <text wx:elif="{{!sending}}" class="link" bindtap="sendCode">重新发送</text>
+    <text wx:else>发送中...</text>
+  </view>
+  <view class="resend" wx:else>
+    <text class="link" bindtap="sendCode">发送验证码</text>
+  </view>
+</view>

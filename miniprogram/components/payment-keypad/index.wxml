@@ -1,0 +1,44 @@
+<view class="payment-keypad-mask" wx:if="{{visible}}" catchtap="noop">
+  <view class="payment-keypad-modal" catchtap="noop">
+    <view class="title-bar">
+      <view class="cancel" bindtap="onClose">取消</view>
+      <view class="title">{{title}}</view>
+      <view class="help" bindtap="onClose">忘记密码</view>
+    </view>
+
+    <!-- 6 位圆点 -->
+    <view class="dots">
+      <view wx:for="{{dots}}" wx:key="idx"
+            class="dot {{item ? 'filled' : ''}} {{error ? 'error' : ''}}">{{item}}</view>
+    </view>
+
+    <view class="error" wx:if="{{error}}">{{error}}</view>
+    <view class="locked" wx:if="{{locked}}">已锁定,{{lockSeconds}}s 后再试</view>
+
+    <!-- 数字键盘(打乱顺序) -->
+    <view class="keypad" wx:if="{{!locked}}">
+      <view class="row">
+        <view class="key" data-k="{{keys[0]}}" hover-class="key-hover" bindtap="onTapKey">
+          <text wx:if="{{keys[0] !== undefined}}">{{keys[0]}}</text>
+        </view>
+        <view class="key" data-k="{{keys[1]}}" hover-class="key-hover" bindtap="onTapKey">{{keys[1]}}</view>
+        <view class="key" data-k="{{keys[2]}}" hover-class="key-hover" bindtap="onTapKey">{{keys[2]}}</view>
+      </view>
+      <view class="row">
+        <view class="key" data-k="{{keys[3]}}" hover-class="key-hover" bindtap="onTapKey">{{keys[3]}}</view>
+        <view class="key" data-k="{{keys[4]}}" hover-class="key-hover" bindtap="onTapKey">{{keys[4]}}</view>
+        <view class="key" data-k="{{keys[5]}}" hover-class="key-hover" bindtap="onTapKey">{{keys[5]}}</view>
+      </view>
+      <view class="row">
+        <view class="key" data-k="{{keys[6]}}" hover-class="key-hover" bindtap="onTapKey">{{keys[6]}}</view>
+        <view class="key" data-k="{{keys[7]}}" hover-class="key-hover" bindtap="onTapKey">{{keys[7]}}</view>
+        <view class="key" data-k="{{keys[8]}}" hover-class="key-hover" bindtap="onTapKey">{{keys[8]}}</view>
+      </view>
+      <view class="row">
+        <view class="key empty"></view>
+        <view class="key" data-k="{{keys[9]}}" hover-class="key-hover" bindtap="onTapKey">{{keys[9]}}</view>
+        <view class="key del" data-k="del" hover-class="key-hover" bindtap="onTapKey">⌫</view>
+      </view>
+    </view>
+  </view>
+</view>
