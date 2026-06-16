@@ -118,17 +118,21 @@
     "navigationBarTitleText": "甜心蛋糕",
     "enablePullDownRefresh": false
   },
+  "usingComponents": {
+    "smart-image": "/components/smart-image/index"
+  },
   "tabBar": {
+    "custom": true,
     "color": "#94a3b8",
     "selectedColor": "#6366f1",
     "backgroundColor": "#ffffff",
     "borderStyle": "white",
     "list": [
-      { "pagePath": "pages/index/index",   "text": "首页", "iconPath": "images/tab-home.png",     "selectedIconPath": "images/tab-home-a.png" },
-      { "pagePath": "pages/goods/goods",  "text": "分类", "iconPath": "images/tab-cat.png",      "selectedIconPath": "images/tab-cat-a.png" },
-      { "pagePath": "pages/cart/cart",    "text": "购物车", "iconPath": "images/tab-cart.png",   "selectedIconPath": "images/tab-cart-a.png" },
-      { "pagePath": "pages/order/list/list", "text": "订单", "iconPath": "images/tab-order.png","selectedIconPath": "images/tab-order-a.png" },
-      { "pagePath": "pages/my/my",        "text": "我的", "iconPath": "images/tab-my.png",       "selectedIconPath": "images/tab-my-a.png" }
+      { "pagePath": "pages/index/index",   "text": "首页" },
+      { "pagePath": "pages/goods/goods",  "text": "分类" },
+      { "pagePath": "pages/cart/cart",    "text": "购物车" },
+      { "pagePath": "pages/order/list/list", "text": "订单" },
+      { "pagePath": "pages/my/my",        "text": "我的" }
     ]
   },
   "style": "v2",

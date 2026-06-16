@@ -1,0 +1,8 @@
+<view class="custom-tab-bar">
+  <view class="ctb-item {{selected === idx ? 'on' : ''}}"
+        wx:for="{{list}}" wx:key="pagePath" wx:for-index="idx"
+        data-idx="{{idx}}" bindtap="onSwitch">
+    <view class="ctb-emoji">{{selected === idx ? item.emojiActive : item.emoji}}</view>
+    <view class="ctb-text" style="color: {{selected === idx ? selectedColor : color}};">{{item.text}}</view>
+  </view>
+</view>

@@ -1,0 +1,9 @@
+<image
+  class="smart-image {{error ? 'smart-image-error' : ''}}"
+  src="{{finalSrc}}"
+  mode="{{mode}}"
+  lazy-load="{{true}}"
+  bindload="onLoad"
+  binderror="onError"
+  style="width: {{width || '100%'}}; height: {{height || '100%'}};"
+></image>
