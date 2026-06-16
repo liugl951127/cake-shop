@@ -133,9 +133,9 @@
   }
 
   // ====== 主题切换 ======
-  const THEMES = ['sakura', 'blue', 'dark', 'plain'];
+  const THEMES = ['indigo', 'sakura', 'business', 'dark', 'white'];
   function getTheme() {
-    return localStorage.getItem('__admin_theme__') || 'sakura';
+    return localStorage.getItem('__admin_theme__') || 'indigo';
   }
   function setTheme(name) {
     if (!THEMES.includes(name)) return;

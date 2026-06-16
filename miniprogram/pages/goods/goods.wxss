@@ -1,48 +1,57 @@
-/* 商品列表 - 樱花主题 */
+/* pages/goods/goods.wxss - 商品列表 浅色卡片 + indigo 渐变 + 大圆角 */
+@import "/styles/theme.wxss";
 
 .search-row {
   position: sticky; top: 0; z-index: 10;
-  background: var(--bg-primary);
+  background: var(--c-bg-card);
   padding: 20rpx 24rpx;
-  border-bottom: 1rpx solid var(--border-light);
+  border-bottom: 1rpx solid var(--c-border-soft);
 }
 .search-input {
   display: flex; align-items: center;
-  background: var(--bg-secondary);
-  border-radius: var(--radius-full);
+  background: var(--c-indigo-50);
+  border-radius: var(--r-full);
   padding: 14rpx 24rpx;
+  border: 2rpx solid var(--c-indigo-100);
+  transition: all 0.2s;
 }
-.si-icon { font-size: 26rpx; color: var(--text-tertiary); margin-right: 12rpx; }
-.search-input input { flex: 1; font-size: 26rpx; }
+.search-input:focus-within {
+  border-color: var(--c-indigo-400);
+  background: #fff;
+}
+.si-icon { font-size: 26rpx; color: var(--c-indigo-400); margin-right: 12rpx; }
+.search-input input { flex: 1; font-size: 26rpx; color: var(--c-text-1); }
 .si-clear {
   width: 40rpx; height: 40rpx; line-height: 36rpx; text-align: center;
-  background: #ccc; color: #fff; border-radius: 50%;
-  font-size: 28rpx;
+  background: var(--c-text-3); color: #fff; border-radius: 50%;
+  font-size: 24rpx;
 }
 
 .body { display: flex; height: calc(100vh - 100rpx); }
 
+/* 左侧分类 */
 .cat-side {
   width: 180rpx;
-  background: var(--bg-secondary);
+  background: var(--c-bg-card);
+  border-top-right-radius: var(--r-lg);
 }
 .cat-item {
   position: relative;
-  padding: 30rpx 20rpx;
+  padding: 32rpx 20rpx;
   text-align: center;
   font-size: 26rpx;
-  color: var(--text-secondary);
+  color: var(--c-text-2);
   transition: all 0.2s;
 }
 .cat-item.active {
-  background: #fff;
-  color: var(--primary);
+  background: var(--c-indigo-50);
+  color: var(--c-indigo-600);
   font-weight: 600;
 }
 .cat-bar {
   position: absolute; left: 0; top: 50%;
   width: 6rpx; height: 40rpx;
-  background: var(--primary);
+  background: var(--grad-primary);
   border-radius: 0 4rpx 4rpx 0;
   transform: translateY(-50%);
   opacity: 0;
@@ -50,33 +59,37 @@
 }
 .cat-item.active .cat-bar { opacity: 1; }
 
-.goods-side { flex: 1; padding: 20rpx; background: #fff; }
+.goods-side { flex: 1; padding: 20rpx; background: var(--c-bg-page); }
 
+/* 分类 banner */
 .cat-banner {
   display: flex; align-items: center;
-  background: var(--grad-primary-soft);
-  border-radius: var(--radius);
+  background: var(--grad-card);
+  border-radius: var(--r-lg);
   padding: 24rpx;
   margin-bottom: 20rpx;
+  border: 1rpx solid var(--c-indigo-100);
+  box-shadow: var(--sh-1);
 }
 .cb-emoji { font-size: 60rpx; margin-right: 20rpx; }
-.cb-name { font-size: 30rpx; font-weight: 600; color: var(--text-primary); display: block; }
-.cb-sub { font-size: 22rpx; color: var(--text-tertiary); display: block; margin-top: 4rpx; }
+.cb-name { font-size: 30rpx; font-weight: 600; color: var(--c-text-1); display: block; }
+.cb-sub { font-size: 22rpx; color: var(--c-text-3); display: block; margin-top: 4rpx; }
 
+/* 商品卡片(横向) */
 .g-card {
   display: flex;
-  background: #fff;
-  border-radius: var(--radius);
+  background: var(--c-bg-card);
+  border-radius: var(--r-lg);
   padding: 20rpx;
   margin-bottom: 20rpx;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--sh-1);
   transition: transform 0.2s;
 }
-.g-card:active { transform: scale(0.98); }
+.g-card:active { transform: scale(0.99); box-shadow: var(--sh-2); }
 .g-img {
   width: 200rpx; height: 200rpx;
-  border-radius: var(--radius-sm);
-  background: #f5f5f5;
+  border-radius: var(--r-md);
+  background: var(--c-indigo-50);
   flex-shrink: 0;
 }
 .g-info {
@@ -84,19 +97,19 @@
   margin-left: 20rpx;
   display: flex; flex-direction: column;
 }
-.g-name { font-size: 28rpx; color: var(--text-primary); line-height: 1.4; }
-.g-desc { font-size: 22rpx; color: var(--text-tertiary); margin-top: 6rpx; }
-.g-meta { font-size: 22rpx; color: var(--text-tertiary); margin-top: 6rpx; }
+.g-name { font-size: 28rpx; color: var(--c-text-1); line-height: 1.4; font-weight: 500; }
+.g-desc { font-size: 22rpx; color: var(--c-text-3); margin-top: 6rpx; }
+.g-meta { font-size: 22rpx; color: var(--c-text-3); margin-top: 6rpx; }
 .g-foot {
   display: flex; align-items: center; justify-content: space-between;
   margin-top: auto; padding-top: 12rpx;
 }
-.g-price { display: flex; align-items: baseline; color: var(--danger); }
+.g-price { display: flex; align-items: baseline; color: var(--c-danger); }
 .gp-cur { font-size: 22rpx; }
 .gp-num { font-size: 32rpx; font-weight: 700; }
 .gp-old {
   font-size: 22rpx;
-  color: var(--text-tertiary);
+  color: var(--c-text-3);
   text-decoration: line-through;
   margin-left: 12rpx;
 }
@@ -108,18 +121,19 @@
   text-align: center; line-height: 52rpx;
   font-size: 36rpx;
   font-weight: 300;
-  box-shadow: 0 4rpx 12rpx rgba(255,123,156,0.4);
+  box-shadow: 0 4rpx 12rpx rgba(99, 102, 241, 0.32);
 }
+.g-cart:active { transform: scale(0.9); }
 
 .empty {
   text-align: center;
   padding: 100rpx 0;
-  color: var(--text-tertiary);
+  color: var(--c-text-3);
 }
 .empty-emoji { display: block; font-size: 100rpx; opacity: 0.5; margin-bottom: 16rpx; }
 .loading, .end {
   text-align: center;
   padding: 32rpx 0;
-  color: var(--text-tertiary);
+  color: var(--c-text-3);
   font-size: 24rpx;
 }

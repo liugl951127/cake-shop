@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="sakura">
+<html lang="zh-CN" data-theme="indigo">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,9 +9,9 @@
   <style>
     body {
       background:
-        radial-gradient(ellipse at top left, rgba(255, 123, 156, 0.15), transparent 50%),
-        radial-gradient(ellipse at bottom right, rgba(255, 154, 110, 0.15), transparent 50%),
-        var(--bg-secondary);
+        radial-gradient(ellipse at top left, rgba(99, 102, 241, 0.18), transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(129, 140, 248, 0.15), transparent 50%),
+        var(--bg-page);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -20,29 +20,31 @@
     }
     .login-card {
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       background: var(--bg-primary);
       border-radius: 24px;
-      padding: 40px;
-      box-shadow: var(--shadow-lg);
+      padding: 48px 40px;
+      box-shadow: 0 12px 40px rgba(99, 102, 241, 0.12);
       border: 1px solid var(--border-light);
     }
     .login-logo {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
     }
     .login-logo .icon {
-      font-size: 56px;
+      font-size: 64px;
       display: inline-block;
       animation: bounce 2s infinite;
+      filter: drop-shadow(0 6px 16px rgba(99, 102, 241, 0.25));
     }
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+      50% { transform: translateY(-8px); }
     }
     .login-logo h1 {
-      font-size: 24px;
-      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 12px;
       background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -50,28 +52,31 @@
     }
     .login-logo p {
       color: var(--text-secondary);
-      font-size: 13px;
-      margin-top: 4px;
+      font-size: 14px;
+      margin-top: 8px;
     }
-    .login-card .form-group { margin-bottom: 16px; }
+    .login-card .form-group { margin-bottom: 20px; }
     .login-card .form-control {
-      padding: 12px 14px;
+      padding: 14px 16px;
       font-size: 15px;
+      border-radius: 12px;
     }
     .login-card .btn {
       width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      margin-top: 8px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 12px;
     }
     .login-tips {
-      margin-top: 16px;
-      padding: 12px;
-      background: var(--bg-secondary);
-      border-radius: var(--radius-md);
-      font-size: 12px;
-      color: var(--text-tertiary);
+      margin-top: 20px;
+      padding: 14px;
+      background: var(--primary-50);
+      border-radius: 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
       text-align: center;
+      border: 1px solid var(--primary-100);
     }
   </style>
 </head>
@@ -80,29 +85,28 @@
     <div class="login-logo">
       <div class="icon">🎂</div>
       <h1>甜心蛋糕</h1>
-      <p>商家管理后台</p>
+      <p>商家管理后台 v27</p>
     </div>
     <form id="loginForm">
       <div class="form-group">
-        <label class="form-label">手机号</label>
+        <label class="form-label">手机号 / 账号</label>
         <input class="form-control" name="phone" placeholder="admin" value="admin" required />
       </div>
       <div class="form-group">
         <label class="form-label">密码</label>
         <input class="form-control" name="password" type="password" placeholder="••••••" value="123456" required />
       </div>
-      <button class="btn btn-primary btn-block" type="submit">登 录</button>
+      <button class="btn btn-primary" type="submit">登 录</button>
     </form>
     <div class="login-tips">
       默认账号: admin / 123456<br />
-      主题切换在登录后右上角
+      5 套主题: indigo(默认) / sakura / business / dark / white
     </div>
   </div>
 
   <script src="/js/request.js"></script>
   <script src="/js/app.js"></script>
   <script>
-    // 已登录直接跳
     if (http.getToken()) {
       location.href = '/pages/dashboard/dashboard.html';
     }
@@ -114,15 +118,12 @@
       try {
         const r = await http.post('/auth/login', { phone, password });
         http.setToken(r.data.token);
-        // 存用户名
         if (r.data.employee) {
           localStorage.setItem('__admin_username__', r.data.employee.name || r.data.employee.phone);
         }
         App.toast.success('登录成功');
         setTimeout(() => location.href = '/pages/dashboard/dashboard.html', 300);
-      } catch (err) {
-        // toast 已在 request.js 处理
-      }
+      } catch (err) {}
     };
   </script>
 </body>

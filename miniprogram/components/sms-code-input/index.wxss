@@ -1,3 +1,6 @@
+/* sms-code-input/index.wxss - 适配浅色卡片 + indigo 主题 */
+@import "/styles/theme.wxss";
+
 .sms-code-input {
   display: flex;
   flex-direction: column;
@@ -6,36 +9,37 @@
 }
 .hint {
   font-size: 26rpx;
-  color: #666;
+  color: var(--c-text-2);
   margin-bottom: 24rpx;
 }
 .boxes {
   display: flex;
-  gap: 16rpx;
+  gap: 20rpx;
   margin-bottom: 16rpx;
   position: relative;
 }
 .box {
-  width: 80rpx;
-  height: 88rpx;
-  border: 2rpx solid #dcdfe6;
-  border-radius: 8rpx;
+  width: 88rpx;
+  height: 96rpx;
+  border: 2rpx solid var(--c-indigo-100);
+  border-radius: var(--r-md);
   text-align: center;
-  line-height: 84rpx;
-  font-size: 40rpx;
-  color: #333;
-  background: #fff;
+  line-height: 92rpx;
+  font-size: 44rpx;
+  color: var(--c-text-1);
+  background: var(--c-bg-card);
   transition: all 0.15s ease;
 }
 .box.focused {
-  border-color: #fa5151;
-  box-shadow: 0 0 0 4rpx rgba(250, 81, 81, 0.1);
+  border-color: var(--c-indigo-500);
+  background: #fff;
+  box-shadow: 0 0 0 6rpx var(--c-indigo-100);
 }
 .box.filled {
-  border-color: #b3d4fc;
+  border-color: var(--c-indigo-300);
 }
 .box.error {
-  border-color: #fa5151;
+  border-color: var(--c-danger);
   animation: shake 0.4s ease;
 }
 @keyframes shake {
@@ -52,7 +56,7 @@
   opacity: 0;
 }
 .error {
-  color: #fa5151;
+  color: var(--c-danger);
   font-size: 24rpx;
   margin-top: 8rpx;
   min-height: 36rpx;
@@ -60,10 +64,14 @@
 .resend {
   margin-top: 16rpx;
   font-size: 26rpx;
-  color: #999;
+  color: var(--c-text-3);
 }
 .resend .link {
-  color: #fa5151;
+  color: var(--c-indigo-600);
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none;
+  padding: 4rpx 16rpx;
+  background: var(--c-indigo-50);
+  border-radius: var(--r-full);
+  font-weight: 500;
 }

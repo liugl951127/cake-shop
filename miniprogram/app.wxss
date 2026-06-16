@@ -2,10 +2,10 @@
 @import "/styles/theme.wxss";
 
 page {
-  background: var(--bg-secondary);
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  background: var(--c-bg-page);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 28rpx;
-  color: var(--text-primary);
+  color: var(--c-text-1);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -19,10 +19,14 @@ button {
   padding: 0;
   background: transparent;
   line-height: 1.4;
+  font-size: 28rpx;
 }
 button::after { border: none; }
+button[disabled] { opacity: 0.4; }
 
-/* 全局文字行数限制 */
+navigator { color: var(--c-text-1); }
+
+/* 文字行数限制 */
 .line-1 {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -41,11 +45,17 @@ button::after { border: none; }
   overflow: hidden;
 }
 
-/* 渐变背景(常用) */
-.bg-gradient-primary { background: var(--grad-primary); }
-.bg-gradient-warm { background: var(--grad-warm); }
-.bg-gradient-night { background: var(--grad-night); }
-.bg-gradient-sky { background: var(--grad-sky); }
+/* 兼容旧 token 别名 */
+:root, page {
+  --bg-secondary: var(--c-bg-page);
+  --text-primary: var(--c-text-1);
+  --text-secondary: var(--c-text-2);
+  --text-tertiary: var(--c-text-3);
+  --grad-primary: var(--grad-primary);
+  --grad-warm: var(--grad-warm);
+  --grad-night: var(--grad-primary);
+  --grad-sky: var(--grad-primary-soft);
+}
 
 /* 通用容器 */
 .container {
