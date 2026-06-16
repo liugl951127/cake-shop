@@ -15,10 +15,17 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-    password:
+    # 不设 password 字段(空密码 Spring 会发 AUTH "" 命令导致报错)
     timeout: 3000ms
     lettuce:
       pool:
         max-active: 20
         max-idle: 8
         min-idle: 0
+
+# 业务配置:Redis 可选,不可用时降级到 LocalCache
+cakeshop:
+  redis:
+    # true: 连接 Redis(默认)
+    # false: 跳过 Redisson,使用 LocalCache
+    enabled: true
