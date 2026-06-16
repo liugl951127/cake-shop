@@ -1,4 +1,6 @@
-# 测试环境 - H2 + 跳过 Druid 严格连接
+# ============================================
+# 测试环境 - H2 + LOCAL 缓存
+# ============================================
 spring:
   datasource:
     driver-class-name: org.h2.Driver
@@ -28,8 +30,11 @@ spring:
       - org.redisson.spring.starter.RedissonAutoConfiguration
 
 cakeshop:
-  redis:
-    enabled: false
+  cache:
+    type: LOCAL
+    local:
+      max-size: 1000
+      default-ttl-minutes: 1
   security:
     ignore-urls:
       - /**

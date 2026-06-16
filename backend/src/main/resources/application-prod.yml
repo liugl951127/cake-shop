@@ -1,4 +1,7 @@
-# 生产环境配置
+# ============================================
+# 生产环境 - REDIS 缓存
+# 密码通过 REDIS_PASSWORD 环境变量注入
+# ============================================
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,13 +15,31 @@ spring:
       max-active: 50
       max-wait: 30000
 
-  redis:
-    host: ${REDIS_HOST:r-xxxx.redis.rds.aliyuncs.com}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD}
-    timeout: 5000ms
+  # ===== Redis 生产配置 =====
+  data:
+    redis:
+      host: ${REDIS_HOST:r-xxxx.redis.rds.aliyuncs.com}
+      port: ${REDIS_PORT:6379}
+      # 密码 - 必填,空字符串 = 无密码
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DB:0}
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 100
+          max-idle: 30
+          min-idle: 10
+          max-wait: 3000ms
+      # Sentinel 集群(可选)
+      sentinel:
+        master: ${REDIS_SENTINEL_MASTER:}
+        nodes: ${REDIS_SENTINEL_NODES:}
 
-# 生产环境启用 Redis
+# 业务配置
 cakeshop:
-  redis:
-    enabled: true
+  # 缓存:生产走 REDIS
+  cache:
+    type: REDIS
+    local:  # 不会用,占位
+      max-size: 10000
+      default-ttl-minutes: 10

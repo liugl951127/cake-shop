@@ -32,6 +32,32 @@ spring:
     ansi:
       enabled: always
 
+  # ============================================
+  # Redis (Spring Boot 2.7 标准命名 spring.data.redis.*)
+  # 兼容旧 spring.redis.* 命名(自动迁移)
+  # ============================================
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      # 密码支持 - 空 = 无密码
+      # 生产务必用环境变量注入,不要写死
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DB:0}
+      timeout: 3000ms
+      # Lettuce 连接池
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 10
+          min-idle: 2
+          max-wait: 2000ms
+        shutdown-timeout: 200ms
+      # Sentinel 集群(可选)
+      sentinel:
+        master: ${REDIS_SENTINEL_MASTER:}
+        nodes: ${REDIS_SENTINEL_NODES:}
+
 # ============================================
 # 自定义配置
 # ============================================
@@ -78,6 +104,18 @@ cakeshop:
       env-id: ${TCB_ENV_ID:cake-shop-prod-xxxx}
       api-base: https://${TCB_ENV_ID:cake-shop-prod-xxxx}.ap-shanghai.tcb-api.tencentcloud.com
       timeout-ms: 8000
+
+  # ============================================
+  # 缓存层(REDIS / LOCAL)
+  # 密码配置已在上方 spring.data.redis.password
+  # ============================================
+  cache:
+    # LOCAL  = 进程内 Caffeine (开发/测试)
+    # REDIS  = 远程 Redis (生产)
+    type: ${CACHE_TYPE:LOCAL}
+    local:
+      max-size: 10000
+      default-ttl-minutes: 10
 
 # ============================================
 # MyBatis-Plus

@@ -40,6 +40,8 @@
         <minio.version>8.5.10</minio.version>
         <easyexcel.version>3.3.3</easyexcel.version>
         <redisson.version>3.32.0</redisson.version>
+        <caffeine.version>3.1.8</caffeine.version>
+        <commons-pool2.version>2.12.0</commons-pool2.version>
         <lombok.version>1.18.30</lombok.version>
     </properties>
 
@@ -88,15 +90,36 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- 缓存 + 会话(Redis 在 dev/test 可选,prod 必选) -->
+        <!-- ================ 缓存层(重隔离) ================ -->
+        <!-- 1. Spring Data Redis:统一连接池 + 序列化 + session 共享 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <!-- Lettuce 连接池(需要,默认 netty 直接发) -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>${commons-pool2.version}</version>
+        </dependency>
+        <!-- 2. 本地缓存 Caffeine(dev/test 独立使用) -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
+        </dependency>
+        <!-- 3. Redisson - 分布式锁、发布订阅、RRateLimiter -->
+        <!--
+            可选依赖（不与 spring-boot-starter 冲突）：
+            - 包含 redisson-spring-boot-starter + redisson-spring-data-3
+            - dev/test profile 下用 autoconfigure.exclude 排除
+            - prod 默认启用
+        -->
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
             <version>${redisson.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- JWT -->
