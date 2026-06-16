@@ -1,7 +1,8 @@
 <view class="container">
-  <!-- 顶部品牌区 -->
+  <!-- ============ 顶部 banner (占满, 圆角) ============ -->
   <view class="hero">
-    <view class="hero-row">
+    <!-- 顶部品牌 + 搜索 -->
+    <view class="hero-top">
       <view class="brand">
         <text class="logo">🎂</text>
         <view class="b-info">
@@ -14,66 +15,60 @@
         <text class="s-placeholder">搜索蛋糕 · 面包 · 甜点</text>
       </view>
     </view>
-  </view>
 
-  <!-- 轮播(缩小 0.7 高度) -->
-  <view class="banner-wrap">
-    <swiper class="banner" indicator-dots autoplay circular interval="4000" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
-      <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="onBannerTap" data-item="{{item}}">
-        <view class="banner-card" style="background: {{item.gradient}};">
-          <view class="banner-emoji">{{item.emoji}}</view>
-          <view class="banner-mask" wx:if="{{item.title}}">
-            <text class="banner-title">{{item.title}}</text>
-            <text class="banner-sub" wx:if="{{item.sub}}">{{item.sub}}</text>
+    <!-- 大 banner 轮播 -->
+    <view class="banner-wrap">
+      <swiper class="banner" indicator-dots autoplay circular interval="4000"
+              indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
+        <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="onBannerTap" data-item="{{item}}">
+          <view class="banner-card" style="background: {{item.gradient}};">
+            <view class="banner-emoji">{{item.emoji}}</view>
+            <view class="banner-mask" wx:if="{{item.title}}">
+              <text class="banner-title">{{item.title}}</text>
+              <text class="banner-sub" wx:if="{{item.sub}}">{{item.sub}}</text>
+            </view>
           </view>
-        </view>
-      </swiper-item>
-    </swiper>
+        </swiper-item>
+      </swiper>
+    </view>
   </view>
 
-  <!-- 金刚区:圆形 + 阴影 -->
+  <!-- ============ 6 格金刚区 (2x3) ============ -->
   <view class="icons">
     <view class="icon-item" wx:for="{{icons}}" wx:key="id" bindtap="onIconTap" data-id="{{item.id}}">
       <view class="icon-circle" style="background:{{item.color}}">
         <text>{{item.emoji}}</text>
       </view>
       <text class="icon-text">{{item.name}}</text>
+      <text class="icon-en">{{item.en}}</text>
     </view>
   </view>
 
-  <!-- 公告条:渐变背景 -->
-  <view class="notice" wx:if="{{notice}}">
+  <!-- ============ 公告条 ============ -->
+  <view class="notice" wx:if="{{notice}}" bindtap="onNoticeTap">
     <text class="notice-icon">📣</text>
     <text class="notice-text line-1">{{notice}}</text>
   </view>
 
-  <!-- 功能宫格(4 个) -->
-  <view class="feature-bar">
-    <view class="f-item" bindtap="goSeckill">
-      <text class="f-emoji">⚡</text>
-      <text class="f-name">限时秒杀</text>
+  <!-- ============ 个性定制卡片 ============ -->
+  <view class="custom-card" bindtap="goCustom">
+    <view class="cc-left">
+      <view class="cc-badge">定制</view>
+      <view class="cc-title">个性蛋糕定制 / 甜品台</view>
+      <view class="cc-sub">请添加客服微信咨询</view>
     </view>
-    <view class="f-item" bindtap="goGroup">
-      <text class="f-emoji">👥</text>
-      <text class="f-name">附近拼团</text>
-    </view>
-    <view class="f-item" bindtap="goLuckyBag">
-      <text class="f-emoji">🎁</text>
-      <text class="f-name">每日福袋</text>
-    </view>
-    <view class="f-item" bindtap="goCustom">
-      <text class="f-emoji">✨</text>
-      <text class="f-name">蛋糕定制</text>
+    <view class="cc-right">
+      <text class="cc-emoji">🍰</text>
     </view>
   </view>
 
-  <!-- 限时秒杀 -->
+  <!-- ============ 限时秒杀 (拓展) ============ -->
   <view class="section" wx:if="{{seckillList.length}}">
     <view class="section-head">
       <view class="h-left">
         <text class="h-title">⚡ 限时秒杀</text>
-        <view class="h-tip">
-          <text class="h-time" wx:if="{{seckillEndText}}">{{seckillEndText}}</text>
+        <view class="h-tip" wx:if="{{seckillEndText}}">
+          <text class="h-time">{{seckillEndText}}</text>
         </view>
       </view>
       <text class="h-more" bindtap="goSeckill">查看全部 ›</text>
@@ -98,7 +93,7 @@
     </scroll-view>
   </view>
 
-  <!-- 推荐商品(2 列网格) -->
+  <!-- ============ 推荐商品 (2 列网格) ============ -->
   <view class="section">
     <view class="section-head">
       <view class="h-left">
@@ -136,6 +131,36 @@
     </view>
     <view class="end" wx:elif="{{finished}}">
       <text>~ 已经到底了 ~</text>
+    </view>
+  </view>
+
+  <!-- ============ 底部双卡 (会员权益/购买须知) ============ -->
+  <view class="footer-cards">
+    <view class="fc-card member-card" bindtap="goMember">
+      <view class="fc-icon">👑</view>
+      <view class="fc-text">
+        <view class="fc-title">会员权益与</view>
+        <view class="fc-title">充值</view>
+      </view>
+      <view class="fc-arrow">›</view>
+    </view>
+    <view class="fc-card notice-card" bindtap="goNotice">
+      <view class="fc-icon">📖</view>
+      <view class="fc-text">
+        <view class="fc-title">生日蛋糕</view>
+        <view class="fc-title">购买须知</view>
+      </view>
+      <view class="fc-arrow">›</view>
+    </view>
+  </view>
+
+  <!-- ============ 悬浮客服按钮 (双按钮) ============ -->
+  <view class="fab-stack">
+    <view class="fab-btn fab-phone" bindtap="onCallPhone">
+      <text>📞</text>
+    </view>
+    <view class="fab-btn fab-service" bindtap="onContactService">
+      <text>🎧</text>
     </view>
   </view>
 </view>
