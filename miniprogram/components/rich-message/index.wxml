@@ -71,7 +71,7 @@
       <view class="rich-file-info">
         <view class="rich-file-name">{{n.a && n.a.name || '文件'}}</view>
         <view class="rich-file-meta">
-          <text wx:if="{{n.a && n.a.size}}">{{(n.a.size / 1024).toFixed(1)}} KB</text>
+          <text wx:if="{{n.a && n.a.sizeText}}">{{n.a.sizeText}}</text>
           <text wx:if="{{n.a && n.a.mime}}"> · {{n.a.mime}}</text>
         </view>
       </view>

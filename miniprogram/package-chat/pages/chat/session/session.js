@@ -27,6 +27,7 @@ Page({
     rateScore: 0,
     rateTags: [],
     rateTagsOptions: ['回复快','态度好','专业','解决了问题','很热情'],
+    rateTagsList: [],
     rateComment: '',
     sendDisabled: false,
     showSendPanel: false
@@ -284,7 +285,13 @@ Page({
     const tags = this.data.rateTags.slice();
     const i = tags.indexOf(t);
     if (i >= 0) tags.splice(i, 1); else tags.push(t);
-    this.setData({ rateTags: tags });
+    // 同步 rateTagsList (避免 wxml 里调 .includes)
+    const sel = new Set(tags);
+    const list = (this.data.rateTagsOptions || []).map(name => ({
+      name,
+      selected: sel.has(name)
+    }));
+    this.setData({ rateTags: tags, rateTagsList: list });
   },
   onRateComment(e) { this.setData({ rateComment: e.detail.value }); },
   closeRate() { this.setData({ showRate: false }); },

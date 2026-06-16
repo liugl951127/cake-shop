@@ -50,7 +50,7 @@
     <view class="card-title">🏆 我的记录</view>
     <view class="my-record" wx:if="{{myRecords.length}}">
       <view class="r-item" wx:for="{{myRecords}}" wx:key="_id">
-        <text class="r-emoji">{{item.prizeName.includes('券') ? '🎟️' : '💎'}}</text>
+        <text class="r-emoji">{{item.prizeEmoji}}</text>
         <view class="r-info">
           <view class="r-name">{{item.prizeName}}</view>
           <view class="text-sub">{{item.createTimeText}}</view>

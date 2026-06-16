@@ -16,7 +16,7 @@
     <view class="o-card" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onDetail">
       <view class="o-head">
         <text class="o-no">{{item.orderNo}}</text>
-        <text class="o-status status-{{item.status}}">{{statusText(item.status)}}</text>
+        <text class="o-status status-{{item.status}}">{{item.statusText}}</text>
       </view>
 
       <view class="o-goods" wx:if="{{item.goods && item.goods.length}}">

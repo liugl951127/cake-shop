@@ -43,7 +43,7 @@
       <view class="w" wx:for="{{withdraws}}" wx:key="_id">
         <view class="w-top">
           <text class="w-amt">¥{{item.amount}}</text>
-          <text class="w-status status-{{item.status}}">{{wtText(item.status)}}</text>
+          <text class="w-status status-{{item.status}}">{{item.statusText}}</text>
         </view>
         <view class="w-time">{{item.createTimeText}}</view>
         <view class="w-time" wx:if="{{item.auditNote}}">备注: {{item.auditNote}}</view>

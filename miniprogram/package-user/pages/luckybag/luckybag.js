@@ -15,6 +15,11 @@ Page({
   async load() {
     try {
       const r = await request('luckyBag', { activityId: 'default' }, { loading: false, silent: true });
+      // 预处理: myRecords 加 prizeEmoji 字段(避免模板调 .includes)
+      const myRecords = (r.myRecords || []).map(rec => Object.assign({}, rec, {
+        prizeEmoji: (rec.prizeName || '').indexOf('券') >= 0 ? '🎟️' : '💎',
+        createTimeText: rec.createTime ? formatTime(rec.createTime, 'YYYY-MM-DD HH:mm') : ''
+      }));
       // 演示模式: 拉取预设奖品池
       this.setData({
         stock: r.stockRemain !== undefined ? r.stockRemain : 200,
@@ -26,7 +31,7 @@ Page({
           { name: '50 积分', weight: 30, image: '⭐' },
           { name: '谢谢参与', weight: 5, image: '😢' }
         ],
-        myRecords: r.myRecords || []
+        myRecords
       });
     } catch (e) {}
   },

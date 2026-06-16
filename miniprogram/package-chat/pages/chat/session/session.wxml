@@ -87,9 +87,9 @@
             bindtap="setRate" data-s="{{item}}">★</text>
     </view>
     <view class="rate-tags">
-      <text wx:for="{{rateTagsOptions}}" wx:key="*this"
-            class="rt {{rateTags.includes(item) ? 'on' : ''}}"
-            bindtap="toggleTag" data-t="{{item}}">{{item}}</text>
+      <text wx:for="{{rateTagsList}}" wx:key="*this"
+            class="rt {{item.selected ? 'on' : ''}}"
+            bindtap="toggleTag" data-t="{{item.name}}">{{item.name}}</text>
     </view>
     <textarea class="rate-comment" placeholder="说点什么吧..." maxlength="200"
               value="{{rateComment}}" bindinput="onRateComment"/>

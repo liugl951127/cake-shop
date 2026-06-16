@@ -22,7 +22,7 @@
             bindtap="goSeckill" data-id="{{item._id}}">立即抢</view>
       <view class="s-btn gray" wx:elif="{{item.state === 'pending'}}">
         <view class="countdown" wx:if="{{item.startTime > now}}">
-          {{formatTime(item.startTime - now)}} 后开抢
+          {{item.countdown}} 后开抢
         </view>
         <view wx:else>即将开始</view>
       </view>

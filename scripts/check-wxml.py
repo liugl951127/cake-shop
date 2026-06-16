@@ -153,6 +153,40 @@ def check_wxml(path: Path):
     if re.search(r'<text[^>]*>\s*¥<text', text):
         warn(f"{rel} 用了 ¥<text 嵌套(可能引发 text 解析错误)")
 
+    # ---------- 5. WXML 模板里不能调 JS 方法 (微信基础库 2.32.3) ----------
+    # 检测: {{xxx.method(...)}}, {{xxx.method}}, {{Math.xxx}}, {{Number(...)}}, {{String(...)}}
+    # WXML 支持: 字段访问、+ - * / %、三元、逻辑、比较
+    # WXML 不支持: .method() .toFixed .includes .Math.* Number() String() 等
+    method_calls = [
+        (r'\{\{[^}]*Math\.[a-zA-Z]', 'Math.xxx 模板里不支持'),
+        (r'\{\{[^}]*\bNumber\([^\)]*\)', 'Number() 模板里不支持'),
+        (r'\{\{[^}]*\bString\([^\)]*\)', 'String() 模板里不支持'),
+        (r'\{\{[^}]*\bBoolean\([^\)]*\)', 'Boolean() 模板里不支持'),
+        (r'\{\{[^}]*\.toFixed\([^\)]*\)', '.toFixed 模板里不支持'),
+        (r'\{\{[^}]*\.toString\([^\)]*\)', '.toString 模板里不支持'),
+        (r'\{\{[^}]*\.includes\([^\)]*\)', '.includes 模板里不支持'),
+        (r'\{\{[^}]*\.indexOf\([^\)]*\)', '.indexOf 模板里不支持'),
+        (r'\{\{[^}]*\.split\([^\)]*\)', '.split 模板里不支持'),
+        (r'\{\{[^}]*\.join\([^\)]*\)', '.join 模板里不支持'),
+        (r'\{\{[^}]*\.slice\([^\)]*\)', '.slice 模板里不支持'),
+        (r'\{\{[^}]*\.substring\([^\)]*\)', '.substring 模板里不支持'),
+        (r'\{\{[^}]*\.substr\([^\)]*\)', '.substr 模板里不支持'),
+        (r'\{\{[^}]*\.charAt\([^\)]*\)', '.charAt 模板里不支持'),
+        (r'\{\{[^}]*\.replace\([^\)]*\)', '.replace 模板里不支持'),
+        (r'\{\{[^}]*\.parseInt\([^\)]*\)', '.parseInt 模板里不支持'),
+        (r'\{\{[^}]*\.parseFloat\([^\)]*\)', '.parseFloat 模板里不支持'),
+        (r'\{\{[^}]*\.startsWith\([^\)]*\)', '.startsWith 模板里不支持'),
+        (r'\{\{[^}]*\.endsWith\([^\)]*\)', '.endsWith 模板里不支持'),
+        # 函数调用: {{funcName(...)}}
+        (r'\{\{[^}]*\b[a-zA-Z_][a-zA-Z0-9_]*\([^\)]*\)\}\}', 'WXML 不能调函数'),
+    ]
+    for pat, desc in method_calls:
+        for m in re.finditer(pat, text):
+            ln = pos2line(m.start())
+            col = m.start() - line_starts[ln - 1] + 1
+            snippet = m.group(0)[:60]
+            fail(f"{rel}:{ln}:{col} {desc}: {snippet}...")
+
 def find_wxml(mp: Path):
     return list(mp.rglob("*.wxml"))
 

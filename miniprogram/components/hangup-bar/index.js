@@ -20,11 +20,12 @@ Component({
     rateScore: 0,
     rateTags: [],
     rateComment: '',
-    rateTagsOptions: ['专业', '热情', '响应快', '解决到位', '有耐心', '建议改进']
+    rateTagsOptions: ['专业', '热情', '响应快', '解决到位', '有耐心', '建议改进'],
+    rateTagsList: []
   },
 
   observers: {
-    'status': function (s) {
+    'status,rateTagsOptions,rateTags': function (s) {
       const closed = s === 'closed' || s === 'archived';
       const map = {
         pending: { cls: 'pending', text: '正在为您分配客服...' },
@@ -36,10 +37,17 @@ Component({
         archived: { cls: 'closed', text: '本次咨询已结束' }
       };
       const m = map[s] || { cls: '', text: '' };
+      // 同步 rateTagsList (模板里不能调 .includes)
+      const sel = new Set(this.data.rateTags || []);
+      const list = (this.data.rateTagsOptions || []).map(name => ({
+        name,
+        selected: sel.has(name)
+      }));
       this.setData({
         closed,
         statusClass: m.cls,
-        statusText: m.text
+        statusText: m.text,
+        rateTagsList: list
       });
     }
   },

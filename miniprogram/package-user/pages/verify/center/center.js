@@ -27,6 +27,10 @@ Page({
     try {
       const r = await request('getVerifyStatus', {}, { loading: false, silent: true });
       const lv = LEVEL_MAP[r.level] || LEVEL_MAP.none;
+      // 预处理: 活体相似度转成 "xx" 文本
+      if (r.liveness && typeof r.liveness.score === 'number') {
+        r.liveness.scoreText = (r.liveness.score * 100).toFixed(0);
+      }
       this.setData({
         status: r,
         level: r.level,

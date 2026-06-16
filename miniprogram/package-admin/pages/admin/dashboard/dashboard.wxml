@@ -32,7 +32,7 @@
     <view class="chart">
       <view class="bar-col" wx:for="{{data.trend}}" wx:key="date">
         <view class="bar-val">{{item.count}}</view>
-        <view class="bar" style="height:{{barHeight(item.count, maxCount)}}%">
+        <view class="bar" style="height:{{item.barHeight}}%">
           <text>¥{{item.amount}}</text>
         </view>
         <view class="bar-date">{{item.date}}</view>
@@ -63,13 +63,13 @@
       </view>
       <view class="f-row">
         <text class="f-label">加购</text>
-        <view class="f-bar" style="width:{{fWidth(data.conversion.cartRate)}}%; background:#9c27b0">
+        <view class="f-bar" style="width:{{data.conversion.cartWidth}}%; background:#9c27b0">
           <text>{{data.conversion.cart}} ({{data.conversion.cartRate}}%)</text>
         </view>
       </view>
       <view class="f-row">
         <text class="f-label">下单</text>
-        <view class="f-bar" style="width:{{fWidth(data.conversion.orderRate)}}%; background:#4caf50">
+        <view class="f-bar" style="width:{{data.conversion.orderWidth}}%; background:#4caf50">
           <text>{{data.conversion.order}} ({{data.conversion.orderRate}}%)</text>
         </view>
       </view>

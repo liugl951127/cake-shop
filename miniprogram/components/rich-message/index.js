@@ -33,7 +33,23 @@ Component({
   },
   methods: {
     format() {
-      const nodes = (this.properties.rich || []).map(n => Object.assign({}, n));
+      const nodes = (this.properties.rich || []).map(n => {
+        const node = Object.assign({}, n);
+        // 预处理: 模板里不能调 .toFixed(),在 JS 里预先算好
+        if (node.t === 'file' && node.a && typeof node.a.size === 'number') {
+          const sz = node.a.size;
+          if (sz < 1024) {
+            node.a.sizeText = sz + ' B';
+          } else if (sz < 1024 * 1024) {
+            node.a.sizeText = (sz / 1024).toFixed(1) + ' KB';
+          } else if (sz < 1024 * 1024 * 1024) {
+            node.a.sizeText = (sz / 1024 / 1024).toFixed(1) + ' MB';
+          } else {
+            node.a.sizeText = (sz / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+          }
+        }
+        return node;
+      });
       this.setData({ nodes });
     },
 

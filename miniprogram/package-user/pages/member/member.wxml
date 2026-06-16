@@ -48,7 +48,7 @@
         <view class="lv-icon">{{item.icon}}</view>
         <view class="lv-name">{{item.name}}</view>
         <view class="lv-range">{{item.min}}+ 成长值</view>
-        <view class="lv-discount">{{item.discount < 1 ? ((1 - item.discount) * 10).toFixed(0) + ' 折优惠' : '基础权益'}}</view>
+        <view class="lv-discount">{{item.discountText}}</view>
       </view>
     </view>
   </view>

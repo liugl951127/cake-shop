@@ -92,7 +92,7 @@
     <view class="card" wx:for="{{logs}}" wx:key="_id">
       <view class="r-head">
         <text class="r-scenario">{{item.scenario}}</text>
-        <text class="r-decision decision-{{item.decision}}">{{decText(item.decision)}}</text>
+        <text class="r-decision decision-{{item.decision}}">{{item.decisionText}}</text>
       </view>
       <view class="r-row"><text class="r-l">分数:</text><text>{{item.totalScore}} / 阈值 {{item.threshold.reject}}</text></view>
       <view class="r-row"><text class="r-l">时间:</text><text class="text-sub">{{item.createTimeText}}</text></view>

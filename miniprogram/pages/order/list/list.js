@@ -40,7 +40,8 @@ Page({
         ...o,
         createTimeText: formatTime(o.createTime),
         goodsCountText: String(count),
-        totalPrice: o.totalPrice != null ? o.totalPrice : (o.total || 0)
+        totalPrice: o.totalPrice != null ? o.totalPrice : (o.total || 0),
+        statusText: STATUS[String(o.status)] || '处理中'
       };
     });
     this.setData({

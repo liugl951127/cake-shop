@@ -25,7 +25,7 @@
         <view class="c-desc">人脸识别 + 活体动作</view>
       </view>
       <view class="c-status">
-        <text wx:if="{{status.liveness.verified}}">✓ 相似度 {{(status.liveness.score * 100).toFixed(0)}}%</text>
+        <text wx:if="{{status.liveness.verified}}">✓ 相似度 {{status.liveness.scoreText}}%</text>
         <text wx:else class="to-do">去认证</text>
       </view>
     </view>

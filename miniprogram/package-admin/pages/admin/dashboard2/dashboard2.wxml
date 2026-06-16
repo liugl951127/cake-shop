@@ -11,8 +11,8 @@
     <view class="kpi">
       <view class="k-label">今日营业额</view>
       <view class="k-value">¥{{data.sales.todayAmount || 0}}</view>
-      <view class="k-sub {{data.sales.dayOverDay >= 0 ? 'up' : 'down'}}">
-        {{data.sales.dayOverDay >= 0 ? '↑' : '↓'}} {{Math.abs(data.sales.dayOverDay || 0)}}% vs 昨日
+      <view class="k-sub {{data.sales.dayOverDayText.direction}}">
+        {{data.sales.dayOverDayText.arrow}} {{data.sales.dayOverDayText.abs}}% vs 昨日
       </view>
     </view>
     <view class="kpi">
@@ -57,7 +57,7 @@
     <view class="funnel">
       <view class="f-step" wx:for="{{data.funnel}}" wx:key="name">
         <view class="f-name">{{item.name}}</view>
-        <view class="f-bar" style="width: {{getFunnelWidth(item.value, data.funnel)}}%;"></view>
+        <view class="f-bar" style="width: {{item.widthPercent}}%;"></view>
         <view class="f-val">{{item.value}}</view>
       </view>
     </view>

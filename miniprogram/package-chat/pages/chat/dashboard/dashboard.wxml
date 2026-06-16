@@ -22,12 +22,12 @@
   <!-- 评分分布 -->
   <view class="card">
     <view class="card-title">评分分布</view>
-    <view class="score-row" wx:for="{{[5,4,3,2,1]}}" wx:key="*this">
-      <text class="score-label">{{item}} ⭐</text>
+    <view class="score-row" wx:for="{{scoreRows}}" wx:key="star">
+      <text class="score-label">{{item.star}} ⭐</text>
       <view class="score-bar">
-        <view class="score-fill" style="width:{{scorePercent(item)}}%"></view>
+        <view class="score-fill" style="width:{{item.percent}}%"></view>
       </view>
-      <text class="score-count">{{data.scoreDist[item] || 0}}</text>
+      <text class="score-count">{{item.count}}</text>
     </view>
   </view>
 
@@ -45,7 +45,7 @@
     <view class="chart">
       <view class="bar-col" wx:for="{{data.dailyTrend}}" wx:key="date">
         <view class="bar-val">{{item.count}}</view>
-        <view class="bar" style="height:{{barHeight(item.count, maxCount)}}%"></view>
+        <view class="bar" style="height:{{item.barHeight}}%"></view>
         <view class="bar-date">{{item.date}}</view>
       </view>
     </view>
