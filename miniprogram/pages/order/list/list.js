@@ -34,7 +34,15 @@ Page({
       page, pageSize: this.data.pageSize,
       status: this.data.tab === -1 ? undefined : this.data.tab
     }, { loading: false, silent: true });
-    const list = (r.list || []).map(o => ({ ...o, createTimeText: formatTime(o.createTime) }));
+    const list = (r.list || []).map(o => {
+      const count = o.goodsCount || (o.goods && o.goods.length) || 0;
+      return {
+        ...o,
+        createTimeText: formatTime(o.createTime),
+        goodsCountText: String(count),
+        totalPrice: o.totalPrice != null ? o.totalPrice : (o.total || 0)
+      };
+    });
     this.setData({
       list: reset ? list : this.data.list.concat(list),
       page: page + 1,

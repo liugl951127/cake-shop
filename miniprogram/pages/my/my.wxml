@@ -54,10 +54,10 @@
   <view class="card promo">
     <view class="p-item" bindtap="goSeckill">
       <text class="p-icon">⚡</text>
-      <text class="p-info">
+      <view class="p-info">
         <text class="p-name">限时秒杀</text>
         <text class="p-sub">每日 10 点开抢</text>
-      </text>
+      </view>
       <text class="p-arrow">›</text>
     </view>
     <view class="p-item" bindtap="goGroup">

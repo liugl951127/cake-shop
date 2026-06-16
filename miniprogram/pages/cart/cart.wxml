@@ -60,13 +60,10 @@
     </view>
     <view class="c-mid" wx:if="{{!editing}}">
       <text class="total-label">合计</text>
-      <text class="total-price">
-        <text class="tp-cur">¥</text>
-        <text class="tp-num font-num">{{totalPrice}}</text>
-      </text>
+      <text class="total-price">¥<text class="tp-num font-num">{{totalPrice}}</text></text>
     </view>
     <view class="c-mid c-edit" wx:else>
-      <text class="c-edit-text">已选 <text class="font-num">{{selectedCount}}</text> 件</text>
+      <text class="c-edit-text">已选 {{selectedCount}} 件</text>
     </view>
     <view class="c-btn {{selectedCount ? 'on' : 'off'}}" bindtap="onCheckout">
       {{editing ? '删除' : '去结算'}}
