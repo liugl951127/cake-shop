@@ -58,6 +58,21 @@ def compute_correct_path(js_file: Path, target_in_miniprogram: str) -> str:
     return rel.replace(os.sep, "/")
 
 
+def compute_pkg_local_path(js_file: Path, pkg_dir: str, rel_in_pkg: str) -> str:
+    """
+    从 js_file 到子包内 utils 的相对路径
+    pkg_dir: 子包目录, 如 "package-chat"
+    rel_in_pkg: 子包内相对路径, 如 "utils/chatClient.js"
+    """
+    cur = js_file
+    while cur.name != "miniprogram" and cur.parent != cur:
+        cur = cur.parent
+    mp_root = cur
+    target = mp_root / pkg_dir / rel_in_pkg
+    rel = os.path.relpath(target, js_file.parent)
+    return rel.replace(os.sep, "/")
+
+
 def main():
     root = Path.cwd() / "miniprogram"
     if not root.exists():

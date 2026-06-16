@@ -1,4 +1,4 @@
-const { getLang, setLang, getLangs } = require('../../../../utils/i18n.js');
+const { getLang, setLang, getLangs } = require('../../../utils/i18n.js');
 
 Page({
   data: { langs: [], current: 'zh-CN', currentName: '简体中文' },

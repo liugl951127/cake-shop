@@ -1,6 +1,6 @@
 // 实名认证
 const { request } = require('../../../../utils/request.js');
-const { uploadImage } = require('../../../../utils/upload.js');
+const { uploadImage } = require('../../../utils/upload.js');
 
 const ID_REGEX = /^\d{17}[\dXx]$/;
 function validateIdCard(id) {

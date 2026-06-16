@@ -1,6 +1,6 @@
 // utils/chatClient.js - 客服会话客户端(连接管理 + 心跳 + 重连)
 // 抽象类,用户端和客服端都基于它
-const { request } = require('./request.js');
+const { request } = require('../../utils/request.js');
 
 const HEARTBEAT_INTERVAL = 15000;  // 15s
 const MAX_BACKOFF = 30000;          // 最大 30s

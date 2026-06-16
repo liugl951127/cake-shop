@@ -1,6 +1,6 @@
 // 评价编辑
 const { request } = require('../../../../utils/request.js');
-const { uploadImage } = require('../../../../utils/upload.js');
+const { uploadImage } = require('../../../utils/upload.js');
 
 Page({
   data: {

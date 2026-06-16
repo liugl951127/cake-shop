@@ -1,7 +1,7 @@
 // 活体检测(简化版:4 步动作 + 演示通过)
 // 真实环境: 用 wx.serviceMarket 调腾讯云慧眼 或 微信原生 wx.faceDetect
 const { request } = require('../../../../utils/request.js');
-const { uploadImage } = require('../../../../utils/upload.js');
+const { uploadImage } = require('../../../utils/upload.js');
 
 const STEPS = [
   { emoji: '😊', text: '请正对手机' },
