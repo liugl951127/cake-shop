@@ -70,6 +70,8 @@ export const members = {
 export const marketing = {
   list: (type, params) => http.get(`/v1/admin/marketing/${type}/list`, { params }),
   create: (type, body) => http.post(`/v1/admin/marketing/${type}`, body),
+  update: (type, id, body) => http.put(`/v1/admin/marketing/${type}/${id}`, body),
+  remove: (type, id) => http.delete(`/v1/admin/marketing/${type}/${id}`),
   toggle: (type, id) => http.post(`/v1/admin/marketing/${type}/${id}/toggle`)
 }
 
