@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("error_reports")
+@TableName("error_report")
 public class ErrorReport extends BaseEntity {
     private String fingerprint;
     private String message;

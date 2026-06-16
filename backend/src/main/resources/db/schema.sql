@@ -234,6 +234,10 @@ CREATE TABLE `seckill_order` (
   `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_seckill_user` (`seckill_id`, `user_id`)
+  `create_by`    VARCHAR(50)  DEFAULT '',
+  `update_by`    VARCHAR(50)  DEFAULT '',
+  `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted`      TINYINT(1)   NOT NULL DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
@@ -273,6 +277,10 @@ CREATE TABLE `group_member` (
   PRIMARY KEY (`id`),
   KEY `idx_group` (`group_id`),
   KEY `idx_user` (`user_id`)
+  `create_by`    VARCHAR(50)  DEFAULT '',
+  `update_by`    VARCHAR(50)  DEFAULT '',
+  `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted`      TINYINT(1)   NOT NULL DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
@@ -317,6 +325,10 @@ CREATE TABLE `wallet_log` (
   KEY `idx_user` (`user_id`),
   KEY `idx_type` (`type`),
   KEY `idx_create_time` (`create_time`)
+  `create_by`    VARCHAR(50)  DEFAULT '',
+  `update_by`    VARCHAR(50)  DEFAULT '',
+  `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted`      TINYINT(1)   NOT NULL DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 提现申请
@@ -372,6 +384,10 @@ CREATE TABLE `lottery_record` (
   `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_user` (`user_id`)
+  `create_by`    VARCHAR(50)  DEFAULT '',
+  `update_by`    VARCHAR(50)  DEFAULT '',
+  `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted`      TINYINT(1)   NOT NULL DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
@@ -503,6 +519,10 @@ CREATE TABLE `audit_log` (
   KEY `idx_employee` (`employee_id`),
   KEY `idx_action` (`action`),
   KEY `idx_create_time` (`create_time`)
+  `create_by`    VARCHAR(50)  DEFAULT '',
+  `update_by`    VARCHAR(50)  DEFAULT '',
+  `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted`      TINYINT(1)   NOT NULL DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 错误上报
@@ -522,6 +542,10 @@ CREATE TABLE `error_report` (
   KEY `idx_user` (`user_id`),
   KEY `idx_type` (`type`),
   KEY `idx_create_time` (`create_time`)
+  `create_by`    VARCHAR(50)  DEFAULT '',
+  `update_by`    VARCHAR(50)  DEFAULT '',
+  `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted`      TINYINT(1)   NOT NULL DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 性能监控
@@ -538,6 +562,10 @@ CREATE TABLE `performance_metric` (
   KEY `idx_page` (`page`),
   KEY `idx_metric` (`metric_name`),
   KEY `idx_create_time` (`create_time`)
+  `create_by`    VARCHAR(50)  DEFAULT '',
+  `update_by`    VARCHAR(50)  DEFAULT '',
+  `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted`      TINYINT(1)   NOT NULL DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 风控日志
@@ -555,6 +583,10 @@ CREATE TABLE `risk_log` (
   KEY `idx_user` (`user_id`),
   KEY `idx_scenario` (`scenario`),
   KEY `idx_decision` (`decision`)
+  `create_by`    VARCHAR(50)  DEFAULT '',
+  `update_by`    VARCHAR(50)  DEFAULT '',
+  `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted`      TINYINT(1)   NOT NULL DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
@@ -635,3 +667,46 @@ INSERT INTO `review` (`user_id`, `goods_id`, `order_id`, `score`, `content`, `im
 -- 风险规则 (示例)
 INSERT INTO `risk_log` (`user_id`, `scenario`, `total_score`, `decision`, `factors`, `threshold`) VALUES
 (0, 'init', 0, 'pass', '[]', '{"reject":80,"review":50}');
+
+
+-- ===========================================
+
+-- 第二轮 AUTO PATCH: create_by/update_by 全部补齐
+ALTER TABLE `address` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `address` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `cart` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `cart` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `member_coupon` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `member_coupon` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `notice` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `notice` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `member` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `member` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `group_buy` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `group_buy` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `cms_page` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `cms_page` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `review` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `review` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `lottery_prize` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `lottery_prize` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `tenant` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `tenant` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `goods` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `goods` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `employee` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `employee` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `coupon` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `coupon` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `chat_message` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `chat_message` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `chat_session` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `chat_session` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `withdraw` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `withdraw` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `favorite` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `favorite` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `seckill` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `seckill` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `orders` ADD COLUMN `create_by` VARCHAR(50) DEFAULT '';
+ALTER TABLE `orders` ADD COLUMN `update_by` VARCHAR(50) DEFAULT '';

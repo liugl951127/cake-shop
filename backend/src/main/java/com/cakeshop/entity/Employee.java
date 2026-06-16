@@ -20,8 +20,6 @@ public class Employee extends BaseEntity {
     private String phone;
     private String role;
     private String password;        // BCrypt 哈希
-    private String avatar;
     private Integer status;         // 1-正常 0-禁用
-    private String lastLoginIp;
     private LocalDateTime lastLoginTime;
 }

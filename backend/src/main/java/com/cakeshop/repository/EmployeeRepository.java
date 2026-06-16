@@ -8,6 +8,6 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface EmployeeRepository extends BaseMapper<Employee> {
 
-    @Select("SELECT * FROM employees WHERE phone = #{phone} AND deleted = 0 LIMIT 1")
+    @Select("SELECT * FROM employee WHERE phone = #{phone} AND deleted = 0 LIMIT 1")
     Employee findByPhone(String phone);
 }

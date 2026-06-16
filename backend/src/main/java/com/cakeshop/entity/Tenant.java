@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("tenants")
+@TableName("tenant")
 public class Tenant extends BaseEntity {
     private String code;
     private String name;

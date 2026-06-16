@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("audit_logs")
+@TableName("audit_log")
 public class AuditLog extends BaseEntity {
 
     private String action;             // 操作(create_employee / update_role / refund_approve / etc.)

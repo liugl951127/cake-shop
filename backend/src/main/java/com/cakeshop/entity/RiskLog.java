@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("risk_logs")
+@TableName("risk_log")
 public class RiskLog extends BaseEntity {
 
     private String scenario;        // pay/withdraw/login/register

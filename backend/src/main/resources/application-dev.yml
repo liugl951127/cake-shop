@@ -1,21 +1,20 @@
 # ============================================
-# 开发环境 - LOCAL 缓存 (Caffeine 进程内)
-# 无需 Redis,启动即用
+# 开发环境 - 本地 MySQL/MariaDB
+# 默认: 127.0.0.1:3306, root 无密码
 # ============================================
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/cake_shop?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useUnicode=true
-    username: root
-    password: root
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DB:cake_shop}?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useUnicode=true&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:cake}
+    password: ${MYSQL_PASSWORD:cake123}
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
+      initial-size: 2
+      min-idle: 2
+      max-active: 10
       max-wait: 60000
 
-  # dev 不连 Redis
   autoconfigure:
     exclude:
       - org.redisson.spring.starter.RedissonAutoConfigurationV2
@@ -23,31 +22,38 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
 
-# 业务配置
+  # 让 Spring 自动跑 schema.sql(只 prod 用,dev 自己手动跑)
+  sql:
+    init:
+      mode: never
+
 cakeshop:
-  # 缓存:开发走 LOCAL (Caffeine),无需 Redis
   cache:
     type: LOCAL
     local:
       max-size: 5000
       default-ttl-minutes: 5
 
-  # 微信小程序 AppID / AppSecret (开发可空)
   wechat:
     appid: ${WX_APPID:dev}
     secret: ${WX_SECRET:dev}
 
-  # 开发期: 鉴权仍开, referer 关
   mp-auth:
     enabled: true
     token-ttl: 86400
-
   mp-referer:
-    enabled: false  # 微信开发者工具的 referer 与真机不同,开发期关
+    enabled: false
     appid: ${WX_APPID:}
 
-  # 内部 RPC
   internal-rpc:
     enabled: true
     path-prefix: /api/internal/
     token: ${INTERNAL_RPC_TOKEN:dev-internal-rpc-token-change-me-32-chars-min}
+
+  schema:
+    run: false
+
+  # dev 期: 全部放行(方便调试)
+  security:
+    ignore-urls:
+      - /**

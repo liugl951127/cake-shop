@@ -7,6 +7,6 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface TenantRepository extends BaseMapper<Tenant> {
-    @Select("SELECT * FROM tenants WHERE code = #{code} AND deleted = 0 LIMIT 1")
+    @Select("SELECT * FROM tenant WHERE code = #{code} AND deleted = 0 LIMIT 1")
     Tenant findByCode(String code);
 }

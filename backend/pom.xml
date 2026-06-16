@@ -83,7 +83,8 @@
             <version>${druid.version}</version>
         </dependency>
 
-        <!-- H2 内存数据库(测试) -->
+        <!-- H2 内存数据库(测试 + 本地无 MySQL 也能跑) -->
+        <!-- H2 仅用于本地单元测试 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("performance_metrics")
+@TableName("performance_metric")
 public class PerformanceMetric extends BaseEntity {
     private String name;
     private Double value;
