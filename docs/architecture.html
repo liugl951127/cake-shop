@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>甜心蛋糕 - 整体架构</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #f5f7fb 0%, #e8eef9 100%);
+    min-height: 100vh;
+    padding: 24px;
+    color: #1f2937;
+  }
+  h1 {
+    text-align: center;
+    color: #4f46e5;
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .sub { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 24px; }
+  .container { max-width: 1280px; margin: 0 auto; }
+
+  /* 4 层架构 */
+  .layer {
+    background: white;
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(79,70,229,0.06);
+    border-left: 4px solid #4f46e5;
+  }
+  .layer-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #4f46e5;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .layer-title .tag {
+    background: #4f46e5; color: white; padding: 2px 10px;
+    border-radius: 12px; font-size: 11px; font-weight: 600;
+  }
+  .boxes { display: grid; gap: 12px; }
+  .boxes-2 { grid-template-columns: repeat(2, 1fr); }
+  .boxes-3 { grid-template-columns: repeat(3, 1fr); }
+  .boxes-4 { grid-template-columns: repeat(4, 1fr); }
+  .boxes-5 { grid-template-columns: repeat(5, 1fr); }
+  .box {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+  .box h4 { font-size: 13px; color: #1f2937; margin-bottom: 4px; }
+  .box p { color: #6b7280; font-size: 11.5px; line-height: 1.55; }
+  .box .icon { font-size: 20px; margin-right: 4px; }
+  .box.green { border-left: 3px solid #10b981; background: #f0fdf4; }
+  .box.orange { border-left: 3px solid #f59e0b; background: #fffbeb; }
+  .box.purple { border-left: 3px solid #8b5cf6; background: #faf5ff; }
+  .box.pink { border-left: 3px solid #ec4899; background: #fdf2f8; }
+  .box.blue { border-left: 3px solid #3b82f6; background: #eff6ff; }
+
+  /* 数据流 */
+  .flow {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 20px 0;
+    padding: 14px;
+    background: linear-gradient(90deg, #ede9fe 0%, #dbeafe 50%, #d1fae5 100%);
+    border-radius: 10px;
+  }
+  .flow-item {
+    text-align: center;
+    font-size: 12px;
+    color: #4b5563;
+    font-weight: 600;
+  }
+  .arrow { color: #4f46e5; font-size: 18px; font-weight: 700; }
+
+  /* 数据存储 */
+  .storage {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .storage .item {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #78350f;
+  }
+
+  /* 技术栈 */
+  .tech {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 8px;
+  }
+  .tech span {
+    background: #4f46e5; color: white; padding: 3px 10px;
+    border-radius: 12px; font-size: 11px; font-weight: 500;
+  }
+  .tech span.alt { background: #10b981; }
+  .tech span.alt2 { background: #f59e0b; }
+
+  /* 关键路径 */
+  .path {
+    background: #1f2937;
+    color: #10b981;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-family: "Fira Code", monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 8px 0;
+  }
+  .path .c1 { color: #9ca3af; }
+  .path .c2 { color: #fbbf24; }
+  .path .c3 { color: #60a5fa; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎂 甜心蛋糕 - 整体架构图</h1>
+  <p class="sub">v36.4 · 4 层架构 · 32 Controller · 27 张表 · 71 页面</p>
+
+  <!-- 数据流 -->
+  <div class="flow">
+    <div class="flow-item">👤 用户</div>
+    <div class="arrow">→</div>
+    <div class="flow-item">📱 微信小程序</div>
+    <div class="arrow">→</div>
+    <div class="flow-item">🔧 Spring Boot</div>
+    <div class="arrow">→</div>
+    <div class="flow-item">🗄️ MySQL</div>
+  </div>
+
+  <!-- 第 1 层: 用户端 -->
+  <div class="layer" style="border-left-color: #10b981">
+    <div class="layer-title" style="color:#10b981">
+      <span class="tag" style="background:#10b981">L1</span>
+      🎨 用户端 - 微信小程序 (71 页面)
+    </div>
+    <div class="boxes boxes-3">
+      <div class="box green">
+        <h4>📦 主包 (9 页面)</h4>
+        <p>首页 / 分类 / 详情 / 购物车 / 订单 / 我的 / 收藏 / 登录 / 搜索</p>
+      </div>
+      <div class="box green">
+        <h4>📂 7 个分包</h4>
+        <p>order / address / user / promo / chat / admin / cms</p>
+      </div>
+      <div class="box green">
+        <h4>🧩 5 个核心组件</h4>
+        <p>smart-image / hangup-bar / rich-message / skeleton-card / transfer-human</p>
+      </div>
+    </div>
+    <div class="tech">
+      <span>WXML 2.32.3</span>
+      <span>原生 JS</span>
+      <span>自定义 tabBar</span>
+      <span>分包加载</span>
+      <span class="alt">云函数 shim</span>
+    </div>
+  </div>
+
+  <!-- 第 2 层: 后端 -->
+  <div class="layer" style="border-left-color: #4f46e5">
+    <div class="layer-title" style="color:#4f46e5">
+      <span class="tag">L2</span>
+      🚀 后端 - Spring Boot 2.7.18 (Java 17)
+    </div>
+    <div class="boxes boxes-4">
+      <div class="box blue">
+        <h4>🌐 Controller 层 (40 个)</h4>
+        <p>REST API · Swagger · 全局异常 · CORS · 参数校验</p>
+      </div>
+      <div class="box blue">
+        <h4>⚙️ Service 层 (24 个)</h4>
+        <p>业务逻辑 · 事务 · 缓存 · 异步</p>
+      </div>
+      <div class="box blue">
+        <h4>🔒 Security 层</h4>
+        <p>3 层鉴权: MiniProgram / InternalRpc / Jwt</p>
+      </div>
+      <div class="box blue">
+        <h4>🗃️ Repository (24 个)</h4>
+        <p>MyBatis-Plus · BaseMapper · LambdaQuery</p>
+      </div>
+    </div>
+    <div class="tech">
+      <span>Spring Boot 2.7.18</span>
+      <span>MyBatis-Plus 3.5</span>
+      <span>Druid</span>
+      <span>Spring Security</span>
+      <span class="alt">Redisson 3.32</span>
+      <span class="alt2">Caffeine 3.1</span>
+      <span>JWT (jjwt)</span>
+    </div>
+  </div>
+
+  <!-- 第 3 层: 数据 -->
+  <div class="layer" style="border-left-color: #f59e0b">
+    <div class="layer-title" style="color:#f59e0b">
+      <span class="tag" style="background:#f59e0b">L3</span>
+      💾 数据层
+    </div>
+    <div class="boxes boxes-3">
+      <div class="box orange">
+        <h4>🗄️ MySQL 8 / MariaDB 10.11</h4>
+        <p>27 张表 · InnoDB · utf8mb4 · 完整索引</p>
+        <p>用户/商品/订单/会员/营销/客服/审计</p>
+      </div>
+      <div class="box orange">
+        <h4>⚡ Redis 7 (可选)</h4>
+        <p>分布式锁 · 限流 · Session · 验证码</p>
+        <p style="color:#9ca3af">dev 用 Caffeine 本地缓存</p>
+      </div>
+      <div class="box orange">
+        <h4>☕ Caffeine 本地缓存</h4>
+        <p>5min TTL · 5000 容量 · 自动失效</p>
+        <p style="color:#9ca3af">离线模式支持</p>
+      </div>
+    </div>
+    <div class="tech">
+      <span>MySQL 8</span>
+      <span>Redis 7</span>
+      <span>Caffeine</span>
+      <span>Druid 连接池</span>
+    </div>
+  </div>
+
+  <!-- 第 4 层: 基础设施 -->
+  <div class="layer" style="border-left-color: #ec4899">
+    <div class="layer-title" style="color:#ec4899">
+      <span class="tag" style="background:#ec4899">L4</span>
+      🛠️ 基础设施 & DevOps
+    </div>
+    <div class="boxes boxes-4">
+      <div class="box pink">
+        <h4>📊 Vue 3 后台 (admin-vue)</h4>
+        <p>40 个管理页 · Element Plus · Vite 5</p>
+      </div>
+      <div class="box pink">
+        <h4>📜 云函数 (180 个, 兼容)</h4>
+        <p>保留旧代码 · 用 shim 静默拦截</p>
+      </div>
+      <div class="box pink">
+        <h4>🐳 部署</h4>
+        <p>Spring Boot 单 jar 110MB</p>
+        <p>Vue 静态资源 · 小程序包上传</p>
+      </div>
+      <div class="box pink">
+        <h4>🧪 测试</h4>
+        <p>verify.sh 35 项 · check-using-components · check-unused</p>
+        <p>test-api.sh 12 项真实接口</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关键路径 -->
+  <div class="layer" style="border-left-color: #6b7280">
+    <div class="layer-title" style="color:#374151">
+      <span class="tag" style="background:#6b7280">关键</span>
+      🔑 关键请求路径
+    </div>
+    <div class="path">
+<span class="c1"># 用户登录 (微信 code → openid + token)</span>
+<span class="c2">POST</span> /api/api/wx/session          { code: "wx-code" }
+  ↓
+<span class="c2">GET</span>  /api/api/wx/session/login     { openid, token }
+
+<span class="c1"># 后台管理登录</span>
+<span class="c2">POST</span> /api/api/v1/auth/login       { username, password }
+  ↓
+<span class="c2">GET</span>  /api/api/v1/notice            Bearer eyJhbGc...
+
+<span class="c1"># 内部 RPC (admin-vue 后台)</span>
+<span class="c2">GET</span>  /api/api/internal/...         X-Internal-Token: ...
+
+<span class="c1"># 业务接口 (小程序直连)</span>
+<span class="c2">GET</span>  /api/goods?page=1            X-Openid + X-Login-Token
+    </div>
+  </div>
+
+  <!-- 数据存储详图 -->
+  <div class="layer">
+    <div class="layer-title">💿 数据存储布局</div>
+    <div class="storage">
+      <div class="item">🍰 业务核心<br>goods / orders / cart</div>
+      <div class="item">👤 用户体系<br>member / address / favorite</div>
+      <div class="item">🎁 营销系统<br>coupon / seckill / group_buy</div>
+      <div class="item">💬 客服&审计<br>chat / audit_log / error_report</div>
+      <div class="item">👨‍💼 员工&租户<br>employee / tenant</div>
+      <div class="item">🔒 鉴权&安全<br>risk_log / performance_metric</div>
+      <div class="item">💰 财务&钱包<br>wallet_log / withdraw</div>
+      <div class="item">🎰 福袋&通知<br>lottery / notice / cms_page</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

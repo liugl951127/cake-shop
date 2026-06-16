@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>微信小程序配置步骤</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    background: #f1f5f9;
+    padding: 24px;
+    color: #1e293b;
+  }
+  h1 { text-align: center; color: #4f46e5; font-size: 26px; margin-bottom: 6px; }
+  .sub { text-align: center; color: #64748b; font-size: 13px; margin-bottom: 22px; }
+  .container { max-width: 1280px; margin: 0 auto; }
+
+  .step {
+    background: white; border-radius: 12px; padding: 18px 22px;
+    margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    display: grid; grid-template-columns: 60px 1fr 1fr; gap: 18px;
+  }
+  .num {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: #4f46e5; color: white; display: flex;
+    align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700;
+  }
+  .text h2 { color: #4f46e5; font-size: 16px; margin-bottom: 8px; }
+  .text p { color: #475569; font-size: 13px; line-height: 1.7; }
+  .text code { background: #f1f5f9; padding: 1px 6px; border-radius: 3px; font-size: 12px; color: #6366f1; }
+  .text ul { padding-left: 20px; margin: 6px 0; }
+  .text li { font-size: 12.5px; color: #475569; margin: 2px 0; }
+
+  /* 截图样式 */
+  .shot {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+    padding: 12px; font-family: "Fira Code", monospace; font-size: 11px;
+    color: #1e293b; min-height: 120px;
+  }
+  .shot-title {
+    font-size: 12px; color: #4f46e5; font-weight: 700; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .shot-content { line-height: 1.65; }
+  .shot-content .row { display: flex; gap: 8px; padding: 2px 0; }
+  .shot-content .label { color: #64748b; min-width: 80px; }
+  .shot-content .val { color: #1e293b; font-weight: 600; }
+  .shot-content .hl { background: #fef3c7; padding: 0 4px; border-radius: 2px; }
+  .shot-content .ok { color: #10b981; font-weight: 700; }
+  .shot-content .warn { color: #f59e0b; font-weight: 700; }
+
+  /* 模拟微信开发者工具界面 */
+  .ide {
+    background: #1e293b; color: #e2e8f0; border-radius: 8px;
+    padding: 10px 12px; font-family: "Fira Code", monospace; font-size: 11px;
+  }
+  .ide-title { color: #60a5fa; font-weight: 700; margin-bottom: 6px; }
+  .ide-row { padding: 2px 0; }
+  .ide .green { color: #10b981; }
+  .ide .red { color: #ef4444; }
+  .ide .yellow { color: #fbbf24; }
+  .ide .blue { color: #60a5fa; }
+  .ide .gray { color: #94a3b8; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📱 微信小程序配置步骤</h1>
+  <p class="sub">从下载开发者工具到上线,8 步搞定 · 截图风格</p>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="num">1</div>
+    <div class="text">
+      <h2>下载微信开发者工具</h2>
+      <p>访问微信官方下载页,选稳定版 (Stable Build)</p>
+      <ul>
+        <li>Windows: <code>wechat_devtools_2.x.x.exe</code></li>
+        <li>macOS: <code>wechat_devtools_2.x.x.dmg</code></li>
+        <li>要求: Win10+ / macOS 11+</li>
+      </ul>
+    </div>
+    <div class="shot">
+      <div class="shot-title">📦 官方下载</div>
+      <div class="shot-content">
+        <div class="row"><span class="label">URL:</span> <span class="val">https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html</span></div>
+        <div class="row"><span class="label">版本:</span> <span class="val">2.01.2510290 (当前)</span></div>
+        <div class="row"><span class="label">基础库:</span> <span class="val">2.32.3 (项目锁定)</span></div>
+        <div class="row"><span class="label">大小:</span> <span class="val">~500 MB</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="num">2</div>
+    <div class="text">
+      <h2>扫码登录</h2>
+      <p>用微信扫码,绑定 AppID:</p>
+      <ul>
+        <li>已有 AppID: 选"小程序" → 填入</li>
+        <li>无 AppID: 选"测试号" (限功能)</li>
+        <li>本项目默认 <code>touristappid000000</code> (游客模式)</li>
+      </ul>
+    </div>
+    <div class="shot">
+      <div class="shot-title">🔑 登录界面</div>
+      <div class="ide">
+        <div class="ide-title">微信开发者工具</div>
+        <div class="ide-row"><span class="blue">[ ]</span> 小程序 <span class="gray">(有 AppID)</span></div>
+        <div class="ide-row"><span class="green">[●]</span> 小程序 <span class="gray">(测试号 - 限功能)</span></div>
+        <div class="ide-row"><span class="gray">[ ]</span> 公众号网页调试</div>
+        <div class="ide-row"><span class="gray">[ ]</span> 微信小程序插件</div>
+        <div class="ide-row gray">─────────────</div>
+        <div class="ide-row"><span class="yellow">AppID:</span> touristappid000000</div>
+        <div class="ide-row"><span class="yellow">扫码登录</span> <span class="gray">→ 二维码弹出</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="num">3</div>
+    <div class="text">
+      <h2>导入项目</h2>
+      <p>项目目录指向 <code>cake-shop/miniprogram/</code>:</p>
+      <ul>
+        <li>项目名称: <code>cake-shop</code></li>
+        <li>目录: <code>miniprogram/</code> (不是项目根!有 project.config.json)</li>
+        <li>开发模式: 小程序</li>
+        <li>后端服务: 不使用云服务</li>
+      </ul>
+    </div>
+    <div class="shot">
+      <div class="shot-title">📁 项目导入</div>
+      <div class="ide">
+        <div class="ide-title">新建项目</div>
+        <div class="ide-row"><span class="yellow">项目名称:</span> cake-shop</div>
+        <div class="ide-row"><span class="yellow">目录:</span> E:\toolsProject\cake-shop\miniprogram</div>
+        <div class="ide-row"><span class="yellow">AppID:</span> touristappid000000</div>
+        <div class="ide-row"><span class="yellow">开发模式:</span> 小程序</div>
+        <div class="ide-row"><span class="yellow">后端服务:</span> <span class="green">✗ 不使用云服务</span></div>
+        <div class="ide-row gray">─────────────</div>
+        <div class="ide-row green">✓ 项目配置 project.config.json 已找到</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="num">4</div>
+    <div class="text">
+      <h2>关闭"合法域名校验" (本地调试)</h2>
+      <p>工具栏 → 详情 → 本地设置 → 勾选"不校验合法域名"</p>
+      <ul>
+        <li>开发期: 勾上,允许 HTTP / 任意域名</li>
+        <li>生产期: 取消勾选,必须 HTTPS + 配置域名</li>
+        <li>v36.4 默认 <code>http://127.0.0.1:8080</code>,无需此选项</li>
+      </ul>
+    </div>
+    <div class="shot">
+      <div class="shot-title">⚙️ 本地设置</div>
+      <div class="ide">
+        <div class="ide-title">详情 → 本地设置</div>
+        <div class="ide-row"><span class="green">[✓]</span> 不校验合法域名、web-view、TLS</div>
+        <div class="ide-row"><span class="gray">[ ]</span> 上传时进行代码保护</div>
+        <div class="ide-row"><span class="green">[✓]</span> 启用自定义处理命令 (自定义预处理)</div>
+        <div class="ide-row"><span class="gray">[ ]</span> 启用多核心编译</div>
+        <div class="ide-row gray">─────────────</div>
+        <div class="ide-row yellow">自定义预处理 (Condition):</div>
+        <div class="ide-row green">globalThis.__BACKEND_URL = 'https://api.cakeshop.com'</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="num">5</div>
+    <div class="text">
+      <h2>配置后端地址</h2>
+      <p>3 种方式,选 1 个:</p>
+      <ul>
+        <li><b>A. 改源码</b>: <code>utils/request.js</code> DEFAULT_BACKEND_URL</li>
+        <li><b>B. app.js</b>: 取消注释 <code>globalThis.__BACKEND_URL = '...'</code></li>
+        <li><b>C. 自定义预处理</b> (推荐,见上一步)</li>
+      </ul>
+    </div>
+    <div class="shot">
+      <div class="shot-title">🌐 后端配置</div>
+      <div class="ide">
+        <div class="ide-title">// utils/request.js</div>
+        <div class="ide-row"><span class="gray">// 默认 (本地)</span></div>
+        <div class="ide-row"><span class="yellow">DEFAULT_BACKEND_URL</span> = 'http://127.0.0.1:8080'</div>
+        <div class="ide-row gray">─────────────</div>
+        <div class="ide-row"><span class="gray">// 优先级</span></div>
+        <div class="ide-row green">globalThis.__BACKEND_URL || DEFAULT_BACKEND_URL</div>
+        <div class="ide-row gray">─────────────</div>
+        <div class="ide-row"><span class="blue">线上:</span> 'https://api.cakeshop.com'</div>
+        <div class="ide-row"><span class="blue">本地:</span> 'http://127.0.0.1:8080'</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="num">6</div>
+    <div class="text">
+      <h2>启动 Spring Boot 后端</h2>
+      <p>独立终端跑后端 (确保 127.0.0.1:8080 通):</p>
+      <ul>
+        <li><code>mvn spring-boot:run -Dspring-boot.run.profiles=dev</code></li>
+        <li>或 <code>java -jar target/cakeshop-backend.jar --spring.profiles.active=dev</code></li>
+        <li>看到 <code>Started CakeshopBackendApplication</code> = OK</li>
+      </ul>
+    </div>
+    <div class="shot">
+      <div class="shot-title">🚀 启动后端</div>
+      <div class="ide">
+        <div class="ide-title">$ cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=dev</div>
+        <div class="ide-row green">Tomcat started on port(s): 8080 (http) with context path '/api'</div>
+        <div class="ide-row green">Started CakeshopBackendApplication in 25.5 seconds</div>
+        <div class="ide-row gray">─────────────</div>
+        <div class="ide-row"><span class="yellow">DataSource:</span> jdbc:mysql://127.0.0.1:3306/cake_shop</div>
+        <div class="ide-row"><span class="yellow">Bean:</span> 540 个 (40 Controller + 24 Service)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="step">
+    <div class="num">7</div>
+    <div class="text">
+      <h2>点击"编译"运行</h2>
+      <p>工具栏 → 编译 (Ctrl+B / Cmd+B)</p>
+      <ul>
+        <li>左侧模拟器自动加载首页</li>
+        <li>控制台 (F12) 看日志,无红色错误 = OK</li>
+        <li>v36.4 默认本地后端,可直接登录 admin/admin123</li>
+      </ul>
+    </div>
+    <div class="shot">
+      <div class="shot-title">📲 编译运行</div>
+      <div class="ide">
+        <div class="ide-title">微信开发者工具</div>
+        <div class="ide-row"><span class="blue">[ 编译 ]</span> Ctrl+B</div>
+        <div class="ide-row"><span class="blue">[ 真机调试 ]</span> Ctrl+Shift+P</div>
+        <div class="ide-row"><span class="blue">[ 上传 ]</span> Ctrl+Shift+U</div>
+        <div class="ide-row gray">─────────────</div>
+        <div class="ide-row green">✓ 编译成功 (0 错误 0 警告)</div>
+        <div class="ide-row blue">→ 模拟器: 甜心蛋糕 首页</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 8 -->
+  <div class="step">
+    <div class="num">8</div>
+    <div class="text">
+      <h2>发布前配置 (生产环境)</h2>
+      <p>微信公众平台配置:</p>
+      <ul>
+        <li>开发 → 开发设置 → 服务器域名 → 添加 <code>https://api.cakeshop.com</code></li>
+        <li>request 合法域名 · uploadFile 合法域名 · downloadFile 合法域名</li>
+        <li>必须 HTTPS + ICP 备案</li>
+        <li>工具栏 → 上传 (Ctrl+Shift+U) → 填版本号</li>
+      </ul>
+    </div>
+    <div class="shot">
+      <div class="shot-title">🚀 发布配置</div>
+      <div class="ide">
+        <div class="ide-title">公众平台 → 开发设置</div>
+        <div class="ide-row"><span class="yellow">request 合法域名:</span></div>
+        <div class="ide-row green">  https://api.cakeshop.com</div>
+        <div class="ide-row"><span class="yellow">uploadFile:</span></div>
+        <div class="ide-row green">  https://api.cakeshop.com</div>
+        <div class="ide-row gray">─────────────</div>
+        <div class="ide-row"><span class="yellow">上传版本:</span> v1.0.0</div>
+        <div class="ide-row"><span class="yellow">项目备注:</span> 甜心蛋糕 v36.4</div>
+        <div class="ide-row green">✓ 上传成功 → 提交审核</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

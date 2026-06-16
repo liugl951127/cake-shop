@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>功能模块关系图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    background: #f8fafc;
+    padding: 24px;
+    color: #1e293b;
+  }
+  h1 { text-align: center; color: #4f46e5; font-size: 26px; }
+  .sub { text-align: center; color: #64748b; font-size: 13px; margin: 6px 0 22px; }
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  /* 模块卡片 */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .mod {
+    background: white; border-radius: 10px; padding: 14px 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border-top: 3px solid #4f46e5;
+  }
+  .mod.g { border-top-color: #10b981; }
+  .mod.o { border-top-color: #f59e0b; }
+  .mod.r { border-top-color: #ef4444; }
+  .mod.p { border-top-color: #8b5cf6; }
+  .mod.b { border-top-color: #3b82f6; }
+  .mod h3 { font-size: 14px; color: #1e293b; margin-bottom: 8px; }
+  .mod h3 .emoji { margin-right: 4px; }
+  .mod ul { list-style: none; }
+  .mod li {
+    font-size: 12px; color: #475569; padding: 3px 0;
+    border-bottom: 1px dashed #e2e8f0;
+  }
+  .mod li:last-child { border-bottom: none; }
+  .mod li code {
+    background: #f1f5f9; padding: 1px 5px; border-radius: 3px;
+    font-size: 11px; color: #6366f1;
+  }
+
+  /* 业务流程图 */
+  .flowchart {
+    background: white; border-radius: 12px; padding: 22px;
+    margin: 20px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .flowchart h2 { color: #4f46e5; font-size: 18px; margin-bottom: 14px; }
+  .flow-row {
+    display: flex; align-items: center; gap: 10px; margin: 12px 0;
+    flex-wrap: wrap;
+  }
+  .node {
+    background: #eef2ff; border: 1.5px solid #4f46e5;
+    border-radius: 22px; padding: 6px 14px; font-size: 12px;
+    color: #4f46e5; font-weight: 600;
+  }
+  .node.alt { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+  .node.ok { background: #d1fae5; border-color: #10b981; color: #047857; }
+  .node.bad { background: #fee2e2; border-color: #ef4444; color: #b91c1c; }
+  .arrow { color: #94a3b8; font-size: 16px; font-weight: 700; }
+
+  /* 矩阵 */
+  table {
+    width: 100%; border-collapse: collapse;
+    background: white; border-radius: 8px; overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  th { background: #4f46e5; color: white; padding: 10px 12px; font-size: 13px; text-align: left; }
+  td { padding: 9px 12px; font-size: 12.5px; border-bottom: 1px solid #f1f5f9; }
+  tr:hover { background: #f8fafc; }
+  .check { color: #10b981; font-weight: 700; }
+  .dash { color: #94a3b8; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🧩 功能模块关系图</h1>
+  <p class="sub">甜心蛋糕 v36.4 · 13 大业务模块 · 71 页面 · 32 Controller</p>
+
+  <!-- 模块卡片 -->
+  <div class="grid">
+    <div class="mod g">
+      <h3><span class="emoji">🛒</span> 交易核心</h3>
+      <ul>
+        <li><code>GoodsController</code> 商品 CRUD + 推荐</li>
+        <li><code>CartController</code> 加车 / 改数 / 选规格</li>
+        <li><code>OrderController</code> 下单 / 取消 / 退款</li>
+        <li><code>PayController</code> 余额 / 微信支付 / 退款</li>
+        <li><code>AddressController</code> 收货地址</li>
+      </ul>
+    </div>
+
+    <div class="mod">
+      <h3><span class="emoji">👤</span> 用户体系</h3>
+      <ul>
+        <li><code>AuthController</code> 登录 / token / 验证</li>
+        <li><code>MemberController</code> 会员 / 等级 / 成长值</li>
+        <li><code>FavoriteController</code> 收藏 / 取消</li>
+        <li><code>WechatSessionController</code> 微信 code</li>
+        <li><code>EmployeeController</code> 员工管理</li>
+      </ul>
+    </div>
+
+    <div class="mod o">
+      <h3><span class="emoji">🎁</span> 营销系统</h3>
+      <ul>
+        <li><code>CouponController</code> 领券 / 我的券</li>
+        <li><code>SeckillController</code> 限时秒杀</li>
+        <li><code>GroupBuyController</code> 拼团</li>
+        <li><code>LotteryController</code> 福袋抽奖</li>
+        <li><code>AdminMarketingController</code> 营销后台</li>
+      </ul>
+    </div>
+
+    <div class="mod b">
+      <h3><span class="emoji">💬</span> 客服 & 聊天</h3>
+      <ul>
+        <li><code>ChatController</code> 客服会话</li>
+        <li><code>AdminChatController</code> 客服工作台</li>
+        <li><code>ChatService</code> AI 转人工 / 多端</li>
+        <li><code>transfer-human</code> 组件 (转人工按钮)</li>
+        <li><code>WebSocket</code> 实时消息</li>
+      </ul>
+    </div>
+
+    <div class="mod p">
+      <h3><span class="emoji">📊</span> 数据 & 看板</h3>
+      <ul>
+        <li><code>AdminDashboardController</code> 运营数据</li>
+        <li><code>AdminFinanceController</code> 财务报表</li>
+        <li><code>MonitorController</code> 性能监控</li>
+        <li><code>PerformanceMetric</code> 埋点</li>
+        <li><code>AuditController</code> 审计日志</li>
+      </ul>
+    </div>
+
+    <div class="mod r">
+      <h3><span class="emoji">🔒</span> 安全 & 风控</h3>
+      <ul>
+        <li><code>RiskController</code> 风控规则</li>
+        <li><code>RiskLog</code> 风控审计</li>
+        <li><code>MiniProgramAuthFilter</code> 小程序鉴权</li>
+        <li><code>InternalRpcFilter</code> 内部 RPC</li>
+        <li><code>JwtAuthFilter</code> JWT 验证</li>
+      </ul>
+    </div>
+
+    <div class="mod b">
+      <h3><span class="emoji">📝</span> 内容 & 评价</h3>
+      <ul>
+        <li><code>CmsController</code> CMS 页面</li>
+        <li><code>NoticeController</code> 公告</li>
+        <li><code>ReviewController</code> 商品评价</li>
+        <li><code>ServiceController</code> 服务页</li>
+        <li><code>api-config</code> 远程配置</li>
+      </ul>
+    </div>
+
+    <div class="mod o">
+      <h3><span class="emoji">💰</span> 财务 & 钱包</h3>
+      <ul>
+        <li><code>WalletController</code> 钱包充值 / 支付</li>
+        <li><code>WalletLog</code> 流水</li>
+        <li><code>Withdraw</code> 提现</li>
+        <li><code>AdminFinanceController</code> 财务审核</li>
+        <li><code>TransferController</code> 转账</li>
+      </ul>
+    </div>
+
+    <div class="mod g">
+      <h3><span class="emoji">🛠️</span> 运营工具</h3>
+      <ul>
+        <li><code>ConfigCenterController</code> 配置中心</li>
+        <li><code>ApiConfigController</code> 接口开关</li>
+        <li><code>ClientErrorController</code> 异常上报</li>
+        <li><code>HistoryController</code> 历史</li>
+        <li><code>LowCode</code> 低代码配置</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 关键业务流程: 下单 -->
+  <div class="flowchart">
+    <h2>🛒 关键流程 1: 用户下单</h2>
+    <div class="flow-row">
+      <span class="node">1.浏览商品</span>
+      <span class="arrow">→</span>
+      <span class="node">2.加入购物车</span>
+      <span class="arrow">→</span>
+      <span class="node">3.选择地址</span>
+      <span class="arrow">→</span>
+      <span class="node alt">4.选优惠券 / 积分</span>
+      <span class="arrow">→</span>
+      <span class="node">5.提交订单</span>
+      <span class="arrow">→</span>
+      <span class="node ok">6.支付成功</span>
+      <span class="arrow">→</span>
+      <span class="node">7.商家接单</span>
+      <span class="arrow">→</span>
+      <span class="node">8.配送</span>
+      <span class="arrow">→</span>
+      <span class="node ok">9.确认收货</span>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:8px">
+      💡 涉及接口: <code>GET /api/goods</code> → <code>POST /api/api/v1/cart</code> →
+      <code>POST /api/api/v1/address</code> → <code>POST /api/api/v1/coupon/mine</code> →
+      <code>POST /api/orders</code> → <code>POST /api/api/v1/pay/wxpay</code>
+    </p>
+  </div>
+
+  <!-- 关键流程: 营销 -->
+  <div class="flowchart">
+    <h2>🎁 关键流程 2: 营销组合</h2>
+    <div class="flow-row">
+      <span class="node">优惠券</span>
+      <span class="arrow">+</span>
+      <span class="node">秒杀价</span>
+      <span class="arrow">+</span>
+      <span class="node">会员折扣</span>
+      <span class="arrow">+</span>
+      <span class="node">积分抵现</span>
+      <span class="arrow">+</span>
+      <span class="node">满减活动</span>
+      <span class="arrow">=</span>
+      <span class="node ok">最优价</span>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:8px">
+      💡 优先级: 秒杀价 &gt; 会员折扣 &gt; 优惠券 &gt; 满减 &gt; 积分抵现
+    </p>
+  </div>
+
+  <!-- 关键流程: 鉴权 -->
+  <div class="flowchart">
+    <h2>🔒 关键流程 3: 3 层鉴权</h2>
+    <div class="flow-row">
+      <span class="node">请求到达</span>
+      <span class="arrow">→</span>
+      <span class="node bad">InternalRpcFilter</span>
+      <span class="arrow">→</span>
+      <span class="node bad">RefererFilter</span>
+      <span class="arrow">→</span>
+      <span class="node bad">MiniProgramAuthFilter</span>
+      <span class="arrow">→</span>
+      <span class="node bad">JwtAuthFilter</span>
+      <span class="arrow">→</span>
+      <span class="node ok">Controller</span>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:8px">
+      💡 路径前缀: <code>/api/internal/**</code> → <code>/servicewechat.com</code> → <code>X-Openid+Token</code> → <code>JWT</code>
+    </p>
+  </div>
+
+  <!-- 模块依赖矩阵 -->
+  <div class="flowchart">
+    <h2>📊 模块依赖矩阵</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>模块 \ 依赖</th>
+          <th>用户</th><th>商品</th><th>订单</th><th>支付</th><th>营销</th><th>客服</th><th>风控</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>👤 用户</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+        <tr><td>🛒 交易</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td></tr>
+        <tr><td>🎁 营销</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+        <tr><td>💬 客服</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+        <tr><td>💰 财务</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+        <tr><td>📊 数据</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>
