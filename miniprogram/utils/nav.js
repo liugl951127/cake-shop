@@ -23,7 +23,7 @@ function go(url, options = {}) {
   const { type = 'navigateTo', login = false, replace = false } = options;
   if (login && !isLoggedIn()) {
     wx.showToast({ title: '请先登录', icon: 'none' });
-    setTimeout(() => wx.navigateTo({ url: '/pages/login/login' }), 600);
+    setTimeout(() => wx.navigateTo({ url: 'pages/login/login' }), 600);
     return;
   }
   const finalUrl = checkPage(url);
@@ -49,7 +49,7 @@ const nav = {
   // 登录后再跳
   toLogin: (url) => go(url, { login: true }),
   // 返回首页
-  home: () => wx.switchTab({ url: '/pages/index/index' }),
+  home: () => wx.switchTab({ url: 'pages/index/index' }),
   // 返回上一页,没有就回首页
   back: (fallback = '/pages/index/index') => {
     const pages = getCurrentPages();

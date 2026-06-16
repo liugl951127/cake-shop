@@ -6,6 +6,10 @@
 //   tracker.pageView('/pages/index/index');
 //   tracker.click('add-cart', { goodsId: 123 });
 //   tracker.stay(1500);  // 页面停留时长(ms)
+//
+// 改 v36.1: 不再调 wx.cloud.callFunction, 改用直连后端 (request.js)
+//   - 失败: 静默 log warn, 不影响业务
+//   - 队列上限 50 条, 超了丢老的(避免占用太多内存)
 
 const { MessageType } = require('./messageTypes.js');   // 复用 client 端定义
 
@@ -14,9 +18,8 @@ let queue = [];
 let flushing = false;
 let lastFlush = 0;
 const FLUSH_INTERVAL = 5000;       // 5s 自动 flush
-const MAX_QUEUE = 50;              // 超过 50 立刻 flush
+const MAX_QUEUE = 50;              // 超过 50 丢老的
 const MAX_BATCH = 100;
-const API_NAME = 'sendBehaviorLog';
 
 let app = null;
 let deviceId = '';
@@ -72,7 +75,10 @@ function push(log) {
     payload: log.payload || null,
     ts: log.ts || Date.now()
   });
-  if (queue.length >= MAX_QUEUE) flush();
+  if (queue.length >= MAX_QUEUE) {
+    // 丢老的,留新的
+    queue = queue.slice(-MAX_QUEUE / 2);
+  }
 }
 
 function flush() {
@@ -93,26 +99,23 @@ function flush() {
   const openid = getOpenid();
   if (openid) payload.openid = openid;
 
-  wx.cloud.callFunction({
-    name: API_NAME,
-    data: payload,
-    success: (res) => {
-      lastFlush = Date.now();
-      if (res && res.result && res.result.code === 0) {
-        // 成功,清掉已上报
-      } else {
-        // 失败:放回去下次再试
-        queue = batch.concat(queue);
-      }
-    },
-    fail: (err) => {
-      console.warn('[tracker] flush fail', err);
-      queue = batch.concat(queue);
-    },
-    complete: () => {
-      flushing = false;
-    }
-  });
+  // 用直连后端(用 require 而非顶层 require,避免循环)
+  try {
+    const request = require('./request.js');
+    request({
+      url: '/client-errors/behavior',
+      method: 'POST',
+      data: payload,
+      // 失败:静默,不重试
+      fail: () => { queue = batch.concat(queue).slice(-MAX_QUEUE); },
+      success: () => { lastFlush = Date.now(); }
+    });
+  } catch (e) {
+    console.warn('[tracker] flush fail', e);
+    queue = batch.concat(queue).slice(-MAX_QUEUE);
+  } finally {
+    flushing = false;
+  }
 }
 
 const tracker = {

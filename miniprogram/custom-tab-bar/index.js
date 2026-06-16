@@ -8,11 +8,11 @@ Component({
     color: '#94a3b8',
     selectedColor: '#6366f1',
     list: [
-      { pagePath: '/pages/index/index',     text: '首页',   emoji: '🏠', emojiActive: '🏠' },
-      { pagePath: '/pages/goods/goods',     text: '分类',   emoji: '🧁', emojiActive: '🧁' },
-      { pagePath: '/pages/cart/cart',       text: '购物车', emoji: '🛒', emojiActive: '🛒' },
-      { pagePath: '/pages/order/list/list', text: '订单',   emoji: '📋', emojiActive: '📋' },
-      { pagePath: '/pages/my/my',           text: '我的',   emoji: '👤', emojiActive: '👤' }
+      { pagePath: 'pages/index/index',     text: '首页',   emoji: '🏠', emojiActive: '🏠' },
+      { pagePath: 'pages/goods/goods',     text: '分类',   emoji: '🧁', emojiActive: '🧁' },
+      { pagePath: 'pages/cart/cart',       text: '购物车', emoji: '🛒', emojiActive: '🛒' },
+      { pagePath: 'pages/order/list/list', text: '订单',   emoji: '📋', emojiActive: '📋' },
+      { pagePath: 'pages/my/my',           text: '我的',   emoji: '👤', emojiActive: '👤' }
     ]
   },
   attached() {

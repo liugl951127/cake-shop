@@ -1,4 +1,5 @@
 // app.js
+require('./utils/cloud-shim.js');   // ★ v36.1 静默拦截 wx.cloud.callFunction
 const tracker = require('./utils/tracker.js');
 const monitor = require('./utils/monitor.js');
 const device = require('./utils/device.js');
