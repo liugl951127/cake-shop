@@ -54,3 +54,8 @@ coverage/
 
 # 云函数相关
 cloudfunctions/*/node_modules/
+cake-shop-*.zip
+node_modules/
+dist/
+target/
+*.log
