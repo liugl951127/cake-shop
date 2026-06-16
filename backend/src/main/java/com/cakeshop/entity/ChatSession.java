@@ -1,0 +1,36 @@
+package com.cakeshop.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+/**
+ * 客服会话
+ * 对应表 chat_session
+ */
+@Data
+@TableName("chat_session")
+public class ChatSession {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private Long userId;
+    private Long agentId;
+    private String status;
+    private String type;
+    private String lastMsg;
+    private LocalDateTime lastMsgTime;
+    private Integer unreadUser;
+    private Integer unreadAgent;
+    private Integer rating;
+    private String ratingText;
+    private LocalDateTime ratingTime;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
+    @TableLogic
+    private Integer deleted;
+}

@@ -57,4 +57,9 @@ public class WeComController {
     private Result<Map<String, Object>> invoke(String fn, Map<String, Object> req) {
         return Result.ok(cloudClient.invoke(fn, req));
     }
+
+    private static String str(Object o) { return o == null ? null : o.toString(); }
+    private static Long lng(Object o) { return o == null ? null : Long.valueOf(o.toString()); }
+    private static Integer integer(Object o) { return o == null ? null : Integer.valueOf(o.toString()); }
+
 }

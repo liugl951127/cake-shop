@@ -102,4 +102,9 @@ public class TenantController {
         tenantRepository.updateById(t);
         return Result.ok();
     }
+
+    private static String str(Object o) { return o == null ? null : o.toString(); }
+    private static Long lng(Object o) { return o == null ? null : Long.valueOf(o.toString()); }
+    private static Integer integer(Object o) { return o == null ? null : Integer.valueOf(o.toString()); }
+
 }

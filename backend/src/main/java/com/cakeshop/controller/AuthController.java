@@ -4,6 +4,7 @@ import com.cakeshop.common.ErrorCode;
 import com.cakeshop.common.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.Mac;
@@ -22,6 +23,8 @@ import java.util.UUID;
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Auth 资源授权", description = "资源访问 token 签发、验证(位置/媒体/文件)")
 public class AuthController {
+    @Autowired private com.cakeshop.security.JwtUtil jwtUtil;
+    @Autowired private com.cakeshop.service.EmployeeService employeeService;
 
     private static final String SECRET = "cake-shop-auth-2024-32bytes!";
     private static final long DEFAULT_TTL = 60L;
@@ -184,4 +187,55 @@ public class AuthController {
             return "";
         }
     }
+
+
+    /**
+     * 登录 (vue 后台)
+     * POST /api/v1/auth/login
+     * body: { username, password }
+     */
+    @PostMapping("/login")
+    @Operation(summary = "登录(后台管理)")
+    public Result<Map<String, Object>> login(@RequestBody Map<String, String> body) {
+        String username = body.get("username");
+        String password = body.get("password");
+        if (username == null || password == null) {
+            return Result.fail(ErrorCode.BAD_REQUEST.getCode(), "用户名/密码不能为空");
+        }
+        // 查 employee (用 EmployeeService)
+        com.cakeshop.entity.Employee e = employeeService.lambdaQuery()
+            .eq(com.cakeshop.entity.Employee::getUsername, username).one();
+        if (e == null) {
+            return Result.fail(ErrorCode.UNAUTHORIZED.getCode(), "用户不存在");
+        }
+        if (e.getStatus() == null || e.getStatus() != 1) {
+            return Result.fail(ErrorCode.FORBIDDEN.getCode(), "账号已禁用");
+        }
+        // BCrypt 校验
+        if (!org.springframework.security.crypto.bcrypt.BCrypt.checkpw(password, e.getPassword())) {
+            return Result.fail(ErrorCode.UNAUTHORIZED.getCode(), "密码错误");
+        }
+        // 签 JWT
+        String token = jwtUtil.generate(e.getId(), "admin_" + e.getId(), e.getRole(), true);
+        // 更新最后登录时间
+        e.setLastLoginTime(java.time.LocalDateTime.now());
+        employeeService.updateById(e);
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", token);
+        data.put("userId", e.getId());
+        data.put("role", e.getRole());
+        data.put("name", e.getName());
+        return Result.ok(data);
+    }
+
+    /**
+     * 登出
+     */
+    @PostMapping("/logout")
+    @Operation(summary = "登出")
+    public Result<Map<String, Object>> logout() {
+        // 简化: 前端清 token 即可
+        return Result.ok(new HashMap<>());
+    }
+
 }

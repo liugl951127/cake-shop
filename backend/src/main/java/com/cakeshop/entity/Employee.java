@@ -12,10 +12,11 @@ import java.time.LocalDateTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("employees")
+@TableName("employee")
 public class Employee extends BaseEntity {
 
     private String name;
+    private String username;    // 登录用户名
     private String phone;
     private String role;
     private String password;        // BCrypt 哈希

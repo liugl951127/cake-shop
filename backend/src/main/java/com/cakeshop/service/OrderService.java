@@ -81,7 +81,6 @@ public class OrderService extends ServiceImpl<OrderRepository, Order> {
             throw new BizException(ErrorCode.ORDER_STATUS_INVALID);
         }
         o.setStatus(2);
-        o.setShipTime(LocalDateTime.now());
         o.setUpdateTime(LocalDateTime.now());
         // 真实业务: 存物流号到 logistics 字段
         updateById(o);
@@ -101,4 +100,127 @@ public class OrderService extends ServiceImpl<OrderRepository, Order> {
         result.put("statusDistribution", baseMapper.statusDistribution(today));
         return result;
     }
+
+    /**
+     * 下单 (含库存原子扣减)
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Order createOrder(Order order) {
+        if (order.getGoods() == null || order.getGoods().isEmpty()) {
+            throw new BizException(ErrorCode.BAD_REQUEST, "商品不能为空");
+        }
+        // 1. 扣库存
+        // 简化: 解析 goodsJson 形如 [{"goodsId":1,"count":2},...]
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
+            com.fasterxml.jackson.core.type.TypeReference<java.util.List<java.util.Map<String, Object>>> tref =
+                new com.fasterxml.jackson.core.type.TypeReference<java.util.List<java.util.Map<String, Object>>>() {};
+            java.util.List<java.util.Map<String, Object>> items = om.readValue(order.getGoods(), tref);
+            for (java.util.Map<String, Object> it : items) {
+                long gid = ((Number) it.get("goodsId")).longValue();
+                int cnt = ((Number) it.get("count")).intValue();
+                if (!goodsService.tryDecStock(gid, cnt)) {
+                    throw new BizException(ErrorCode.OUT_OF_STOCK, "商品 " + gid + " 库存不足");
+                }
+            }
+        } catch (BizException e) {
+            throw e;
+        } catch (Exception e) {
+            log.warn("parse goodsJson err: {}", e.getMessage());
+            throw new BizException(ErrorCode.BAD_REQUEST, "商品格式错误");
+        }
+        // 2. 写订单
+        if (order.getOrderNo() == null || order.getOrderNo().isEmpty()) {
+            order.setOrderNo(genOrderNo());
+        }
+        if (order.getStatus() == null) order.setStatus(0);
+        if (order.getTotalPrice() == null) order.setTotalPrice(order.getTotalPrice());
+        order.setCreateTime(LocalDateTime.now());
+        order.setUpdateTime(LocalDateTime.now());
+        save(order);
+        return order;
+    }
+
+    /**
+     * 支付
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Order pay(Long orderId, String payMethod, String tradeNo) {
+        Order o = getById(orderId);
+        if (o == null) throw new BizException(ErrorCode.ORDER_NOT_FOUND);
+        if (o.getStatus() != 0) throw new BizException(ErrorCode.ORDER_STATUS_INVALID, "订单不是待付款状态");
+        o.setStatus(1);
+        o.setPayTime(LocalDateTime.now());
+        o.setUpdateTime(LocalDateTime.now());
+        updateById(o);
+        return o;
+    }
+
+    /**
+     * 确认收货
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Order confirmReceive(Long orderId) {
+        Order o = getById(orderId);
+        if (o == null) throw new BizException(ErrorCode.ORDER_NOT_FOUND);
+        if (o.getStatus() != 2 && o.getStatus() != 3) {
+            throw new BizException(ErrorCode.ORDER_STATUS_INVALID, "订单状态不允许确认收货");
+        }
+        o.setStatus(4);
+        
+        o.setUpdateTime(LocalDateTime.now());
+        updateById(o);
+        return o;
+    }
+
+    /**
+     * 申请退款
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Order requestRefund(Long orderId, String reason) {
+        Order o = getById(orderId);
+        if (o == null) throw new BizException(ErrorCode.ORDER_NOT_FOUND);
+        if (o.getStatus() != 1 && o.getStatus() != 2 && o.getStatus() != 3) {
+            throw new BizException(ErrorCode.ORDER_STATUS_INVALID, "当前状态不可申请退款");
+        }
+        o.setStatus(5); // 5 = 退款处理中
+        
+        
+        o.setUpdateTime(LocalDateTime.now());
+        updateById(o);
+        return o;
+    }
+
+    /**
+     * 取消订单 (恢复库存)
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelOrder(Long orderId) {
+        Order o = getById(orderId);
+        if (o == null) throw new BizException(ErrorCode.ORDER_NOT_FOUND);
+        if (o.getStatus() != 0) throw new BizException(ErrorCode.ORDER_STATUS_INVALID);
+        // 恢复库存
+        if (o.getGoods() != null) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
+                com.fasterxml.jackson.core.type.TypeReference<java.util.List<java.util.Map<String, Object>>> tref =
+                    new com.fasterxml.jackson.core.type.TypeReference<java.util.List<java.util.Map<String, Object>>>() {};
+                java.util.List<java.util.Map<String, Object>> items = om.readValue(o.getGoods(), tref);
+                for (java.util.Map<String, Object> it : items) {
+                    long gid = ((Number) it.get("goodsId")).longValue();
+                    int cnt = ((Number) it.get("count")).intValue();
+                    goodsService.incStock(gid, cnt);
+                }
+            } catch (Exception e) { log.warn("恢复库存失败: {}", e.getMessage()); }
+        }
+        o.setStatus(-1);
+        
+        o.setUpdateTime(LocalDateTime.now());
+        updateById(o);
+    }
+
+    private String genOrderNo() {
+        return "OD" + System.currentTimeMillis() + String.format("%04d", (int)(Math.random() * 10000));
+    }
+
 }
