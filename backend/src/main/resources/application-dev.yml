@@ -1,4 +1,4 @@
-# 开发环境配置
+# 开发环境配置 - 走 LocalCache(无需 Redis)
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,20 +12,16 @@ spring:
       max-active: 20
       max-wait: 60000
 
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    # 不设 password 字段(空密码 Spring 会发 AUTH "" 命令导致报错)
-    timeout: 3000ms
-    lettuce:
-      pool:
-        max-active: 20
-        max-idle: 8
-        min-idle: 0
+  # 开发环境:排除 Redisson 自动配置,改用 LocalCache
+  autoconfigure:
+    exclude:
+      - org.redisson.spring.starter.RedissonAutoConfigurationV2
+      - org.redisson.spring.starter.RedissonAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
 
-# 业务配置:Redis 可选,不可用时降级到 LocalCache
+# 业务配置
 cakeshop:
   redis:
-    # true: 连接 Redis(默认)
-    # false: 跳过 Redisson,使用 LocalCache
-    enabled: true
+    # 开发环境禁用 Redis
+    enabled: false

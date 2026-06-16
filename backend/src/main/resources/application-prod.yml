@@ -17,3 +17,8 @@ spring:
     port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD}
     timeout: 5000ms
+
+# 生产环境启用 Redis
+cakeshop:
+  redis:
+    enabled: true

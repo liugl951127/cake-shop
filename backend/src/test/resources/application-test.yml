@@ -28,6 +28,8 @@ spring:
       - org.redisson.spring.starter.RedissonAutoConfiguration
 
 cakeshop:
+  redis:
+    enabled: false
   security:
     ignore-urls:
       - /**

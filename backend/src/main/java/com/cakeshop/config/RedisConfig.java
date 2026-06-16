@@ -2,24 +2,26 @@ package com.cakeshop.config;
 
 import com.cakeshop.common.cache.LocalCache;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.Redisson;
-import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
-import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Redis 配置 - 可选/降级
- *   1. 默认走 Redisson(生产)
- *   2. 若 Redis 不可用,降级到 LocalCache(开发/H2 环境)
- *   3. 启动时连接 3 次重试,失败不阻塞 Spring 启动
+ * Redis 配置(简化版 - 不与 starter 冲突)
+ *
+ * 设计:
+ *   - RedissonClient 由 redisson-spring-boot-starter 自动配置
+ *   - 我们的 application-dev.yml 中关闭 Redisson 自动配置 + 走 LocalCache
+ *   - 本类只做 health check + LocalCache 兜底
+ *
+ * 切换说明:
+ *   1. dev/test:  application-{profile}.yml 加 autoconfigure.exclude 排除 Redisson
+ *   2. prod:      application-prod.yml 不排除,自动用 Redis
  */
 @Slf4j
 @Configuration
@@ -31,53 +33,47 @@ public class RedisConfig {
     private int port;
     @Value("${spring.redis.password:}")
     private String password;
-    @Value("${spring.redis.database:0}")
-    private int database;
-    @Value("${spring.redis.timeout:3000}")
-    private int timeout;
 
     /**
-     * RedissonClient
-     *   - 当 cakeshop.redis.enabled=false 时,本 Bean 不注册
-     *   - 默认 true;但若启动后连接失败,会回退到 LocalCache
+     * 启动前 TCP ping(检查 Redis 是否可达)
+     *   只在 Redisson 自动配置**启用**时(生产环境)检查
+     *   dev/test 排除了自动配置,这个 Bean 不会执行
      */
-    @Bean(name = "redissonClient", destroyMethod = "shutdown")
-    @ConditionalOnProperty(name = "cakeshop.redis.enabled", havingValue = "true", matchIfMissing = true)
-    public RedissonClient redissonClient() {
-        // 启动前先尝试 ping
+    @Bean
+    @ConditionalOnProperty(name = "cakeshop.redis.enabled", havingValue = "true", matchIfMissing = false)
+    public RedisHealthChecker redisHealthChecker() {
         if (!tryConnect()) {
-            log.warn("Redis 连不上,Redisson 跳过创建,降级到 LocalCache");
-            return null;
+            throw new IllegalStateException(String.format(
+                "Redis %s:%d 不可用。请检查:\n" +
+                "  1. Redis 服务是否启动 (docker run -d -p 6379:6379 redis:7-alpine)\n" +
+                "  2. spring.redis.host/port 是否正确\n" +
+                "  3. 或设置 cakeshop.redis.enabled=false 走 LocalCache",
+                host, port
+            ));
         }
-        Config config = new Config();
-        String address = "redis://" + host + ":" + port;
-        var single = config.useSingleServer()
-                .setAddress(address)
-                .setDatabase(database)
-                .setConnectTimeout(timeout)
-                .setRetryAttempts(3)
-                .setRetryInterval(1000);
-        if (password != null && !password.trim().isEmpty()) {
-            single.setPassword(password);
-        }
-        try {
-            RedissonClient client = Redisson.create(config);
-            log.info("Redisson 启动: {} (db={})", address, database);
-            return client;
-        } catch (Exception e) {
-            log.warn("Redisson 创建失败,降级到 LocalCache: {}", e.getMessage());
-            return null;
-        }
+        return new RedisHealthChecker();
     }
 
     /**
-     * 尝试 TCP 连一下 Redis(不认证)
+     * LocalCache 兜底 Bean
+     *   - 只在 dev/test 启用(Redsion 被排除时)
+     *   - 业务代码可同时注入 RedissonClient 和 LocalCache,选其一
      */
+    @Bean(name = "localCacheFallback")
+    @ConditionalOnProperty(name = "cakeshop.redis.enabled", havingValue = "false")
+    public LocalCache localCacheFallback() {
+        log.warn("======================================================");
+        log.warn("= 使用 LocalCache 替代 Redis (进程内,重启数据丢失) =");
+        log.warn("= 生产环境请设置 cakeshop.redis.enabled=true      =");
+        log.warn("======================================================");
+        return new LocalCache();
+    }
+
     private boolean tryConnect() {
         for (int i = 0; i < 3; i++) {
-            try (java.net.Socket socket = new java.net.Socket()) {
-                socket.connect(new java.net.InetSocketAddress(host, port), 1000);
-                log.info("Redis {}:{} 可达 (第 {} 次尝试)", host, port, i + 1);
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress(host, port), 1500);
+                log.info("Redis {}:{} 可达(第 {} 次)", host, port, i + 1);
                 return true;
             } catch (Exception e) {
                 log.warn("Redis {}:{} 第 {} 次连不上: {}", host, port, i + 1, e.getMessage());
@@ -87,15 +83,7 @@ public class RedisConfig {
         return false;
     }
 
-    /**
-     * 兜底 Bean:当 Redisson 没注册时,提供 LocalCache 作为替代
-     *   通过 @Primary 让 Spring 优先注入 LocalCache
-     */
-    @Bean(name = "localCacheFallback")
-    @ConditionalOnMissingBean(name = "redissonClient")
-    @Primary
-    public LocalCache localCacheFallback() {
-        log.warn("⚠️ 使用 LocalCache 替代 Redis(进程内,重启数据丢失)");
-        return new LocalCache();
+    public static class RedisHealthChecker {
+        // 占位,只为了让 @Bean 触发
     }
 }

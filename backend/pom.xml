@@ -88,7 +88,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- 缓存 + 会话 -->
+        <!-- 缓存 + 会话(Redis 在 dev/test 可选,prod 必选) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
