@@ -10,6 +10,40 @@ const monitor = require('./monitor.js');
 
 const STORAGE_KEY = '__auth_grants__';
 const grants = {};  // 内存缓存: { scope: true|false|neverAsk }
+
+// ============================================
+// Token / Openid 缓存 helper
+//   - request.js 等模块用, 不依赖云函数
+//   - 安全: 都用 try/catch, 失败返回空值
+// ============================================
+function getOpenid() {
+  try { return wx.getStorageSync('openid') || ''; } catch (e) { return ''; }
+}
+function getToken() {
+  try { return wx.getStorageSync('token') || ''; } catch (e) { return ''; }
+}
+function getUserId() {
+  try { return wx.getStorageSync('userId') || null; } catch (e) { return null; }
+}
+function setOpenid(openid) {
+  try { if (openid) wx.setStorageSync('openid', openid); } catch (e) {}
+}
+function setToken(token) {
+  try { if (token) wx.setStorageSync('token', token); } catch (e) {}
+}
+function setUserId(userId) {
+  try { if (userId) wx.setStorageSync('userId', userId); } catch (e) {}
+}
+function clearAuth() {
+  try {
+    wx.removeStorageSync('openid');
+    wx.removeStorageSync('token');
+    wx.removeStorageSync('userId');
+  } catch (e) {}
+}
+function isLoggedIn() {
+  return !!(getOpenid() && getToken());
+}
 let app = null;
 
 // 权限场景
@@ -473,6 +507,15 @@ function init(opts = {}) {
 module.exports = {
   init,
   SCENE,
+  // Token / Openid helper (供 request.js 等模块用)
+  getOpenid,
+  getToken,
+  getUserId,
+  setOpenid,
+  setToken,
+  setUserId,
+  clearAuth,
+  isLoggedIn,
   requestScope,
   requestScopes,
   requestForRich,

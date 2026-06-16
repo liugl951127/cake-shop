@@ -12,6 +12,7 @@
 //   - 队列上限 50 条, 超了丢老的(避免占用太多内存)
 
 const { MessageType } = require('./messageTypes.js');   // 复用 client 端定义
+const { getOpenid, getUserId } = require('./auth.js');     // 复用统一 helper
 
 // 内存队列
 let queue = [];
@@ -30,18 +31,6 @@ let lastPage = '';
 
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
-}
-
-function getOpenid() {
-  try {
-    return wx.getStorageSync('openid') || '';
-  } catch (e) { return ''; }
-}
-
-function getUserId() {
-  try {
-    return wx.getStorageSync('userId') || null;
-  } catch (e) { return null; }
 }
 
 function ensureSession() {
