@@ -1,6 +1,0 @@
-<view class="skeleton {{animated ? 'animated' : ''}}" wx:if="{{loading}}">
-  <view class="sk-block" wx:for="{{rows}}" wx:key="*this" style="width: {{item}}"></view>
-</view>
-<view wx:else>
-  <slot></slot>
-</view>

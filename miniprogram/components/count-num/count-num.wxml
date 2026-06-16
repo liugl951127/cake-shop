@@ -1,2 +1,0 @@
-<text class="count-num" wx:if="{{!bump}}">{{display}}</text>
-<text class="count-num bump" wx:else>{{display}}</text>
