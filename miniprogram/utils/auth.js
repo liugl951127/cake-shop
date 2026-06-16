@@ -33,27 +33,36 @@ const SCENE = {
  * 加载持久化授权缓存
  */
 /**
- * 静默登录: 调云函数 login 拿 openid + token
- *  - 已有本地 openid 则不再调
+ * 静默登录: 调后端 /api/wx/session 拿 openid + token
+ *  - 已有本地 openid+token 则不重调
  *  - 返回 { openid, token, userId, ... }
  *  - 失败不拋错(避免冷启动阻塞)
  */
 function login(opts = {}) {
   return new Promise((resolve, reject) => {
     try {
-      const cached = wx.getStorageSync('openid');
-      if (cached) {
-        return resolve({ openid: cached });
+      const cachedOpenid = wx.getStorageSync('openid');
+      const cachedToken = wx.getStorageSync('token');
+      if (cachedOpenid && cachedToken) {
+        return resolve({ openid: cachedOpenid, token: cachedToken });
       }
       wx.login({
         success: async (r) => {
           if (!r || !r.code) return reject(new Error('wx.login 无 code'));
           try {
-            const cf = await wx.cloud.callFunction({
-              name: 'login',
-              data: { code: r.code, inviterCode: opts.inviterCode || '' }
+            // 直连后端换 session
+            const { request, BACKEND_URL } = require('./request.js');
+            const resp = await new Promise((res, rej) => {
+              wx.request({
+                url: BACKEND_URL + '/api/wx/session',
+                method: 'POST',
+                data: { code: r.code, inviterCode: opts.inviterCode || '' },
+                header: { 'Content-Type': 'application/json' },
+                success: (s) => res(s.data),
+                fail: (e) => rej(e)
+              });
             });
-            const data = (cf && cf.result && cf.result.data) || {};
+            const data = (resp && resp.data) || {};
             if (data.openid) {
               wx.setStorageSync('openid', data.openid);
               if (data.token) wx.setStorageSync('token', data.token);

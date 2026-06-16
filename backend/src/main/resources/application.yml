@@ -79,6 +79,9 @@ cakeshop:
     ignore-urls:
       - /auth/login
       - /auth/refresh
+      # 微信小程序直连(不走 JWT)
+      - /api/wx/session
+      - /api/wx/session/**
       - /doc.html
       - /swagger-ui/**
       - /v3/api-docs/**
@@ -98,12 +101,37 @@ cakeshop:
     customer-service: ["agent:read", "agent:write", "user:read", "order:read"]
     readonly: ["*:read"]
 
-  # 微信云函数 HTTP 触发器
+  # 微信云函数 HTTP 触发器 (可选, 不用时可不填)
   wechat:
     cloudbase:
       env-id: ${TCB_ENV_ID:cake-shop-prod-xxxx}
       api-base: https://${TCB_ENV_ID:cake-shop-prod-xxxx}.ap-shanghai.tcb-api.tencentcloud.com
       timeout-ms: 8000
+    # 小程序 AppID / AppSecret (走 /api/wx/session 换 openid)
+    appid: ${WX_APPID:}
+    secret: ${WX_SECRET:}
+
+  # ============================================
+  # 鉴权 - 3 层防御
+  # ============================================
+  mp-auth:
+    # 1. 小程序 openid + X-Login-Token 鉴权
+    enabled: ${MP_AUTH_ENABLED:true}
+    token-ttl: ${MP_TOKEN_TTL:86400}
+
+  mp-referer:
+    # 2. Referer 头校验(防外网直接调)
+    enabled: ${MP_REFERER_ENABLED:false}
+    appid: ${WX_APPID:}
+
+  # ============================================
+  # 内部 RPC Token (云函数 / 跨服务调用)
+  # ============================================
+  internal-rpc:
+    enabled: ${INTERNAL_RPC_ENABLED:true}
+    path-prefix: /api/internal/
+    # 必须 32+ 位随机串, 生产用环境变量注入
+    token: ${INTERNAL_RPC_TOKEN:dev-internal-rpc-token-change-me-32-chars-min}
 
   # ============================================
   # 缓存层(REDIS / LOCAL)

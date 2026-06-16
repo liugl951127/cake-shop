@@ -10,6 +10,12 @@ const http = axios.create({
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem('__admin_token__')
   if (token) config.headers.Authorization = `Bearer ${token}`
+
+  // 内部 RPC 调用(如云函数中转)需要 X-Internal-Token
+  if (config.url && config.url.startsWith('/internal/')) {
+    const rpcToken = import.meta.env.VITE_RPC_TOKEN || ''
+    if (rpcToken) config.headers['X-Internal-Token'] = rpcToken
+  }
   return config
 })
 
@@ -99,4 +105,32 @@ export const monitor = {
 
 export const dashboard = {
   overview: () => http.get('/v1/admin/dashboard/overview')
+}
+
+// ============================================================
+// 内部 RPC(给云函数 / 跨服务调用, 不走 JWT)
+//   - 后端会校验 X-Internal-Token
+//   - VITE_RPC_TOKEN 在 .env.production 注入
+// ============================================================
+const rpcHttp = axios.create({
+  baseURL: '/internal',
+  timeout: 30000
+})
+rpcHttp.interceptors.request.use((config) => {
+  const t = import.meta.env.VITE_RPC_TOKEN || ''
+  if (t) config.headers['X-Internal-Token'] = t
+  return config
+})
+rpcHttp.interceptors.response.use(
+  (res) => res.data,
+  (err) => Promise.reject(err)
+)
+
+export const rpc = {
+  // 云函数任务执行
+  invokeCloudfn: (name, data) => rpcHttp.post(`/cloudfn/${name}`, data),
+  // 跨服务调用
+  call: (service, action, data) => rpcHttp.post(`/${service}/${action}`, data),
+  // 内部统计
+  internalStats: () => rpcHttp.get('/internal/stats')
 }

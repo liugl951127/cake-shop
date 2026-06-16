@@ -31,3 +31,23 @@ cakeshop:
     local:
       max-size: 5000
       default-ttl-minutes: 5
+
+  # 微信小程序 AppID / AppSecret (开发可空)
+  wechat:
+    appid: ${WX_APPID:dev}
+    secret: ${WX_SECRET:dev}
+
+  # 开发期: 鉴权仍开, referer 关
+  mp-auth:
+    enabled: true
+    token-ttl: 86400
+
+  mp-referer:
+    enabled: false  # 微信开发者工具的 referer 与真机不同,开发期关
+    appid: ${WX_APPID:}
+
+  # 内部 RPC
+  internal-rpc:
+    enabled: true
+    path-prefix: /api/internal/
+    token: ${INTERNAL_RPC_TOKEN:dev-internal-rpc-token-change-me-32-chars-min}
