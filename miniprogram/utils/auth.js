@@ -32,6 +32,46 @@ const SCENE = {
 /**
  * 加载持久化授权缓存
  */
+/**
+ * 静默登录: 调云函数 login 拿 openid + token
+ *  - 已有本地 openid 则不再调
+ *  - 返回 { openid, token, userId, ... }
+ *  - 失败不拋错(避免冷启动阻塞)
+ */
+function login(opts = {}) {
+  return new Promise((resolve, reject) => {
+    try {
+      const cached = wx.getStorageSync('openid');
+      if (cached) {
+        return resolve({ openid: cached });
+      }
+      wx.login({
+        success: async (r) => {
+          if (!r || !r.code) return reject(new Error('wx.login 无 code'));
+          try {
+            const cf = await wx.cloud.callFunction({
+              name: 'login',
+              data: { code: r.code, inviterCode: opts.inviterCode || '' }
+            });
+            const data = (cf && cf.result && cf.result.data) || {};
+            if (data.openid) {
+              wx.setStorageSync('openid', data.openid);
+              if (data.token) wx.setStorageSync('token', data.token);
+              if (data.userId) wx.setStorageSync('userId', data.userId);
+            }
+            resolve(data);
+          } catch (e) {
+            reject(e);
+          }
+        },
+        fail: (e) => reject(e)
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
 function loadCache() {
   try {
     const s = wx.getStorageSync(STORAGE_KEY);
@@ -437,5 +477,6 @@ module.exports = {
   promptOpenSetting,
   isGranted,
   isNeverAsk,
-  hasAsked
+  hasAsked,
+  login
 };

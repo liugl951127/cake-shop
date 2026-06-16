@@ -1,7 +1,7 @@
 // 订单列表
-const { request } = require('../../../../utils/request.js');
-const nav = require('../../../../utils/nav.js');
-const { formatTime } = require('../../../../utils/util.js');
+const { request } = require('../../../utils/request.js');
+const nav = require('../../../utils/nav.js');
+const { formatTime } = require('../../../utils/util.js');
 
 const STATUS = {
   '0': '待付款', '1': '待发货', '2': '配送中', '3': '待收货', '4': '已完成',

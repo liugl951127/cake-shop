@@ -1,7 +1,7 @@
-const { request } = require('../../utils/request.js');
-const { requireLogin, getUser } = require('../../utils/auth.js');
-const cartUtil = require('../../utils/cart.js');
-const { formatPrice } = require('../../utils/util.js');
+const { request } = require('../../../utils/request.js');
+const { requireLogin, getUser } = require('../../../utils/auth.js');
+const cartUtil = require('../../../utils/cart.js');
+const { formatPrice } = require('../../../utils/util.js');
 
 Page({
   data: {

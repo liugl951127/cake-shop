@@ -1,5 +1,5 @@
-const { request } = require('../../../utils/request.js');
-const { formatTime } = require('../../../utils/util.js');
+const { request } = require('../../../../utils/request.js');
+const { formatTime } = require('../../../../utils/util.js');
 
 Page({
   data: { list: [], loading: false },

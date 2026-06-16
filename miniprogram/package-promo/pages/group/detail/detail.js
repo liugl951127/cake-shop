@@ -1,5 +1,5 @@
-const { request } = require('../../utils/request.js');
-const { formatCountdown } = require('../../utils/util.js');
+const { request } = require('../../../../utils/request.js');
+const { formatCountdown } = require('../../../../utils/util.js');
 
 Page({
   data: { info: null, countdown: '', emptySlots: [] },

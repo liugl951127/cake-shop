@@ -3,13 +3,13 @@
 //   - 状态轮询 + 实时消息
 //   - 转人工 / 挂断 / 评价
 //   - 发送消息: 文本 / 富文本(图/视频/文件/位置/语音)
-const { request } = require('../../../utils/request.js');
-const { getUser } = require('../../../utils/auth.js');
-const { formatTime } = require('../../../utils/util.js');
-const { ChatClient } = require('../../../utils/chatClient.js');
-const authz = require('../../../utils/auth.js');
-const monitor = require('../../../utils/monitor.js');
-const nav = require('./nav.js');
+const { request } = require('../../../../utils/request.js');
+const { getUser } = require('../../../../utils/auth.js');
+const { formatTime } = require('../../../../utils/util.js');
+const { ChatClient } = require('../../../../utils/chatClient.js');
+const authz = require('../../../../utils/auth.js');
+const monitor = require('../../../../utils/monitor.js');
+const nav = require('../../../../utils/nav');
 
 Page({
   data: {

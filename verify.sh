@@ -86,6 +86,17 @@ if [ -f "miniprogram/app.json" ]; then
         fi
     fi
 
+    # 调 require 路径检查
+    if command -v python3 >/dev/null && [ -f "scripts/check-require-paths.py" ]; then
+        REQ_OUT=$(python3 scripts/check-require-paths.py 2>&1)
+        REQ_CODE=$?
+        if [ $REQ_CODE -eq 0 ]; then
+            check_pass "require 路径有效"
+        else
+            check_fail "require 路径错误: $(echo "$REQ_OUT" | grep '❌' | head -3)"
+        fi
+    fi
+
     # 调 WXML 校验
     if command -v python3 >/dev/null && [ -f "scripts/check-wxml.py" ]; then
         WXML_OUT=$(python3 scripts/check-wxml.py 2>&1)

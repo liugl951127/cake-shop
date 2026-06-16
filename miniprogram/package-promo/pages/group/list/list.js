@@ -1,5 +1,5 @@
 // 拼团列表(附近 / 同城)
-const { request } = require('../../../utils/request.js');
+const { request } = require('../../../../utils/request.js');
 
 Page({
   data: {

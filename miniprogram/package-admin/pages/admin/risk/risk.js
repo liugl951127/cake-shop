@@ -1,7 +1,7 @@
 // 风控中心
 const { request } = require('../../../../utils/request.js');
 const { formatTime } = require('../../../../utils/util.js');
-const nav = require('./nav.js');
+const nav = require('../../../../utils/nav');
 
 const DECISION_TEXT = {
   'pass': '通过',

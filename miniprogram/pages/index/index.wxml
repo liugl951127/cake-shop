@@ -20,8 +20,8 @@
   <view class="banner-wrap">
     <swiper class="banner" indicator-dots autoplay circular interval="4000" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
       <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="onBannerTap" data-item="{{item}}">
-        <view class="banner-card">
-          <image src="{{item.image}}" mode="aspectFill" class="banner-img"></image>
+        <view class="banner-card" style="background: {{item.gradient}};">
+          <view class="banner-emoji">{{item.emoji}}</view>
           <view class="banner-mask" wx:if="{{item.title}}">
             <text class="banner-title">{{item.title}}</text>
             <text class="banner-sub" wx:if="{{item.sub}}">{{item.sub}}</text>

@@ -1,7 +1,7 @@
 // miniprogram/utils/monitor.js
 // 性能监控 + 异常上报 SDK(客户端)
 // 用法:
-//   const monitor = require('./utils/monitor.js');
+//   const monitor = require('monitor.js');
 //   monitor.init({ app });
 //   monitor.metric('page.load', 234, { page: '/pages/index' });
 //   monitor.error(err, { page: '...' });

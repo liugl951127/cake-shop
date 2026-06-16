@@ -1,5 +1,5 @@
 // 身份认证中心
-const { request } = require('../../../utils/request.js');
+const { request } = require('../../../../utils/request.js');
 
 const LEVEL_MAP = {
   full: { icon: '🏆', text: '高级认证' },

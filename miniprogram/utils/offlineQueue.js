@@ -6,7 +6,7 @@
 //   - 持久化: wx.storage
 //
 // 用法:
-//   const oq = require('./utils/offlineQueue.js');
+//   const oq = require('offlineQueue.js');
 //   oq.init();
 //   oq.push({ type: 'chat.message', payload: {...} });
 //   // 上线自动 sync

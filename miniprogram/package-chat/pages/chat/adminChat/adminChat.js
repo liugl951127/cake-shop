@@ -1,7 +1,7 @@
-const { request } = require('../../../utils/request.js');
-const { getUser } = require('../../../utils/auth.js');
-const { formatTime } = require('../../../utils/util.js');
-const { ChatClient } = require('../../../utils/chatClient.js');
+const { request } = require('../../../../utils/request.js');
+const { getUser } = require('../../../../utils/auth.js');
+const { formatTime } = require('../../../../utils/util.js');
+const { ChatClient } = require('../../../../utils/chatClient.js');
 
 const STATE_MAP = {
   idle: { text: '未连接', sub: '', cls: 'closed' },

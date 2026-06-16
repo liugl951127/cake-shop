@@ -4,9 +4,9 @@ const { login } = require('../../utils/auth.js');
 Page({
   data: {
     banners: [
-      { id: 1, image: 'https://img.zcool.cn/community/01a87d5e8c4e5da8012051cd9c0e8a.jpg', url: '' },
-      { id: 2, image: 'https://img.zcool.cn/community/01b3eb5e8c4e5ea8012051cd3ed57a.jpg', url: '' },
-      { id: 3, image: 'https://img.zcool.cn/community/01d7b75e8c4e5ea8012051cd86e0aa.jpg', url: '' }
+      { id: 1, emoji: '🎂', gradient: 'linear-gradient(135deg,#ffb1cc,#ff7eb3)', title: '草莓鲜奶蛋糕', sub: '9 折尝鲜价 ¥99', url: '/pages/goods/goods' },
+      { id: 2, emoji: '🍰', gradient: 'linear-gradient(135deg,#ffd6a5,#ff9a76)', title: '提拉米苏', sub: '买一送一', url: '/pages/goods/goods' },
+      { id: 3, emoji: '🍫', gradient: 'linear-gradient(135deg,#a18cd1,#fbc2eb)', title: '巧克力熔岩', sub: '新品上市', url: '/pages/goods/goods' }
     ],
     icons: [
       { id: 'cake',    name: '蛋糕',   emoji: '🎂', color: '#ffe4ec' },

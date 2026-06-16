@@ -1,7 +1,7 @@
 // miniprogram/utils/tracker.js
 // 客户端行为埋点 SDK
 // 用法:
-//   const tracker = require('./utils/tracker.js');
+//   const tracker = require('tracker.js');
 //   tracker.init();  // App.onLaunch 调一次
 //   tracker.pageView('/pages/index/index');
 //   tracker.click('add-cart', { goodsId: 123 });

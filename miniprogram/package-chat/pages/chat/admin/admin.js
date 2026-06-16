@@ -1,6 +1,6 @@
-const { request } = require('../../../utils/request.js');
-const { getUser } = require('../../../utils/auth.js');
-const { ChatClient } = require('../../../utils/chatClient.js');
+const { request } = require('../../../../utils/request.js');
+const { getUser } = require('../../../../utils/auth.js');
+const { ChatClient } = require('../../../../utils/chatClient.js');
 
 Page({
   data: { list: [], loading: false, isOnline: true, filter: 'all' },

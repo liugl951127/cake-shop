@@ -1,6 +1,6 @@
 // 客服数据看板
-const { request } = require('../../../utils/request.js');
-const nav = require('./nav.js');
+const { request } = require('../../../../utils/request.js');
+const nav = require('../../../../utils/nav');
 
 Page({
   data: {

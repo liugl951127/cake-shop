@@ -1,6 +1,7 @@
 // 我的 - 樱花主题
 const { request } = require('../../utils/request.js');
 const { login } = require('../../utils/auth.js');
+const nav = require('../../utils/nav.js');
 
 const ORDER_TYPES = [
   { id: 'unpaid', name: '待付款', icon: '💳' },
