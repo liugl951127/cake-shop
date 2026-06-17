@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -19,6 +20,7 @@ import java.util.UUID;
  * 资源访问 token 签发 + 校验(对应微信小程序 /auth/token、/auth/verify)
  * 位置/媒体/文件访问都需要先签 token
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Auth 资源授权", description = "资源访问 token 签发、验证(位置/媒体/文件)")
@@ -197,29 +199,61 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "登录(后台管理)")
     public Result<Map<String, Object>> login(@RequestBody Map<String, String> body) {
+        // 1) 参数校验(必填 + 限长 + trim)
+        if (body == null) {
+            return Result.fail(ErrorCode.BAD_REQUEST.getCode(), "请求体不能为空");
+        }
         String username = body.get("username");
         String password = body.get("password");
-        if (username == null || password == null) {
-            return Result.fail(ErrorCode.BAD_REQUEST.getCode(), "用户名/密码不能为空");
+        if (username == null || username.trim().isEmpty()) {
+            return Result.fail(ErrorCode.BAD_REQUEST.getCode(), "用户名不能为空");
         }
-        // 查 employee (用 EmployeeService)
+        if (password == null || password.isEmpty()) {
+            return Result.fail(ErrorCode.BAD_REQUEST.getCode(), "密码不能为空");
+        }
+        // 限长:防 DB 撑爆
+        if (username.length() > 50) {
+            return Result.fail(ErrorCode.BAD_REQUEST.getCode(), "用户名过长(>50)");
+        }
+        if (password.length() > 200) {
+            return Result.fail(ErrorCode.BAD_REQUEST.getCode(), "密码过长(>200)");
+        }
+        username = username.trim();  // 去掉前后空格
+
+        // 2) 查用户
         com.cakeshop.entity.Employee e = employeeService.lambdaQuery()
             .eq(com.cakeshop.entity.Employee::getUsername, username).one();
         if (e == null) {
-            return Result.fail(ErrorCode.UNAUTHORIZED.getCode(), "用户不存在");
+            // 安全:统一返"用户名或密码错误",不暴露用户是否存在
+            return Result.fail(ErrorCode.UNAUTHORIZED.getCode(), "用户名或密码错误");
         }
         if (e.getStatus() == null || e.getStatus() != 1) {
             return Result.fail(ErrorCode.FORBIDDEN.getCode(), "账号已禁用");
         }
-        // BCrypt 校验
+
+        // 3) BCrypt 校验
         if (!org.springframework.security.crypto.bcrypt.BCrypt.checkpw(password, e.getPassword())) {
-            return Result.fail(ErrorCode.UNAUTHORIZED.getCode(), "密码错误");
+            return Result.fail(ErrorCode.UNAUTHORIZED.getCode(), "用户名或密码错误");
         }
-        // 签 JWT
-        String token = jwtUtil.generate(e.getId(), "admin_" + e.getId(), e.getRole(), true);
-        // 更新最后登录时间
-        e.setLastLoginTime(java.time.LocalDateTime.now());
-        employeeService.updateById(e);
+
+        // 4) 签 JWT(失败应 catch,不冒泡 500)
+        String token;
+        try {
+            token = jwtUtil.generate(e.getId(), "admin_" + e.getId(), e.getRole(), true);
+        } catch (Exception ex) {
+            log.error("[Auth] JWT 签发失败, userId={}", e.getId(), ex);
+            return Result.fail(ErrorCode.FAIL.getCode(), "登录失败,请稍后重试");
+        }
+
+        // 5) 更新最后登录时间(失败只 log,不影响登录)
+        try {
+            e.setLastLoginTime(java.time.LocalDateTime.now());
+            employeeService.updateById(e);
+        } catch (Exception ex) {
+            log.warn("[Auth] 更新最后登录时间失败, userId={}", e.getId(), ex);
+            // 继续:不影响登录成功
+        }
+
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
         data.put("userId", e.getId());
