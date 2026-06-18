@@ -231,8 +231,13 @@ public class AuthController {
             return Result.fail(ErrorCode.FORBIDDEN.getCode(), "账号已禁用");
         }
 
-        // 3) BCrypt 校验
-        if (!org.springframework.security.crypto.bcrypt.BCrypt.checkpw(password, e.getPassword())) {
+        // 3) BCrypt 校验(防 IllegalArgumentException 冒泡 500)
+        try {
+            if (!org.springframework.security.crypto.bcrypt.BCrypt.checkpw(password, e.getPassword())) {
+                return Result.fail(ErrorCode.UNAUTHORIZED.getCode(), "用户名或密码错误");
+            }
+        } catch (IllegalArgumentException ex) {
+            log.error("[Auth] 密码 hash 格式错误, userId={}", e.getId(), ex);
             return Result.fail(ErrorCode.UNAUTHORIZED.getCode(), "用户名或密码错误");
         }
 

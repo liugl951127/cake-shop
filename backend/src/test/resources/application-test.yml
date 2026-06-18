@@ -43,7 +43,12 @@ cakeshop:
       default-ttl-minutes: 1
   security:
     ignore-urls:
-      - /**
+      - /api/v1/auth/login
+      - /api/v1/auth/logout
+      - /api/wx/session/**
+      - /actuator/**
+      - /v3/api-docs/**
+      - /doc.html
 
 logging:
   level:

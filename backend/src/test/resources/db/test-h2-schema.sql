@@ -45,3 +45,60 @@ CREATE TABLE IF NOT EXISTS employee (
 
 -- 初始数据
 INSERT INTO tenant (id, code, name, status) VALUES (1, 'default', '甜心蛋糕主店', 'active');
+
+-- goods (PerformanceTests 需要)
+CREATE TABLE IF NOT EXISTS goods (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    description TEXT,
+    image VARCHAR(500),
+    images TEXT,
+    price DECIMAL(10,2) NOT NULL DEFAULT 0,
+    origin_price DECIMAL(10,2) DEFAULT 0,
+    cost_price DECIMAL(10,2) DEFAULT 0,
+    stock INT NOT NULL DEFAULT 0,
+    sales INT NOT NULL DEFAULT 0,
+    category_id BIGINT DEFAULT 0,
+    category_name VARCHAR(200),
+    shop_id BIGINT DEFAULT 0,
+    tags VARCHAR(500),
+    specs TEXT,
+    status INT NOT NULL DEFAULT 1,
+    featured TINYINT DEFAULT 0,
+    sort INT NOT NULL DEFAULT 0,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted TINYINT NOT NULL DEFAULT 0,
+    create_by VARCHAR(50) DEFAULT '',
+    update_by VARCHAR(50) DEFAULT ''
+);
+
+-- orders (后续 test 用)
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    order_no VARCHAR(50) NOT NULL,
+    user_id BIGINT,
+    user_name VARCHAR(200),
+    total_price DECIMAL(10,2) NOT NULL DEFAULT 0,
+    status INT NOT NULL DEFAULT 0,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted TINYINT NOT NULL DEFAULT 0,
+    create_by VARCHAR(50) DEFAULT '',
+    update_by VARCHAR(50) DEFAULT ''
+);
+
+-- member
+CREATE TABLE IF NOT EXISTS member (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    openid VARCHAR(100),
+    nickname VARCHAR(200),
+    phone VARCHAR(20),
+    level INT NOT NULL DEFAULT 0,
+    points INT NOT NULL DEFAULT 0,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted TINYINT NOT NULL DEFAULT 0,
+    create_by VARCHAR(50) DEFAULT '',
+    update_by VARCHAR(50) DEFAULT ''
+);
